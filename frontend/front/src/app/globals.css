@@ -29,7 +29,7 @@ html {
  body {
   margin: 0;
   height: 100vh; 
-  background: linear-gradient(to bottom, #171738, #2e2e64); 
+  background: #171738; 
 }
 
 /**
