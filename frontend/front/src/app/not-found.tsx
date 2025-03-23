@@ -5,13 +5,15 @@ export const pageNotFound: React.FC = (): ReactElement => {
 
     return (
         <>
-        <div className={styles.page}>
-            <div className={styles.container}>
-                <div className={styles.ring}></div>
-                <div className={styles.ring}></div>
-                <div className={styles.ring}></div>
-                <div className={styles.ring}></div>
-                <div className={styles.text}>404...</div>
+        <div className={styles.wrapper}>
+            <div className={styles.page}>
+                <div className={styles.container}>
+                    <div className={styles.ring}></div>
+                    <div className={styles.ring}></div>
+                    <div className={styles.ring}></div>
+                    <div className={styles.ring}></div>
+                    <div className={styles.text}>404...</div>
+                </div>
             </div>
         </div>
         </>
