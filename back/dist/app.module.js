@@ -16,12 +16,29 @@ const memberships_module_1 = require("./memberships/memberships.module");
 const payment_module_1 = require("./payment/payment.module");
 const workout_routine_module_1 = require("./workout-routine/workout-routine.module");
 const auth_module_1 = require("./auth/auth.module");
+const config_1 = require("@nestjs/config");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("./config/typeorm");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [users_module_1.UsersModule, suscriptions_module_1.SuscriptionsModule, memberships_module_1.MembershipsModule, payment_module_1.PaymentModule, workout_routine_module_1.WorkoutRoutineModule, auth_module_1.AuthModule],
+        imports: [config_1.ConfigModule.forRoot({
+                isGlobal: true,
+                load: [typeorm_2.default],
+            }),
+            typeorm_1.TypeOrmModule.forRootAsync({
+                inject: [config_1.ConfigService],
+                useFactory: async (config) => {
+                    const typeOrmConfig = config.get('typeorm');
+                    if (!typeOrmConfig) {
+                        throw new Error('TypeORM configuration is not defined in the environment.');
+                    }
+                    return typeOrmConfig;
+                },
+            }),
+            users_module_1.UsersModule, suscriptions_module_1.SuscriptionsModule, memberships_module_1.MembershipsModule, payment_module_1.PaymentModule, workout_routine_module_1.WorkoutRoutineModule, auth_module_1.AuthModule],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })

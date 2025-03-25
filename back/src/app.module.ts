@@ -7,10 +7,32 @@ import { MembershipsModule } from './memberships/memberships.module';
 import { PaymentModule } from './payment/payment.module';
 import { WorkoutRoutineModule } from './workout-routine/workout-routine.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import typeOrm from './config/typeorm';
+
 
 @Module({
-  imports: [UsersModule, SuscriptionsModule, MembershipsModule, PaymentModule, WorkoutRoutineModule, AuthModule],
+  imports: [ConfigModule.forRoot({
+    isGlobal: true,
+    load: [typeOrm],
+  }),
+  TypeOrmModule.forRootAsync({
+    inject: [ConfigService],
+    // eslint-disable-next-line @typescript-eslint/require-await
+    useFactory: async (config: ConfigService): Promise<TypeOrmModuleOptions> => {
+      const typeOrmConfig = config.get<TypeOrmModuleOptions>('typeorm');
+      if (!typeOrmConfig) {
+        throw new Error('TypeORM configuration is not defined in the environment.');
+      }
+      return typeOrmConfig;
+    },
+  }),
+  UsersModule, SuscriptionsModule, MembershipsModule, PaymentModule, WorkoutRoutineModule, AuthModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
+
+
 export class AppModule {}
