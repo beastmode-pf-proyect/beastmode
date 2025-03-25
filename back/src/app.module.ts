@@ -6,9 +6,10 @@ import { SuscriptionsModule } from './suscriptions/suscriptions.module';
 import { MembershipsModule } from './memberships/memberships.module';
 import { PaymentModule } from './payment/payment.module';
 import { WorkoutRoutineModule } from './workout-routine/workout-routine.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [UsersModule, SuscriptionsModule, MembershipsModule, PaymentModule, WorkoutRoutineModule],
+  imports: [UsersModule, SuscriptionsModule, MembershipsModule, PaymentModule, WorkoutRoutineModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
