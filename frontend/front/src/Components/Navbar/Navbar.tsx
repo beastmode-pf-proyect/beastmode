@@ -12,11 +12,10 @@ export const Navbar: React.FC = (): ReactElement => {
 
     return (
         <>
-            <div className="flex flex-row flex-wrap justify-center gap-2 w-full">
+            <div className="flex flex-wrap justify-center gap-16 md:gap-12 sm:gap-8 w-full">
                 {itemNavbar.map((elemento, index) => (
                     <Link href={elemento.href} key={index}>
-                        /* From Uiverse.io by JesusRafaelNavaCruz */
-                        <button className="cursor-pointer uppercase bg-white px-4 py-2 active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#F44336,-0.5rem_-0.5rem_#00BCD4] transition">
+                        <button className="cursor-pointer uppercase bg-white px-4 py-2 active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#F44336,-0.5rem_-0.5rem_#00BCD4] transition rounded-b-sm">
                             {elemento.label}
                         </button>
                     </Link>
