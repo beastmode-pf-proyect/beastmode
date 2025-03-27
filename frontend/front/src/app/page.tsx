@@ -1,10 +1,8 @@
-import Image from "next/image";
-import MembershipSection from "../../components/memberships/memberships";
-import Line from "../../components/line_decoration";
-import AboutUs from "../../components/intro-about_us/aboutus";
-import GymCarousel from "../../components/carrusel-gym/carruselpics";
-import Phrase from "../../components/phrase/phrase";
-import TestimonialsSection from "../../components/testimonies/testimonials";
+import GymCarousel from "@/Components/carrusel-gym/carruselpics";
+import AboutUs from "@/Components/intro-about_us/aboutus";
+import MembershipSection from "@/Components/memberships/memberships";
+import Phrase from "@/Components/phrase/phrase";
+import TestimonialsSection from "@/Components/testimonies/testimonials";
 
 export default function Home() {
   return (

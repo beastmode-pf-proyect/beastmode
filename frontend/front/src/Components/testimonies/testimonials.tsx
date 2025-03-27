@@ -1,5 +1,4 @@
 import TestimonialsCarousel from "./testimonialsCard";
-import TestimonialCard from "./testimonialsCard";
 
 const TestimonialsSection = () => {
   return (
