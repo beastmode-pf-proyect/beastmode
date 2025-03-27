@@ -34,7 +34,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <ul className="mt-4 space-y-3">
             <li>
               <Link 
-                href="/dashboard" 
+                href="/Dashboard" 
                 className="flex items-center p-3 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#dc150ba7]"
               >
                 <HiHome className="w-6 h-6" />
@@ -43,7 +43,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </li>
             <li>
               <Link 
-                href="/dashboard/clases" 
+                href="/Dashboard/Clases" 
                 className="flex items-center p-3 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#dc150ba7]"
               >
                 <HiBookOpen className="w-6 h-6" />
@@ -52,7 +52,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </li>
             <li>
               <Link 
-                href="/dashboard/membresia" 
+                href="/Dashboard/Membresia" 
                 className="flex items-center p-3 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#dc150ba7]"
               >
                 <HiOutlineStar className="w-6 h-6" />
@@ -61,7 +61,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </li>
             <li>
               <Link 
-                href="/dashboard/compras" 
+                href="/Dashboard/Compras" 
                 className="flex items-center p-3 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#dc150ba7]"
               >
                 <HiShoppingCart className="w-6 h-6" />
