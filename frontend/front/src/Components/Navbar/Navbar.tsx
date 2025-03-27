@@ -2,7 +2,6 @@ import React, { ReactElement } from "react";
 
 // importamos el menu harcodeado
 import { itemNavbar } from "./itemNavbar";
-import { itemLogin } from "./itemLogin";
 
 // importamos Link para hacer el Router
 import Link from "next/link";
@@ -11,6 +10,9 @@ import Link from "next/link";
 import Image from "next/image";
 import logo from "../../../public/img/beastmode_wolf_white (2).png";
 
+// importamos estilos css
+import estilos from "./Navbar.module.css";
+
 
 
 export const Navbar: React.FC = (): ReactElement => {
@@ -18,9 +20,9 @@ export const Navbar: React.FC = (): ReactElement => {
     return (
         <>
             <div className="flex justify-center items-center text-#5e1914">
-                <div className="flex flex-row justify-center items-center">
-                    <Image src={logo} alt="Logo" className="h-20 w-20" />
-                    <h1>Beast Mode</h1>
+                <div className={`${estilos.logoPosicion} flex flex-row justify-center items-center`}>
+                    <Image src={logo} alt="Logo" className={`${estilos.logo} h-34 w-34`} />
+                    <h1 className={estilos.tituloLogo}>Beast Mode</h1>
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-16 md:gap-12 sm:gap-8 w-full">
