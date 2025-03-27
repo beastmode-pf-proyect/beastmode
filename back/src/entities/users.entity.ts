@@ -1,4 +1,11 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { 
+    Column, 
+    Entity, 
+    OneToMany, 
+    ManyToMany, 
+    PrimaryGeneratedColumn, 
+    JoinTable 
+} from "typeorm";
 import { Subscription } from "./subscription.entity";
 import { WorkoutRoutine } from "./workout.routine.entity";
 
@@ -25,10 +32,16 @@ export class User {
     @Column({ default: true })
     isActive: boolean;
 
-    @OneToMany(() => WorkoutRoutine, (workoutRoutine) => workoutRoutine.users)
-    workoutRoutines: WorkoutRoutine[];
+    // Relación OneToMany con Subscription
+    @OneToMany(() => Subscription, (subscription) => subscription.user)
+    subscriptions: Subscription[];
 
-    @ManyToOne(() => Subscription, (subscription) => subscription.user)
-    @JoinColumn({ name: "ID_suscription" })
-    subscription: Subscription;
+    // Relación ManyToMany con WorkoutRoutine
+    @ManyToMany(() => WorkoutRoutine, (workoutRoutine) => workoutRoutine.users)
+    @JoinTable({
+        name: "user_workout_routines",
+        joinColumn: { name: "user_id", referencedColumnName: "id" },
+        inverseJoinColumn: { name: "workout_routine_id", referencedColumnName: "id" }
+    })
+    workoutRoutines: WorkoutRoutine[];
 }
