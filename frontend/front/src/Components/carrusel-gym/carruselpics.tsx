@@ -63,7 +63,9 @@ const GymCarousel = () => {
                 src={img}
                 alt={`Selfie ${(index % selfies.length) + 1}`}
                 layout="fill"
-                objectFit="cover"
+                style={{
+                  objectFit: "cover",
+                }}
                 className="absolute inset-0"
               />
             </div>

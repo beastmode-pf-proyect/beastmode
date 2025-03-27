@@ -74,8 +74,10 @@ const TestimonialsCarousel = () => {
                         <Image
                           src={testimonial.selfieUrl}
                           alt={`Selfie de ${testimonial.name}`}
-                          layout="fill"
-                          objectFit="cover"
+                          fill
+                          style={{
+                            objectFit: "cover",
+                          }}
                         />
                       </div>
                     </div>
