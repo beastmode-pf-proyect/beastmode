@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Image from "next/legacy/image";
+import Image from "next/image";
 
 const GymCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -62,18 +62,15 @@ const GymCarousel = () => {
               <Image
                 src={img}
                 alt={`Selfie ${(index % selfies.length) + 1}`}
-                layout="fill"
+                fill
                 style={{
                   objectFit: "cover",
-                  position: "absolute",
-                  inset: "inset: calc(var(--spacing) * 0)",
                 }}
               />
             </div>
           </div>
         ))}
       </div>
-
       {/* Indicador de pausa */}
     </div>
   );
