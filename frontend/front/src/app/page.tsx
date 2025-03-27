@@ -1,4 +1,4 @@
-import Dashboard from "./Components/Dashboard/page";
+
 
 export default function Home() {
 
@@ -6,8 +6,8 @@ export default function Home() {
     
   
   <>
+<h1></h1>
 
-  <Dashboard/>
   </>
   
   );
