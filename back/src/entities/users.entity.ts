@@ -34,7 +34,7 @@ export class User {
 
     // Relación OneToMany con Subscription
     @OneToMany(() => Subscription, (subscription) => subscription.user)
-    subscriptions: Subscription[];
+    subscription: Subscription[];
 
     // Relación ManyToMany con WorkoutRoutine
     @ManyToMany(() => WorkoutRoutine, (workoutRoutine) => workoutRoutine.users)
