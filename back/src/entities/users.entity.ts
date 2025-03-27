@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Subscription } from "./subscription.entity";
+import { WorkoutRoutine } from "./workout.routine.entity";
 
 @Entity("users")
 export class User {
@@ -15,8 +16,17 @@ export class User {
     @Column()
     password: string;
 
-    @Column({ type: 'boolean', default: true })
-    isUser: boolean;
+    @Column({ nullable: true })
+    imageUrl: string;
+
+    @Column({ type: 'enum', enum: ['admin', 'trainer', 'client'], default: 'client' })
+    role: string;
+
+    @Column({ default: true })
+    isActive: boolean;
+
+    @OneToMany(() => WorkoutRoutine, (workoutRoutine) => workoutRoutine.users)
+    workoutRoutines: WorkoutRoutine[];
 
     @ManyToOne(() => Subscription, (subscription) => subscription.user)
     @JoinColumn({ name: "ID_suscription" })
