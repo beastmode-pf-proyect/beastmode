@@ -2,9 +2,14 @@ import React, { ReactElement } from "react";
 
 // importamos el menu harcodeado
 import { itemNavbar } from "./itemNavbar";
+import { itemLogin } from "./itemLogin";
 
 // importamos Link para hacer el Router
 import Link from "next/link";
+
+// importamos Logo
+import Image from "next/image";
+import logo from "../../../public/img/beastmode_wolf_white (2).png";
 
 
 
