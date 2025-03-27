@@ -2,13 +2,13 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "t
 import { User } from "./users.entity";
 import { MembershipPlan } from "./membership.plan.entity";
 
-@Entity("subscriptions")
+@Entity("subscription")
 export class Subscription {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
     // Relación ManyToOne con User
-    @ManyToOne(() => User, (user) => user.subscriptions)
+    @ManyToOne(() => User, (user) => user.subscription)
     @JoinColumn({ name: "user_id" }) 
     user: User;
 
