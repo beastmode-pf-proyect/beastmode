@@ -5,11 +5,7 @@ import typeOrm from './config/typeorm';
 import { UsersModule } from './users/users.module';
 import { SuscriptionsModule } from './suscriptions/suscriptions.module';
 import { MembershipsModule } from './memberships/memberships.module';
-import { PaymentModule } from './payment/payment.module';
 import { WorkoutRoutineModule } from './workout-routine/workout-routine.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -29,11 +25,10 @@ import { AppService } from './app.service';
   }),
   UsersModule,
   SuscriptionsModule, 
-  MembershipsModule, 
-  PaymentModule, 
+  MembershipsModule,  
   WorkoutRoutineModule  
   ],
-  controllers: [AppController],
-  providers: [AppService],
-
-export class AppModule {}
+  controllers: [],
+  providers: [],
+})
+export class AppModule {};

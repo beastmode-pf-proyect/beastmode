@@ -1,7 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./users.entity";
 import { MembershipPlan } from "./membership.plan.entity";
-import { Payment } from "./payment.entity";
 
 @Entity("subscription")
 export class Subscription {
@@ -22,6 +21,10 @@ export class Subscription {
     @Column()
     endDate: Date;
 
-    @OneToMany(() => Payment, (payment) => payment.subscription)
-    payments: Payment[];
+    @Column({ default: false  })
+    isPago: boolean;
+
+    @Column({ default: true })
+    isActive: boolean;
+    
 }
