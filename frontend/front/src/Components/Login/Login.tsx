@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAuth0, RedirectLoginOptions } from "@auth0/auth0-react";
-import { FaGithub, FaGoogle, FaLinkedin, FaMicrosoft } from "react-icons/fa";
+import { FaFacebook, FaGoogle, FaInstagram } from "react-icons/fa";
 import Button from "../Button/button"
 
 const Login: React.FC = () => {
@@ -58,13 +58,10 @@ const Login: React.FC = () => {
         <p className="text-center text-gray-500">O inicia sesión con:</p>
         <div className="flex justify-center mt-4 space-x-4">
           <button className="bg-gray-200 hover:bg-gray-300 rounded-full p-2 inline-flex items-center justify-center text-gray-500">
-            <FaLinkedin className="h-6 w-6" />
+            <FaFacebook className="h-6 w-6" />
           </button>
           <button className="bg-gray-200 hover:bg-gray-300 rounded-full p-2 inline-flex items-center justify-center text-gray-500">
-            <FaMicrosoft className="h-6 w-6" />
-          </button>
-          <button className="bg-gray-200 hover:bg-gray-300 rounded-full p-2 inline-flex items-center justify-center text-gray-500">
-            <FaGithub className="h-6 w-6" />
+            <FaInstagram className="h-6 w-6" />
           </button>
           <button className="bg-gray-200 hover:bg-gray-300 rounded-full p-2 inline-flex items-center justify-center text-gray-500">
             <FaGoogle className="h-6 w-6" />
