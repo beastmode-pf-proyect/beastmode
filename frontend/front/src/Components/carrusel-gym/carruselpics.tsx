@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
+import Image from "next/legacy/image";
 
 const GymCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
