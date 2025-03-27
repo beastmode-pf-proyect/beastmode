@@ -9,12 +9,50 @@
     top: .5rem;
 }
 
+/* Centrar en pantallas pequeñas */
+@media (max-width: 767px) { 
+    .logoPosicion {
+        display: flex;
+        flex-direction: column;
+        width: 100%; 
+        align-items: center;
+    }
+}
+
+@media (max-width: 910px) { 
+    .logoPosicion {
+        display: flex;
+        flex-direction: column;
+        width: 100%; 
+        align-items: center;
+    }
+}
+
+
 .logo {
     filter: drop-shadow(3px 3px 5px rgba(0, 0, 0));
+    width: 12rem;
+    height: 12rem;
+}
+
+@media (max-width: 767px) { 
+    .logo {
+        width: 8rem;
+        height: 8rem;
+    }
+
+}
+
+@media (max-width: 910px) { 
+    .logo {
+        width: 8rem;
+        height: 8rem;
+    }
 }
 
 .tituloLogo {
     font-family: "mephisto";
-    font-size: 2.5rem;
-
+    font-size: 3rem;
+    margin: 0;
+    padding: 0;
 }
