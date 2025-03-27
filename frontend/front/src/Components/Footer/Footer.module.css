@@ -1,0 +1,74 @@
+@font-face {
+    font-family: fuenteTitulo;
+    src: url("../../../public/Fuentes/MEPHISTO.TTF");
+}
+
+.contenedorPadre {
+    background-color: #242068;
+    height: 11rem;
+    border-radius: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Estilos para cada sección del footer */
+.contenedorHijo {
+    flex: 1; 
+    margin: 1rem; 
+    padding: 1rem; 
+    border-radius: 1rem;
+}
+
+.contenedorHijo:hover {
+    transition: all 1s;
+    transform: scale(1.1);
+}
+
+.tituloFooter {
+    font-family: fuenteTitulo;
+}
+
+/* ------------------ */
+.contenedorVer {
+    position: relative;
+}
+
+/* Ocultar el footer en pantallas grandes hasta hover */
+.oculto {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    bottom: 3rem;
+    width: 100%;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+}
+
+/* 🖥️ Hover para pantallas grandes */
+@media (min-width: 768px) {
+    .contenedorVer:hover .oculto {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+/* 📱 Siempre visible y en columna en pantallas pequeñas */
+@media (max-width: 767px) {
+    .oculto {
+        opacity: 1 !important;
+        visibility: visible !important;
+        position: static; /* Para que no se superponga */
+    }
+
+    /* Cambio de diseño en pantallas pequeñas */
+    .contenedorPadre {
+        flex-direction: column; /* Acomoda los hijos en columna */
+        height: auto; /* Ajusta el tamaño automáticamente */
+        align-items: center; /* Centra el contenido */
+        text-align: center; /* Alinea el texto al centro */
+        padding: 1rem 0; /* Espaciado arriba y abajo */
+    }
+
+    .contenedorHijo {
+        width: 100%; /* Ocupa todo el ancho disponible */
+    }
+}

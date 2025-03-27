@@ -2,6 +2,13 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import typeOrm from './config/typeorm';
+import { UsersModule } from './users/users.module';
+import { SuscriptionsModule } from './suscriptions/suscriptions.module';
+import { MembershipsModule } from './memberships/memberships.module';
+import { PaymentModule } from './payment/payment.module';
+import { WorkoutRoutineModule } from './workout-routine/workout-routine.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 
 @Module({
@@ -20,9 +27,13 @@ import typeOrm from './config/typeorm';
       return typeOrmConfig;
     },
   }),
-  
+  UsersModule,
+  SuscriptionsModule, 
+  MembershipsModule, 
+  PaymentModule, 
+  WorkoutRoutineModule  
   ],
-  controllers: [],
-  providers: [],
-})
+  controllers: [AppController],
+  providers: [AppService],
+
 export class AppModule {}
