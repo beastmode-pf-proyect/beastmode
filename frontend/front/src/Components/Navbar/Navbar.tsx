@@ -17,7 +17,7 @@ export const Navbar: React.FC = (): ReactElement => {
 
     return (
         <>
-            <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center text-#5e1914">
                 <div className="flex flex-row justify-center items-center">
                     <Image src={logo} alt="Logo" className="h-20 w-20" />
                     <h1>Beast Mode</h1>
