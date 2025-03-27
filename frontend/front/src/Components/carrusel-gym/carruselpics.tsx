@@ -65,8 +65,9 @@ const GymCarousel = () => {
                 layout="fill"
                 style={{
                   objectFit: "cover",
+                  position: "absolute",
+                  inset: "inset: calc(var(--spacing) * 0)",
                 }}
-                className="absolute inset-0"
               />
             </div>
           </div>

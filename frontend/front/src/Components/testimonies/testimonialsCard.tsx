@@ -16,7 +16,6 @@ const TestimonialsCarousel = () => {
     {
       id: 1,
       selfieUrl: "/images/testimonies/testimonio1.jpg",
-
       name: "Virginia González",
       rating: 5,
       testimonial:
@@ -25,7 +24,6 @@ const TestimonialsCarousel = () => {
     {
       id: 2,
       selfieUrl: "/images/testimonies/tetimonio6.jpg",
-
       name: "Carlos Rodríguez",
       rating: 4,
       testimonial:
@@ -34,7 +32,6 @@ const TestimonialsCarousel = () => {
     {
       id: 3,
       selfieUrl: "/images/testimonies/tetimonio3.jpg",
-
       name: "Ana Martínez",
       rating: 5,
       testimonial:
