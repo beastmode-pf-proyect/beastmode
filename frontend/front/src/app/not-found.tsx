@@ -2,7 +2,7 @@ import React, { ReactElement } from "react";
 import styles from "./not-found.module.css";
 import Link from "next/link";
 
-export const PageNotFound: React.FC = (): ReactElement => {
+export default function PageNotFound() {
 
     return (
         <>
@@ -28,5 +28,3 @@ export const PageNotFound: React.FC = (): ReactElement => {
         </>
     )
 }
-
-export default PageNotFound;
