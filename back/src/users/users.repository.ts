@@ -9,6 +9,14 @@ export class UsersRepository{
         @InjectRepository(User) private usersRepository: Repository<User>,
     ){}
 
+    async getUsers() : Promise <Partial<User>[]> {
+      let users = await this.usersRepository.find()
+  
+      const userWithoutPassword = users.map(({password, ...user}) => user)
+  
+      return userWithoutPassword
+  }
+
     async getUserByEmail(email: string) {
         const user = await this.usersRepository.findOne({
           where: { email },
@@ -16,7 +24,7 @@ export class UsersRepository{
         return user;
       }  
 
-      async createUser(user: Partial<User>) {
+      async createUser(user: CreateUserDto) {
         try {
             const newUser = await this.usersRepository.save(user);
             return newUser;
@@ -24,5 +32,7 @@ export class UsersRepository{
             throw new Error('Error al crear el usuario');
           }
         }
+
+      
 
 }

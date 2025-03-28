@@ -13,13 +13,13 @@ const app_service_1 = require("./app.service");
 const users_module_1 = require("./users/users.module");
 const suscriptions_module_1 = require("./suscriptions/suscriptions.module");
 const memberships_module_1 = require("./memberships/memberships.module");
-const payment_module_1 = require("./payment/payment.module");
 const workout_routine_module_1 = require("./workout-routine/workout-routine.module");
 const auth_module_1 = require("./auth/auth.module");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("./config/typeorm");
 const jwt_1 = require("@nestjs/jwt");
+const testimonials_module_1 = require("./testimonials/testimonials.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -46,7 +46,7 @@ exports.AppModule = AppModule = __decorate([
                 },
                 secret: process.env.JWT_SECRET,
             }),
-            users_module_1.UsersModule, suscriptions_module_1.SuscriptionsModule, memberships_module_1.MembershipsModule, payment_module_1.PaymentModule, workout_routine_module_1.WorkoutRoutineModule, auth_module_1.AuthModule],
+            users_module_1.UsersModule, suscriptions_module_1.SuscriptionsModule, memberships_module_1.MembershipsModule, workout_routine_module_1.WorkoutRoutineModule, auth_module_1.AuthModule, testimonials_module_1.TestimonialsModule],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })
