@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import typeOrm from './config/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 
 
 @Module({
@@ -27,6 +28,13 @@ import typeOrm from './config/typeorm';
       }
       return typeOrmConfig;
     },
+  }),
+  JwtModule.register({
+    global: true,
+    signOptions: {
+      expiresIn: '1h',
+      },
+    secret: process.env.JWT_SECRET,
   }),
   UsersModule, SuscriptionsModule, MembershipsModule, PaymentModule, WorkoutRoutineModule, AuthModule
   ],

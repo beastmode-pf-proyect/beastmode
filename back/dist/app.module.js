@@ -19,6 +19,7 @@ const auth_module_1 = require("./auth/auth.module");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("./config/typeorm");
+const jwt_1 = require("@nestjs/jwt");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -37,6 +38,13 @@ exports.AppModule = AppModule = __decorate([
                     }
                     return typeOrmConfig;
                 },
+            }),
+            jwt_1.JwtModule.register({
+                global: true,
+                signOptions: {
+                    expiresIn: '1h',
+                },
+                secret: process.env.JWT_SECRET,
             }),
             users_module_1.UsersModule, suscriptions_module_1.SuscriptionsModule, memberships_module_1.MembershipsModule, payment_module_1.PaymentModule, workout_routine_module_1.WorkoutRoutineModule, auth_module_1.AuthModule],
         controllers: [app_controller_1.AppController],
