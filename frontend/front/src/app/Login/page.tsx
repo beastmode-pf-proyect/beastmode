@@ -39,7 +39,7 @@ const Login: React.FC = () => {
         <label
           className="block text-white font-bold mb-2"
           htmlFor="password">
-          Contraseña
+          Contraseña.
         </label>
         <input
           className="bg-white shadow appearance-none border rounded w-full py-2 px-3 text-black mb-3 leading-tight focus:outline-none focus:shadow-outline"
