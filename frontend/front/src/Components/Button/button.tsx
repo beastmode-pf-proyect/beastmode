@@ -47,7 +47,7 @@ const Button: React.FC<ButtonProps> = ({
   color = "purple",
 }) => {
   const buttonStyles = `
-    px-6 py-3 rounded-xl font-bold text-white transition-colors border-4
+    px-6 py-3 rounded-xl font-bold text-black transition-colors border-4 hover:text-white
     ${
       variant === "first"
         ? firstButtonStyles[color]
