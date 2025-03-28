@@ -51,7 +51,6 @@
     from {
         transform: rotateX(50deg) rotateZ(110deg);
     }
-
     to {
         transform: rotateX(50deg) rotateZ(470deg);
     }
@@ -66,7 +65,6 @@
     from {
         transform: rotateX(20deg) rotateY(50deg) rotateZ(20deg);
     }
-
     to {
         transform: rotateX(20deg) rotateY(50deg) rotateZ(380deg);
     }
@@ -81,7 +79,6 @@
     from {
         transform: rotateX(40deg) rotateY(130deg) rotateZ(450deg);
     }
-
     to {
         transform: rotateX(40deg) rotateY(130deg) rotateZ(90deg);
     }
@@ -96,14 +93,10 @@
     from {
         transform: rotateX(70deg) rotateZ(270deg);
     }
-
     to {
         transform: rotateX(70deg) rotateZ(630deg);
     }
 }
-
-
-
 
 /* ----------------------------------------------- */
 .tooltip_container {
@@ -117,7 +110,7 @@
     left: 50%;
     transform: translateX(-50%);
     background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    color: #000; /* Cambia el color del texto a negro */
     padding: 15px 20px;
     border-radius: 15px;
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -159,10 +152,10 @@
 
 .tooltip_trigger {
     padding: 15px 30px;
-    color: #fff;
     font-size: 16px;
     text-transform: uppercase;
-    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    background: linear-gradient(45deg, #4facfe, #00f2fe); /* Color inicial del botón */
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 10px;
     backdrop-filter: blur(10px);
@@ -173,7 +166,7 @@
 }
 
 .tooltip_trigger:hover {
-    background: linear-gradient(45deg, #4facfe, #00f2fe);
+    background: linear-gradient(45deg, #00f2fe, #4facfe); /* Color del hover */
     transform: translateY(-3px);
     box-shadow: 0 6px 15px rgba(0, 255, 255, 0.5);
 }
