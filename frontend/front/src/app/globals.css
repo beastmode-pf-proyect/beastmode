@@ -32,6 +32,7 @@ body {
   height: 100vh;
 }
 
+
 /**
  * Render the `main` element consistently in IE.
  */
@@ -154,6 +155,7 @@ sub {
 
 sup {
   top: -0.5em;
+
 }
 
 /* Embedded content
