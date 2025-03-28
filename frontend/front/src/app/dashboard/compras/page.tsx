@@ -27,14 +27,14 @@ function PurchaseHistory() {
 
   return (
     <div>
-      <h2 className="text-3xl font-semibold text-[#ffffff]">Historial de Compras</h2>
-      <p className="mt-4 text-gray-300">
+      <h2 className="text-3xl font-semibold text-[#5e1914]">Historial de Compras</h2>
+      <p className="mt-4 text-[#5e1914]">
         Revisa todas tus transacciones y compras realizadas.
       </p>
-text-[#dc150ba7]
+
       <div className="mt-8 bg-[#ffffff] rounded-lg shadow-lg overflow-hidden">
         <table className="w-full">
-          <thead className="bg-[#dc150ba7]">
+          <thead className="bg-[#5e1914] text-[#f1f1f1] ">
             <tr>
               <th className="px-6 py-3 text-left text-sm font-semibold">Fecha</th>
               <th className="px-6 py-3 text-left text-sm font-semibold">Item</th>
@@ -42,7 +42,7 @@ text-[#dc150ba7]
               <th className="px-6 py-3 text-left text-sm font-semibold">Estado</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#dc150ba7] text-[#dc150ba7]">
+          <tbody className="divide-y divide-[#5e1914] text-[#5e1914]">
             {purchases.map((purchase) => (
               <tr key={purchase.id}>
                 <td className="px-6 py-4 text-sm ">{purchase.date}</td>
