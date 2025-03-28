@@ -16,17 +16,17 @@ function Dashboard() {
     <div className="p-6">
       {/* Contenido principal Dashboard */}
       <div>
-        <h2 className="text-3xl font-semibold text-[#dc150b]">Dashboard</h2>
+        <h2 className="text-3xl font-semibold text-[#5e1914]">Dashboard</h2>
         <p className="mt-4 text-gray-600">
           Bienvenido a tu panel de control. Administra tu información de manera fácil y rápida.
         </p>
 
         {/* Sección de Información del Usuario */}
-        <div className="mt-8 bg-[#f8f8f8] p-6 rounded-lg shadow-lg border border-[#dc150b]">
-          <h3 className="text-xl font-semibold text-[#2D2D56]">Información del Usuario</h3>
+        <div className="mt-8 bg-[#f8f8f8] p-6 rounded-lg shadow-lg border border-[#5e1914]">
+          <h3 className="text-xl font-semibold text-[#5e1914]">Información del Usuario</h3>
           <div className="flex items-center space-x-6 mt-4">
             
-            <div className="text-[#2D2D56]">
+            <div className="text-[#5e1914]">
               <p><span className="font-semibold">Nombre:</span> {user.name}</p>
               <p><span className="font-semibold">Email:</span> {user.email}</p>
               <p><span className="font-semibold">Membresía:</span> {user.membership}</p>
