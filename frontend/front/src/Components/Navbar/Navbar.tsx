@@ -10,7 +10,7 @@ import Link from "next/link";
 
 // importamos Logo
 import Image from "next/image";
-import logo from "../../../public/img/beastmode_wolf_white (2).png";
+import logo from "../../../public/img/logo.png";
 import hamburguesa from "../../../public/img/hamburguesa.png";
 
 // importamos estilos css
