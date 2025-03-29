@@ -55,20 +55,20 @@ const AboutUs = () => {
 
   return (
     <div className="py-12 md:py-20 bg-white">
-      <h1 className="text-red-950 text-center text-3xl md:text-4xl lg:text-5xl font-bold mb-12 md:mb-20 px-4">
+      <h1 className="text-red-950 text-center text-3xl md:text-4xl lg:text-5xl font-bold mb-12 md:mb-20 ">
         🚀 Colaboradores 👨‍💻
       </h1>
 
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-8 md:gap-12">
+      <div className="container mx-auto px-28">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-1 md:gap-2">
           {collaborators.map((collab) => (
             <div
               key={collab.id}
               className="flex flex-col items-center group relative"
             >
-              {/* Contenedor de imagen */}
+              {/* Contenedor de imagen - Tamaño reducido */}
               <div
-                className={`relative w-32 h-48 md:w-40 md:h-60 lg:w-48 lg:h-80 overflow-hidden rounded-lg shadow-xl transition-all duration-500 ${collab.hoverColor} group-hover:scale-95`}
+                className={`relative w-24 h-36 md:w-32 md:h-48 lg:w-36 lg:h-56 overflow-hidden rounded-lg shadow-xl transition-all duration-500 ${collab.hoverColor} group-hover:scale-95`}
               >
                 <Image
                   src={collab.image}
@@ -79,17 +79,17 @@ const AboutUs = () => {
                 />
 
                 {/* Overlay con iconos (hover) */}
-                <div className=" absolute inset-0 flex items-end justify-center pb-4 gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 flex items-end justify-center pb-3 gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   {collab.linkedin && (
                     <a
                       href={collab.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="   shadow-lg  transition-colors"
+                      className="shadow-lg transition-colors"
                       aria-label={`LinkedIn de ${collab.name}`}
                     >
-                      <div className="bg-white p-2 rounded-full">
-                        <SiLinkedin className=" w-6 h-6 text-[#0077B5]" />
+                      <div className="bg-white p-1.5 rounded-full">
+                        <SiLinkedin className="w-5 h-5 text-[#0077B5]" />
                       </div>
                     </a>
                   )}
@@ -99,11 +99,11 @@ const AboutUs = () => {
                       href={collab.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className=" shadow-lg transition-colors"
+                      className="shadow-lg transition-colors"
                       aria-label={`GitHub de ${collab.name}`}
                     >
-                      <div className="bg-white p-2 rounded-full">
-                        <SiGithub className="w-6 h-6 text-gray-800" />
+                      <div className="bg-white p-1.5 rounded-full">
+                        <SiGithub className="w-5 h-5 text-gray-800" />
                       </div>
                     </a>
                   )}
@@ -112,35 +112,9 @@ const AboutUs = () => {
 
               {/* Nombre + iconos pequeños */}
               <div className="mt-4 flex flex-col items-center">
-                <p className="text-center font-medium text-sm md:text-base lg:text-lg px-2">
+                <p className="text-center font-medium text-sm md:text-base px-2">
                   {collab.name}
                 </p>
-
-                {/* <div className="flex gap-3 mt-2">
-                  {collab.linkedin && (
-                    <a
-                      href={collab.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[#0077B5] hover:text-[#005f8c] transition-colors"
-                      aria-label={`LinkedIn de ${collab.name}`}
-                    >
-                      <SiLinkedin className="w-5 h-5" />
-                    </a>
-                  )}
-
-                  {collab.github && (
-                    <a
-                      href={collab.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-gray-800 hover:text-gray-600 transition-colors"
-                      aria-label={`GitHub de ${collab.name}`}
-                    >
-                      <SiGithub className="w-5 h-5" />
-                    </a>
-                  )}
-                </div> */}
               </div>
             </div>
           ))}

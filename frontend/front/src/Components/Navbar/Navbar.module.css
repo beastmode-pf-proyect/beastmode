@@ -5,7 +5,7 @@
 
 .logoPosicion {
     position: absolute;
-    left: 1rem;
+    left: 0;
     top: .5rem;
 }
 
@@ -31,8 +31,8 @@
 
 .logo {
     filter: drop-shadow(3px 3px 5px rgba(0, 0, 0));
-    width: 3rem;
-    height: 3rem;
+    width: 10rem;
+    height: 10rem;
 }
 
 @media (max-width: 767px) { 
