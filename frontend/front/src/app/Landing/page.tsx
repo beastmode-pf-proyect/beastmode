@@ -1,3 +1,4 @@
+
 import GymCarousel from "@/Components/carrusel-gym/carruselpics";
 import AboutUs from "@/Components/intro-about_us/aboutus";
 import MembershipSection from "@/Components/memberships/memberships";
@@ -34,3 +35,5 @@ const Landing = () => {
 };
 
 export default Landing;
+
+
