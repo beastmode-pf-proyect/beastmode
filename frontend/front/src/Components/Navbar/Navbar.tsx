@@ -34,9 +34,9 @@ export const Navbar: React.FC = (): ReactElement => {
             <div className="flex justify-center items-center text-#5e1914">
 
                 {/* logo y nombre */}
-                <div className={`${estilos.logoPosicion} flex flex-row justify-center items-center`}>
+                <div className={`${estilos.logoPosicion} flex flex-row justify-center `}>
                     <Image src={logo} alt="Logo" className={`${estilos.logo}`} />
-                    <h1 className={estilos.tituloLogo}>Beast Mode</h1>
+                    <h1 className={`${estilos.tituloLogo} flex items-end`}>Beast Mode</h1>
                 </div>
 
 
