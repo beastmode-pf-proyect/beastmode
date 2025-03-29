@@ -8,7 +8,7 @@ import TestimonialsSection from "@/Components/testimonies/testimonials";
 const Landing = () => {
   return (
     <div>
-      <header>
+      <div>
         <div
           style={{
             backgroundImage: "url('/images/landingpage.png')",
@@ -18,7 +18,7 @@ const Landing = () => {
             height: "100vh",
           }}
         ></div>
-      </header>
+      </div>
 
       <AboutUs />
 

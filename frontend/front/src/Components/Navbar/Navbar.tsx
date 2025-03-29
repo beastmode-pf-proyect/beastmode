@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { ReactElement, useState } from "react";
 
@@ -108,3 +108,4 @@ export const Navbar: React.FC = (): ReactElement => {
 }
 
 export default Navbar;
+
