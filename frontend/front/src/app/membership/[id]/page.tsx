@@ -9,7 +9,7 @@ const MembershipDetail = () => {
 
   const membership = memberships.find((m) => m.id === id); /**Busca el array de la mock */
 
-  if (!membership) { /**si no esta que tire un mensaje */
+  if (!membership) { /**si no está, que tire un mensaje */
     return <p>Membresía no encontrada</p>;
   }
 

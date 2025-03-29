@@ -6,7 +6,7 @@ export const Subscriptions:React.FC = ():ReactElement =>{
 
     return(
        
-  <h1></h1>
+  <h1>Suscripcion del cliente</h1>
        
     )
 }
