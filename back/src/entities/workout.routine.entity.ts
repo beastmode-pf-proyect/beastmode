@@ -1,16 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
-import { User } from './users.entity';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { User } from "./users.entity";
 
-@Entity('workout_routine')
+@Entity("workout_routine")
 export class WorkoutRoutine {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column()
   name: string;
-  
-  @Column()
+
+  @Column("text")
   description: string;
+
+  @Column({ nullable: true, length: 255 })
+  imageUrl: string;
 
   @Column({ default: true })
   isActive: boolean;

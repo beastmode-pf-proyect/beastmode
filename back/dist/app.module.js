@@ -15,6 +15,7 @@ const users_module_1 = require("./users/users.module");
 const suscriptions_module_1 = require("./suscriptions/suscriptions.module");
 const memberships_module_1 = require("./memberships/memberships.module");
 const workout_routine_module_1 = require("./workout-routine/workout-routine.module");
+const file_upload_module_1 = require("./file-upload/file-upload.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -37,7 +38,8 @@ exports.AppModule = AppModule = __decorate([
             users_module_1.UsersModule,
             suscriptions_module_1.SuscriptionsModule,
             memberships_module_1.MembershipsModule,
-            workout_routine_module_1.WorkoutRoutineModule],
+            workout_routine_module_1.WorkoutRoutineModule,
+            file_upload_module_1.FileUploadModule],
         controllers: [],
         providers: [],
     })

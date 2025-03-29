@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { SuscriptionsModule } from './suscriptions/suscriptions.module';
 import { MembershipsModule } from './memberships/memberships.module';
 import { WorkoutRoutineModule } from './workout-routine/workout-routine.module';
+import { FileUploadModule } from './file-upload/file-upload.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -26,7 +27,8 @@ import { WorkoutRoutineModule } from './workout-routine/workout-routine.module';
   UsersModule,
   SuscriptionsModule, 
   MembershipsModule,  
-  WorkoutRoutineModule  
+  WorkoutRoutineModule,
+  FileUploadModule
   ],
   controllers: [],
   providers: [],

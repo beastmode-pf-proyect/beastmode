@@ -13,10 +13,13 @@ export class MembershipPlan {
     price: number;
 
     @Column()
-    duration: string;
-    
+    duration: string; 
+
     @Column({ default: true })
     isActive: boolean;
+
+    @Column({ nullable: true })
+    description: string; 
 
     @OneToMany(() => Subscription, (subscription) => subscription.membershipPlan)
     subscriptions: Subscription[];
