@@ -1,4 +1,13 @@
+"use client"
+import { useRouter } from "next/navigation";
+
 const MembershipSection = () => {
+  const router = useRouter();
+
+  const handleNavigation = (id: string) => {
+    router.push(`/membership/${id}`);
+  };
+
   return (
     <div className="grid grid-cols-2 p-20 gap-16">
       <div className="border-2 rounded-4xl bg-transparent shadow-2xl h-80 pl-2">
@@ -24,7 +33,10 @@ const MembershipSection = () => {
         </ul>
 
         <div className="flex justify-center pt-8">
-          <button className="bg-transparent text-red-950 border-2 rounded-3xl border-red-950 px-44 py-1.5 hover:bg-red-950 hover:text-white cursor-pointer">
+          <button
+            onClick={() => handleNavigation("novato")}
+            className="bg-transparent text-red-950 border-2 rounded-3xl border-red-950 px-44 py-1.5 hover:bg-red-950 hover:text-white cursor-pointer"
+          >
             Get Started
           </button>
         </div>
@@ -59,7 +71,10 @@ const MembershipSection = () => {
           <li className="pt-2 font-medium">⚡ Evaluación médica completa</li>
         </ul>
         <div className="flex justify-center pt-5">
-          <button className="bg-transparent text-red-950 border-2 rounded-3xl border-red-950 px-44 py-1.5 hover:bg-red-950 hover:text-white cursor-pointer">
+          <button
+            onClick={() => handleNavigation("pro")}
+            className="bg-transparent text-red-950 border-2 rounded-3xl border-red-950 px-44 py-1.5 hover:bg-red-950 hover:text-white cursor-pointer"
+          >
             Get Started
           </button>
         </div>
