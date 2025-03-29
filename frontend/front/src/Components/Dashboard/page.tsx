@@ -1,18 +1,34 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 function Dashboard() {
   const { user, isAuthenticated, isLoading } = useAuth0();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      Swal.fire({
+        icon: "error",
+        title: "Acceso denegado",
+        text: "Debes iniciar sesión para acceder a esta página.",
+        confirmButtonText: "Aceptar",
+      }).then(() => {
+        router.push("/"); // Redirige al usuario a la página principal o de inicio de sesión
+      });
+    }
+  }, [isLoading, isAuthenticated, router]);
 
   // Muestra un mensaje de carga mientras obtiene los datos
   if (isLoading) {
     return <div className="text-center text-xl text-gray-600">Cargando...</div>;
   }
 
-  // Si el usuario no está autenticado, muestra un mensaje
+  // Si el usuario no está autenticado, no renderiza el contenido
   if (!isAuthenticated || !user) {
-    return <div className="text-center text-xl text-red-600">No estás autenticado</div>;
+    return null;
   }
 
   return (

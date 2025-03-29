@@ -4,6 +4,7 @@ import { useAuth0, RedirectLoginOptions } from "@auth0/auth0-react";
 import { FaFacebook, FaGoogle, FaInstagram } from "react-icons/fa";
 import Button from "../../Components/Button/button"
 
+
 const Login: React.FC = () => {
   const { loginWithRedirect } = useAuth0();
   const [email, setEmail] = useState("");
@@ -51,7 +52,11 @@ const Login: React.FC = () => {
         />
       </div>
       <div className="flex items-center justify-between">
-        <Button  text="Iniciar sesion" variant="first" color="blue" />
+        <Button 
+          text="Iniciar sesión"
+          variant="first"
+          color="blue"
+        />
       </div>
       <div className="mt-6">
         <p className="text-center text-white">O inicia sesión con:</p>
