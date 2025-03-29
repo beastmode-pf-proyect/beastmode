@@ -197,13 +197,13 @@ const Register: React.FC = () => {
       <div className="mt-6">
         <p className="text-center text-white">O regístrate con:</p>
         <div className="flex justify-center gap-3 mt-4 space-x-4">
-          <button className="bg-white hover:bg-gray-300 rounded-full p-2 inline-flex items-center justify-center text-gray-500">
+          <button className="bg-white hover:bg-gray-300 rounded-full p-2 inline-flex items-center justify-center text-black">
             <FaFacebook className="h-6 w-6" />
           </button>
-          <button className="bg-white hover:bg-gray-300 rounded-full p-2 inline-flex items-center justify-center text-gray-500">
+          <button className="bg-white hover:bg-gray-300 rounded-full p-2 inline-flex items-center justify-center text-black">
             <FaInstagram className="h-6 w-6" />
           </button>
-          <button className="bg-white hover:bg-gray-300 rounded-full p-2 inline-flex items-center justify-center text-gray-500">
+          <button className="bg-white hover:bg-gray-300 rounded-full p-2 inline-flex items-center justify-center text-black">
             <FaGoogle className="h-6 w-6" />
           </button>
         </div>
