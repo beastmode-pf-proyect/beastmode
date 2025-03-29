@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Footer from "@/Components/Footer/Footer";
+import Header from "@/Views/Header";
 
 export const metadata: Metadata = {
   title: "BeastMode",
@@ -14,7 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Header />
+        <div>{children}</div>
+        <Footer />
+      </body>
     </html>
   );
 }

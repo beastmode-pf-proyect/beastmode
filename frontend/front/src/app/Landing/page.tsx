@@ -4,10 +4,10 @@ import MembershipSection from "@/Components/memberships/memberships";
 import Phrase from "@/Components/phrase/phrase";
 import TestimonialsSection from "@/Components/testimonies/testimonials";
 
-const LandingPage = () => {
+const Landing = () => {
   return (
     <div>
-      <header>
+      <div>
         <div
           style={{
             backgroundImage: "url('/images/landingpage.png')",
@@ -17,7 +17,7 @@ const LandingPage = () => {
             height: "100vh",
           }}
         ></div>
-      </header>
+      </div>
 
       <AboutUs />
 
@@ -32,4 +32,4 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage;
+export default Landing;
