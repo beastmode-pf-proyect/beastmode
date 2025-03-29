@@ -17,12 +17,13 @@ export default function PageNotFound() {
                     </div>
                 </div>
 
-
                 <div className={styles.tooltip_container}>
                     <Link href="/">
                         <button className={styles.tooltip_trigger}>Home</button>
                     </Link>
-                    <div className={styles.tooltip}>Pagina No Encontrada, Click Para Retornar a Home</div>
+                    <div className={styles.tooltip}>
+                        Página No Encontrada, Click Para Retornar a Home
+                    </div>
                 </div>
             </div>
         </>
