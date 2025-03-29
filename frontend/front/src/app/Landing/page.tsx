@@ -13,9 +13,10 @@ const Landing = () => {
           style={{
             backgroundImage: "url('/images/landingpage.png')",
             backgroundSize: "cover",
-            width: "screen",
+            width: "100%",
             position: "relative",
             height: "100vh",
+            marginTop: "5rem"
           }}
         ></div>
       </div>
