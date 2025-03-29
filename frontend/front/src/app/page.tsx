@@ -1,15 +1,11 @@
-import Login from "./Login/Login";
+import Ctestimonios from "@/Components/Ctestimonios";
 
 export default function Home() {
-  // const handleClick = () => {
-  //   window.alert("Hiciste click!");
-  // };
+
 
   return (
     <>
-      <div className="flex flex-col-1 justify-center mt-24">
-        <Login />
-      </div>
+      <Ctestimonios />
     </>
   );
 }
