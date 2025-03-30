@@ -1,55 +1,42 @@
-"use client"
+"use client";
 
 import React, { ReactElement, useState } from "react";
-
-// importamos el menu harcodeado
 import { itemNavbar } from "./itemNavbar";
-
-// importamos Link para hacer el Router
 import Link from "next/link";
-
-// importamos Logo
 import Image from "next/image";
 import logo from "../../../public/img/logo.png";
 import hamburguesa from "../../../public/img/hamburguesa.png";
-
-// importamos estilos css
 import estilos from "./Navbar.module.css";
 
-
-
-
 export const Navbar: React.FC = (): ReactElement => {
-
-
-  // esatdo para el menu hamburguesa
-  const [mostrar, setMostrat] = useState(false);
+  const [mostrar, setMostrar] = useState(false);
 
   function visible() {
-    setMostrat(!mostrar);
+    setMostrar(!mostrar);
   }
 
   return (
     <>
-      <div className="flex justify-center  items-center text-#5e1914">
-        {/* logo y nombre */}
+      <div className="flex justify-center items-center text-[#5e1914]">
+        {/* Logo y nombre */}
         <div className={`${estilos.logoPosicion} flex flex-row items-end`}>
-          <Image src={logo} alt="Logo" className={`${estilos.logo}`} />
-          <span className={`${estilos.tituloLogo}`}>Beast Mode</span>
+          <Image src={logo} alt="Logo" className={estilos.logo} width={50} height={50} />
+          <span className={estilos.tituloLogo}>Beast Mode</span>
         </div>
 
-        {/* menu hamburguesa */}
+        {/* Menú hamburguesa */}
         <div className="lg:hidden">
           <button onClick={visible}>
             <Image
               src={hamburguesa}
               alt="ico"
-              unoptimized
-              className={`${estilos.icoHamburguesa} cursor-pointer `}
+              width={30}
+              height={30}
+              className={`${estilos.icoHamburguesa} cursor-pointer`}
             />
           </button>
 
-          {mostrar ? (
+          {mostrar && (
             <div className={`${estilos.menuDesplegable} z-50`}>
               {itemNavbar.map((elemento, index) => (
                 <Link href={elemento.href} key={index}>
@@ -70,20 +57,20 @@ export const Navbar: React.FC = (): ReactElement => {
                   >
                     Iniciar
                   </button>
-
                 </Link>
 
                 <Link href="/Register" className="hidden lg:block">
-                    <button className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]">
-                        Registrarse
-                    </button>
+                  <button className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]">
+                    Registrarse
+                  </button>
                 </Link>
+              </div>
             </div>
-        </div >
-        </>
-    )
-}
-
+          )}
+        </div>
+      </div>
+    </>
+  );
+};
 
 export default Navbar;
-
