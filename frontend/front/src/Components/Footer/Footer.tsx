@@ -8,7 +8,7 @@ import styles from "./Footer.module.css";
 
 export const Footer: React.FC = (): ReactElement => {
     return (
-        <footer className="flex flex-col items-center mt-24">
+        <footer className="flex flex-col items-center mt-28">
             <div className={`${styles.contenedorVer} w-full flex flex-col items-center`}>
                 {/* Sección oculta (aparece en hover o siempre en móviles) */}
                 <div className={`${styles.oculto}  p-6 rounded-lg w-full max-w-4xl`}>
