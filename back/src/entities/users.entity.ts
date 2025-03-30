@@ -1,4 +1,6 @@
+
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+
 import { Subscription } from "./subscription.entity";
 import { WorkoutRoutine } from "./workout.routine.entity";
 import { Testimony } from "./testimonies.entity";
@@ -15,7 +17,7 @@ export class User {
     email: string;
 
     @Column()
-    password: string;
+    password: string; 
 
     @Column({ nullable: true })
     imageUrl: string;

@@ -12,4 +12,5 @@ import { User } from 'src/entities/users.entity';
   providers: [FileUploadService,FileUploadRepository,CloudinaryConfig],
   exports: [CloudinaryConfig]
 })
+
 export class FileUploadModule {}

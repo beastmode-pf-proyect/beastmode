@@ -1,4 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+    Column,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from "typeorm";
 import { User } from "./users.entity";
 import { MembershipPlan } from "./membership.plan.entity";
 
@@ -29,3 +35,4 @@ export class Subscription {
     @Column({ default: true })
     isActive: boolean;
 }
+

@@ -1,15 +1,16 @@
+
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinColumn } from 'typeorm';
 import { User } from './users.entity';
 
-@Entity('workout_routine')
+@Entity("workout_routine")
 export class WorkoutRoutine {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column()
   name: string;
 
-  @Column()
+  @Column("text")
   description: string;
 
   @Column({ nullable: true, length: 255 })
