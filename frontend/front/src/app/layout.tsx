@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Footer from "@/Components/Footer/Footer";
 import Header from "@/Views/Header";
+import AuthProvider from "./AuthProvider";
 
 export const metadata: Metadata = {
   title: "BeastMode",
@@ -12,6 +13,14 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
+<AuthProvider>
+    <html lang="en">
+      
+      <Header/>
+      <body>{children}</body>
+      <Footer/>
+      
+    
     <html lang="en">
       <body className="flex flex-col min-h-screen">
         {/* Header siempre arriba */}
@@ -24,5 +33,6 @@ export default function RootLayout({
         <Footer />
       </body>
     </html>
+    </AuthProvider>
   );
 }
