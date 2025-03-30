@@ -1,4 +1,12 @@
+"use client"
+import { useRouter } from "next/navigation";
 const MembershipSection = () => {
+  const router = useRouter();
+
+  const handleNavigation = (id: string) => {
+    router.push(`/membership/${id}`);
+  };
+  
   return (
     <div className="w-full px-4 py-12 sm:py-20 lg:px-8 xl:px-20">
       <div className="max-w-7xl mx-auto">
@@ -43,7 +51,9 @@ const MembershipSection = () => {
             </div>
 
             <div className="mt-8">
-              <button className="w-full bg-transparent text-red-950 border-2 border-red-950 rounded-3xl px-6 py-3 hover:bg-red-950 hover:text-white transition-colors duration-300 font-medium">
+              
+              <button onClick={() => handleNavigation("novato")}
+              className="w-full bg-transparent text-red-950 border-2 border-red-950 rounded-3xl px-6 py-3 hover:bg-red-950 hover:text-white transition-colors duration-300 font-medium">
                 Comenzar Ahora
               </button>
             </div>
@@ -88,7 +98,7 @@ const MembershipSection = () => {
             </div>
 
             <div className="mt-8">
-              <button className="w-full bg-red-900 text-white border-2 border-red-900 rounded-3xl px-6 py-3 hover:bg-red-800 hover:border-red-800 transition-colors duration-300 font-medium">
+              <button onClick={() => handleNavigation("pro")} className="w-full bg-red-900 text-white border-2 border-red-900 rounded-3xl px-6 py-3 hover:bg-red-800 hover:border-red-800 transition-colors duration-300 font-medium">
                 ¡Quiero ser PRO!
               </button>
             </div>
