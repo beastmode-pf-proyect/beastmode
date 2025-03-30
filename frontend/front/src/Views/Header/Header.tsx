@@ -3,20 +3,16 @@ import React, { ReactElement } from "react";
 // importamos el componente navbar
 import Navbar from "@/Components/Navbar";
 
-// importamos los estilos
-import estilos from "./Header.module.css";
 
 export const Header: React.FC = (): ReactElement => {
 
-
-    return (
-        <div className="mt-1 p-2 mb-20 bg-[#a82717] rounded-xl min-h-16 content-center">
-            <Navbar />
-        </div>
-    )
-}
-
-
-  
+  return (
+    <div className="mb-10">
+      <div className="p-2  bg-[#a82717] min-h-16 content-center rounded-t-xl">
+        <Navbar />
+      </div>
+    </div>
+  );
+};
 
 export default Header;
