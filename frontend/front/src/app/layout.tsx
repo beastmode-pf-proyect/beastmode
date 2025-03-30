@@ -10,18 +10,19 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-
     <html lang="en">
-      <Header/>
-      <body>{children}</body>
-      <Footer/>
+      <body className="flex flex-col min-h-screen">
+        {/* Header siempre arriba */}
+        <Header />
 
-    
+        {/* Contenido principal se expande dinámicamente */}
+        <main className="flex-grow">{children}</main>
 
+        {/* Footer siempre abajo */}
+        <Footer />
+      </body>
     </html>
   );
 }
