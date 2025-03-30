@@ -96,7 +96,9 @@ const Login: React.FC = () => {
               <button className="bg-white hover:bg-gray-300 rounded-full p-2 inline-flex items-center justify-center text-gray-500">
                 <FaInstagram className="h-6 w-6" />
               </button>
-              <button className="bg-white hover:bg-gray-300 rounded-full p-2 inline-flex items-center justify-center text-gray-500">
+              <button
+                className="bg-white hover:bg-gray-300 rounded-full p-2 inline-flex items-center justify-center text-gray-500"
+                onClick={() => loginWithRedirect()}> 
                 <FaGoogle className="h-6 w-6" />
               </button>
             </div>
