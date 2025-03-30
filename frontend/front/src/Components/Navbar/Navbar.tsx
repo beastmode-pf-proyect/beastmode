@@ -30,7 +30,7 @@ export const Navbar: React.FC = (): ReactElement => {
         {/* logo y nombre */}
         <div className={`${estilos.logoPosicion} flex flex-row items-end`}>
           <Image src={logo} alt="Logo" className={`${estilos.logo}`} />
-          <span className={`${estilos.tituloLogo}`}>Beast Mode</span>
+          <span className={`${estilos.tituloLogo} `}>Beast Mode</span>
         </div>
 
         {/* menu hamburguesa */}
@@ -81,7 +81,7 @@ export const Navbar: React.FC = (): ReactElement => {
         </div>
 
         {/* navbar */}
-        <div className="flex flex-wrap justify-center gap-16 md:gap-12 sm:gap-8 w-full ml-40 ">
+        <div className="flex flex-wrap justify-center gap-16 md:gap-12 sm:gap-8 w-full ml-40 z-10">
           {itemNavbar.map((elemento, index) => (
             <Link href={elemento.href} key={index} className="hidden lg:block">
               <button className="cursor-pointer uppercase bg-[#f1f1f1] text-[#5e1914] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]">
