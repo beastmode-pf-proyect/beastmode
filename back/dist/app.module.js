@@ -8,14 +8,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
-const config_1 = require("@nestjs/config");
-const typeorm_1 = require("@nestjs/typeorm");
-const typeorm_2 = require("./config/typeorm");
+const file_upload_module_1 = require("./file-upload/file-upload.module");
+const app_controller_1 = require("./app.controller");
+const app_service_1 = require("./app.service");
 const users_module_1 = require("./users/users.module");
 const suscriptions_module_1 = require("./suscriptions/suscriptions.module");
 const memberships_module_1 = require("./memberships/memberships.module");
+const payment_module_1 = require("./payment/payment.module");
 const workout_routine_module_1 = require("./workout-routine/workout-routine.module");
-const file_upload_module_1 = require("./file-upload/file-upload.module");
+const auth_module_1 = require("./auth/auth.module");
+const config_1 = require("@nestjs/config");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("./config/typeorm");
+const jwt_1 = require("@nestjs/jwt");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -35,13 +40,16 @@ exports.AppModule = AppModule = __decorate([
                     return typeOrmConfig;
                 },
             }),
-            users_module_1.UsersModule,
-            suscriptions_module_1.SuscriptionsModule,
-            memberships_module_1.MembershipsModule,
-            workout_routine_module_1.WorkoutRoutineModule,
-            file_upload_module_1.FileUploadModule],
-        controllers: [],
-        providers: [],
+            jwt_1.JwtModule.register({
+                global: true,
+                signOptions: {
+                    expiresIn: '1h',
+                },
+                secret: process.env.JWT_SECRET,
+            }),
+            users_module_1.UsersModule, suscriptions_module_1.SuscriptionsModule, memberships_module_1.MembershipsModule, payment_module_1.PaymentModule, workout_routine_module_1.WorkoutRoutineModule, auth_module_1.AuthModule],
+        controllers: [app_controller_1.AppController],
+        providers: [app_service_1.AppService],
     })
 ], AppModule);
 ;

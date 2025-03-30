@@ -10,3 +10,4 @@ export const About:React.FC = ():ReactElement => {
 }
 
 export default About;
+

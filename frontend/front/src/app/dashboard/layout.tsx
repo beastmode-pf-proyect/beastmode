@@ -1,4 +1,4 @@
-import { HiHome, HiBookOpen, HiShoppingCart, HiOutlineStar } from "react-icons/hi";
+import { HiHome, HiBookOpen, HiShoppingCart, HiOutlineStar,HiOutlineLogout } from "react-icons/hi";
 import Link from 'next/link';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -11,74 +11,77 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
   
   return (
-    <div className="flex min-h-screen bg-[#f8f8f8] text-white">
-      {/* Sidebar */}
-      <div className="fixed w-80 h-full bg-[#ffffff] p-8 shadow-lg flex flex-col justify-between">
+    <div className="flex min-h-screen bg-[#f8f8f8] text-[#333]">
+      {/* Sidebar más compacto y sticky */}
+      <div className="sticky top-14 h-[calc(100vh-3.5rem)] w-64 bg-white shadow-lg p-4 flex flex-col overflow-y-auto z-20">
         <div>
-          <h1 className="text-2xl font-bold text-[#dc150ba7] mb-6">
-            Logo
-          </h1>
+          
+          <img src="/img/logon.png" alt="Logo" className="w-40 h-auto mb-6" />
+          
+          <h1 className="text-2xl font-bold text-[#5e1914] mb-6">BeastMode</h1>
 
           {/* Información del usuario */}
-          <div className="flex items-center space-x-4 bg-[#ffffff] p-4 rounded-md mb-6">
-            <img src={user.avatar} alt="Usuario" className="w-12 h-12 rounded-full" />
+          <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
+            <img src={user.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
             <div>
-              <h2 className="text-lg font-semibold text-[#dc150ba7]">{user.name}</h2>
-              <p className="text-sm text-[#dc150ba7]">{user.email}</p>
-              
-              <p  className="text-sm text-[#dc150ba7]" >{user.membership}</p>
+              <h2 className="text-lg font-semibold text-[#5e1914]">{user.name}</h2>
+              <p className="text-sm text-[#5e1914]">{user.email}</p>
+              <p className="text-sm text-[#5e1914]">{user.membership}</p>
             </div>
           </div>
 
           {/* Menú */}
-          <ul className="mt-4 space-y-3">
+          <ul className="mt-4 space-y-2">
             <li>
               <Link 
                 href="/Dashboard" 
-                className="flex items-center p-3 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#dc150ba7]"
+                className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#5e1914]"
               >
-                <HiHome className="w-6 h-6" />
+                <HiHome className="w-5 h-5" />
                 <span>Inicio</span>
               </Link>
             </li>
             <li>
               <Link 
                 href="/Dashboard/Clases" 
-                className="flex items-center p-3 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#dc150ba7]"
+                className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#5e1914]"
               >
-                <HiBookOpen className="w-6 h-6" />
+                <HiBookOpen className="w-5 h-5" />
                 <span>Clases</span>
               </Link>
             </li>
             <li>
               <Link 
                 href="/Dashboard/Membresia" 
-                className="flex items-center p-3 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#dc150ba7]"
+                className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#5e1914]"
               >
-                <HiOutlineStar className="w-6 h-6" />
+                <HiOutlineStar className="w-5 h-5" />
                 <span>Membresía</span>
               </Link>
             </li>
             <li>
               <Link 
                 href="/Dashboard/Compras" 
-                className="flex items-center p-3 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#dc150ba7]"
+                className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#5e1914]"
               >
-                <HiShoppingCart className="w-6 h-6" />
+                <HiShoppingCart className="w-5 h-5" />
                 <span>Historial de compras</span>
               </Link>
             </li>
           </ul>
         </div>
 
-        {/* Cierre de sesión */}
-        <button className="mt-6 w-full bg-red-500 hover:bg-red-600 text-white p-2 rounded-md transition-all duration-300 hover:scale-105">
-          Cerrar sesión
-        </button>
-      </div>
+        {/* Cierre de sesión más arriba */}
+          <div className="mt-4">
+              <button className="w-full flex items-center justify-center gap-2 bg-[#5e1914] hover:bg-[#a82717] text-white p-2 rounded-md transition-all duration-300 transform hover:scale-105">
+                  <HiOutlineLogout className="w-5 h-5" />
+                  <span>Cerrar sesión</span>
+              </button>
+          </div>
+        </div>
 
-      {/* Contenido principal */}
-      <main className="md:ml-80 p-10 w-full">{children}</main>
+      {/* Contenido principal más pegado al sidebar */}
+      <main className="flex-1  p-8 min-h-screen">{children}</main>
     </div>
   );
 }
