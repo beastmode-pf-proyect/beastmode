@@ -80,8 +80,4 @@ async createUser(user: CreateUserDto) {
   }
 }
 
-/////////////////////
-async findByAuth0Id(auth0Id: string): Promise<User> {
-  return this.usersRepository.findOne({ where: { auth0Id } });
-}
 }

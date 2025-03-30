@@ -1,14 +1,12 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Subscription } from "./subscription.entity";
 import { WorkoutRoutine } from "./workout.routine.entity";
+import { Testimony } from "./testimonies.entity";
 
 @Entity("users")
 export class User {
     @PrimaryGeneratedColumn("uuid")
     id: string;
-
-    @Column({ unique: true })
-    auth0Id: string;
 
     @Column()
     name: string;
@@ -38,5 +36,9 @@ export class User {
         inverseJoinColumn: { name: "workout_routine_id", referencedColumnName: "id" }
     })
     workoutRoutines: WorkoutRoutine[];
+
+     // Relación OneToMany con Testimony
+     @OneToMany(() => Testimony, (testimony) => testimony.user)
+     testimonies: Testimony[];
 
 }

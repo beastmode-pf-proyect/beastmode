@@ -6,8 +6,8 @@ import { AuthGuardian } from 'src/guards/authorization.guard';
 import { Role } from 'src/decorators/roles.decorators';
 import { Roles } from 'src/roles.enum';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiOperation } from '@nestjs/swagger';
-import { Request } from 'express-jwt';
+import { Request } from 'express';
+
 
 
 @Controller('users')
@@ -15,8 +15,8 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   
   @Get()
-  @Role(Roles.Admin)
-  @UseGuards(AuthGuardian, RolesGuard)
+  //@Role(Roles.Admin)
+  //@UseGuards(AuthGuardian, RolesGuard)
   getUsers(){
     return this.usersService.getUsers();
   }
@@ -40,17 +40,6 @@ export class UsersController {
   updatetrainerUser(@Param('id', ParseUUIDPipe) id: string){
     return this.usersService.updatetrainerUser(id);
 }
-
-
-///// AUTH
-
-  @Get('profile')
-  @UseGuards(AuthGuard('jwt'))
-  @ApiOperation({ summary: 'Obtener perfil de usuario' })
-  async getUserProfile(@Req() req: Request) {
-    const auth0Id = req.user['sub'];
-    return this.usersService.getUserProfile(auth0Id);
-  }
 
 }
 

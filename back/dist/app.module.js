@@ -20,6 +20,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("./config/typeorm");
 const jwt_1 = require("@nestjs/jwt");
 const testimonials_module_1 = require("./testimonials/testimonials.module");
+const file_upload_module_1 = require("./file-upload/file-upload.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -46,7 +47,7 @@ exports.AppModule = AppModule = __decorate([
                 },
                 secret: process.env.JWT_SECRET,
             }),
-            users_module_1.UsersModule, suscriptions_module_1.SuscriptionsModule, memberships_module_1.MembershipsModule, workout_routine_module_1.WorkoutRoutineModule, auth_module_1.AuthModule, testimonials_module_1.TestimonialsModule],
+            users_module_1.UsersModule, suscriptions_module_1.SuscriptionsModule, memberships_module_1.MembershipsModule, workout_routine_module_1.WorkoutRoutineModule, auth_module_1.AuthModule, testimonials_module_1.TestimonialsModule, file_upload_module_1.FileUploadModule],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })

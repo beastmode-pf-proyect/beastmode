@@ -23,16 +23,4 @@ export class UsersService {
         return this.usersRepository.updatetrainerUser(id)
     }
 
-    ///// AUTH
-
-    async getUserProfile(auth0Id: string): Promise<User> {
-        const user = await this.usersRepository.findByAuth0Id(auth0Id);
-        
-        if (!user) {
-          throw new NotFoundException('Perfil de usuario no encontrado');
-        }
-    
-        return user;
-      }
-    
 }

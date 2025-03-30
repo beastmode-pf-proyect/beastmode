@@ -11,6 +11,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import typeOrm from './config/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { TestimonialsModule } from './testimonials/testimonials.module';
+import { FileUploadModule } from './file-upload/file-upload.module';
 
 
 @Module({
@@ -36,7 +37,7 @@ import { TestimonialsModule } from './testimonials/testimonials.module';
       },
     secret: process.env.JWT_SECRET,
   }),
-  UsersModule, SuscriptionsModule, MembershipsModule, WorkoutRoutineModule, AuthModule, TestimonialsModule
+  UsersModule, SuscriptionsModule, MembershipsModule, WorkoutRoutineModule, AuthModule, TestimonialsModule, FileUploadModule
   ],
   controllers: [AppController],
   providers: [AppService],

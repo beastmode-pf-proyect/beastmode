@@ -12,6 +12,9 @@ export class WorkoutRoutine {
   @Column()
   description: string;
 
+  @Column({ nullable: true, length: 255 })
+  imageUrl: string;
+
   @Column({ default: true })
   isActive: boolean;
 
