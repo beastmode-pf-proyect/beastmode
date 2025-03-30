@@ -11,9 +11,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
 <AuthProvider>
     <html lang="en">
@@ -23,7 +21,17 @@ export default function RootLayout({
       <Footer/>
       
     
+    <html lang="en">
+      <body className="flex flex-col min-h-screen">
+        {/* Header siempre arriba */}
+        <Header />
 
+        {/* Contenido principal se expande dinámicamente */}
+        <main className="flex-grow">{children}</main>
+
+        {/* Footer siempre abajo */}
+        <Footer />
+      </body>
     </html>
     </AuthProvider>
   );
