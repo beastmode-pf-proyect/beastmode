@@ -11,6 +11,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import typeOrm from './config/typeorm';
 import { JwtModule } from '@nestjs/jwt';
+import { TestimonialsModule } from './testimonials/testimonials.module';
+import { FileUploadModule } from './file-upload/file-upload.module';
 
 
 @Module({
@@ -36,11 +38,7 @@ import { JwtModule } from '@nestjs/jwt';
       },
     secret: process.env.JWT_SECRET,
   }),
-  UsersModule,
-  SuscriptionsModule, 
-  MembershipsModule,  
-  WorkoutRoutineModule,
-  FileUploadModule
+  UsersModule, SuscriptionsModule, MembershipsModule, WorkoutRoutineModule, AuthModule, TestimonialsModule, FileUploadModule
   ],
   controllers: [AppController],
   providers: [AppService],

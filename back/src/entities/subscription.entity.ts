@@ -15,7 +15,7 @@ export class Subscription {
 
     // Relación ManyToOne con User
     @ManyToOne(() => User, (user) => user.subscription)
-    @JoinColumn({ name: "user_id" })
+    @JoinColumn({ name: "user_id" }) 
     user: User;
 
     // Relación ManyToOne con MembershipPlan
@@ -30,8 +30,9 @@ export class Subscription {
     endDate: Date;
 
     @Column({ default: false })
-    isPaid: boolean; 
+    isPago: boolean;
 
     @Column({ default: true })
     isActive: boolean;
 }
+
