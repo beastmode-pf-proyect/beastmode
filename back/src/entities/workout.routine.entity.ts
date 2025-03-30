@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinColumn } from 'typeorm';
+import { User } from './users.entity';
 
 @Entity('workout_routine')
 export class WorkoutRoutine {
@@ -10,4 +11,11 @@ export class WorkoutRoutine {
 
   @Column()
   description: string;
+
+  @Column({ default: true })
+  isActive: boolean;
+
+  // Relación ManyToMany con User
+  @ManyToMany(() => User, (user) => user.workoutRoutines)
+  users: User[];
 }

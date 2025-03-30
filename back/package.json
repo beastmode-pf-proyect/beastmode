@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@auth0/nextjs-auth0": "^4.3.0",
     "@nestjs/common": "^11.0.12",
     "@nestjs/config": "^4.0.1",
     "@nestjs/core": "^11.0.12",
@@ -39,7 +40,9 @@
     "jwks-rsa": "^3.2.0",
     "passport": "^0.7.0",
     "passport-auth0": "^1.4.4",
+    "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
+    "passport-openidconnect": "^0.1.2",
     "pg": "^8.14.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",

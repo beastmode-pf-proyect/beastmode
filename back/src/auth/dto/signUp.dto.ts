@@ -48,7 +48,7 @@ export class SignUpDto {
   address: string;
 
   @IsEmpty()
-  isUser: boolean;
+  isUser: string;
 
   @IsNotEmpty()
   @IsString()

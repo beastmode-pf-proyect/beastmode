@@ -15,6 +15,9 @@ export class MembershipPlan {
     @Column()
     duration: string;
 
+    @Column({ default: true })
+    isActive: boolean;
+
     @OneToMany(() => Subscription, (subscription) => subscription.membershipPlan)
     subscriptions: Subscription[];
 }

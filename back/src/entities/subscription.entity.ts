@@ -7,12 +7,14 @@ export class Subscription {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
+    // Relación ManyToOne con User
     @ManyToOne(() => User, (user) => user.subscription)
-    @JoinColumn({ name: "ID_User" })
+    @JoinColumn({ name: "user_id" }) 
     user: User;
 
+    // Relación ManyToOne con MembershipPlan
     @ManyToOne(() => MembershipPlan, (membershipPlan) => membershipPlan.subscriptions)
-    @JoinColumn({ name: "ID_MembershipPlan" })
+    @JoinColumn({ name: "membership_plan_id" })
     membershipPlan: MembershipPlan;
 
     @Column()
@@ -20,4 +22,10 @@ export class Subscription {
 
     @Column()
     endDate: Date;
+
+    @Column({ default: false })
+    isPago: boolean;
+
+    @Column({ default: true })
+    isActive: boolean;
 }
