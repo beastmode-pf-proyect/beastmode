@@ -2,7 +2,7 @@ import React, { ReactElement } from "react";
 import styles from "./not-found.module.css";
 import Link from "next/link";
 
-export const pageNotFound: React.FC = (): ReactElement => {
+export default function PageNotFound() {
 
     return (
         <>
@@ -17,16 +17,15 @@ export const pageNotFound: React.FC = (): ReactElement => {
                     </div>
                 </div>
 
-
                 <div className={styles.tooltip_container}>
                     <Link href="/">
                         <button className={styles.tooltip_trigger}>Home</button>
                     </Link>
-                    <div className={styles.tooltip}>Pagina No Encontrada, Click Para Regresar a Home</div>
+                    <div className={styles.tooltip}>
+                        Página No Encontrada, Click Para Retornar a Home
+                    </div>
                 </div>
             </div>
         </>
     )
 }
-
-export default pageNotFound;

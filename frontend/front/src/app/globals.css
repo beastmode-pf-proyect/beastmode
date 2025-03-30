@@ -1,6 +1,11 @@
 @import "tailwindcss";
 
 
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+
 /* ------------------------ */
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 
@@ -27,11 +32,9 @@ html {
  */
 
 body {
-  margin-left: 1rem;
-  margin-right: 1rem;
-  height: 100vh;
-  background: #171738;
+  margin: 1rem;
 }
+
 
 /**
  * Render the `main` element consistently in IE.
@@ -155,17 +158,15 @@ sub {
 
 sup {
   top: -0.5em;
+
+
 }
 
-/* Embedded content
-   ========================================================================== */
-
-/**
- * Remove the border on images inside links in IE 10.
- */
-
-img {
-  border-style: none;
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
 /* Forms
