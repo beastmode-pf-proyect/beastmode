@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { SuscriptionsModule } from './suscriptions/suscriptions.module';
 import { MembershipsModule } from './memberships/memberships.module';
 import { WorkoutRoutineModule } from './workout-routine/workout-routine.module';
+import { FileUploadModule } from './file-upload/file-upload.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
@@ -38,7 +39,8 @@ import { JwtModule } from '@nestjs/jwt';
   UsersModule,
   SuscriptionsModule, 
   MembershipsModule,  
-  WorkoutRoutineModule  
+  WorkoutRoutineModule,
+  FileUploadModule
   ],
   controllers: [AppController],
   providers: [AppService],

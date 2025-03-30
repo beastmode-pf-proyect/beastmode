@@ -18,6 +18,7 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": true,
-    "types": ["jest", "express", "node"],
+    "types": ["jest", "express", "node","multer"],
+
   }
 }

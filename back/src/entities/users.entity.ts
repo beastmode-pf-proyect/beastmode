@@ -1,13 +1,14 @@
-import { 
-    Column, 
-    Entity, 
-    OneToMany, 
-    ManyToMany, 
-    PrimaryGeneratedColumn, 
-    JoinTable 
+import {
+    Column,
+    Entity,
+    OneToMany,
+    ManyToMany,
+    PrimaryGeneratedColumn,
+    JoinTable,
 } from "typeorm";
 import { Subscription } from "./subscription.entity";
 import { WorkoutRoutine } from "./workout.routine.entity";
+import { Testimony } from "./testimonies.entity";
 
 @Entity("users")
 export class User {
@@ -21,12 +22,12 @@ export class User {
     email: string;
 
     @Column()
-    password: string;
+    password: string; 
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, length: 500 })
     imageUrl: string;
 
-    @Column({ type: 'enum', enum: ['admin', 'trainer', 'client'], default: 'client' })
+    @Column({ type: "enum", enum: ["admin", "trainer", "client"], default: "client" })
     role: string;
 
     @Column({ default: true })
@@ -41,7 +42,11 @@ export class User {
     @JoinTable({
         name: "user_workout_routines",
         joinColumn: { name: "user_id", referencedColumnName: "id" },
-        inverseJoinColumn: { name: "workout_routine_id", referencedColumnName: "id" }
+        inverseJoinColumn: { name: "workout_routine_id", referencedColumnName: "id" },
     })
     workoutRoutines: WorkoutRoutine[];
+
+    // Relación OneToMany con Testimony
+    @OneToMany(() => Testimony, (testimony) => testimony.user)
+    testimonies: Testimony[];
 }
