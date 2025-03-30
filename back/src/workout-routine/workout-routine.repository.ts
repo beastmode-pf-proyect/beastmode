@@ -34,15 +34,19 @@ export class WorkoutRoutineRepository{
 
         const updatedWorkoutRoutine = await this.workoutRuotineRepository.findOneBy({ id })
 
-        return `Rutinas de ejercicios actualizada: ${updatedWorkoutRoutine}`
+        return `Rutinas de ejercicios actualizada: ${updatedWorkoutRoutine.name}`
 
     }
 
     async createWorkoutRoutine(workoutRoutine: Partial<WorkoutRoutine>){
-
-        const createdWorkoutRoutine = await this.workoutRuotineRepository.create(workoutRoutine)
-
-        return `Rutina ${createdWorkoutRoutine.name} creada exitosamente `
+    
+        const createdWorkoutRoutine = await this.workoutRuotineRepository.save(workoutRoutine);
+    
+        if (!createdWorkoutRoutine) {
+            throw new Error('No se pudo crear la rutina');
+        }
+    
+        return `Rutina ${createdWorkoutRoutine.name} creada exitosamente`;
 
     }
 

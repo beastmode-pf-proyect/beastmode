@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, UseInterceptors } from '@nestjs/common';
 import { WorkoutRoutineService } from './workout-routine.service';
 import { Role } from 'src/decorators/roles.decorators';
 import { Roles } from 'src/roles.enum';
@@ -36,7 +36,7 @@ export class WorkoutRoutineController {
   @Role(Roles.Admin, Roles.Trainer)
   @UseGuards(AuthGuardian, RolesGuard)
   @UseInterceptors(validateWorkoutRoutineInteceptor)
-  createWorkoutRoutine(WorkoutRoutine: Partial<WorkoutRoutine>){
+  createWorkoutRoutine(@Body() WorkoutRoutine: Partial<WorkoutRoutine>){
     return this.workoutRoutineService.createWorkoutRoutine(WorkoutRoutine)
   }
 
