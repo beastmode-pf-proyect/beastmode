@@ -31,7 +31,7 @@ export const Ctestimonios: React.FC = (): ReactElement => {
 
         const intervalo = setInterval(() => {
             setListaTestimonios(sacarTestimoniosRandom());
-        }, 60000); // 60 segundos
+        }, 10000); // 60 segundos
 
         return () => clearInterval(intervalo);
     }, []);
