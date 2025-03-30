@@ -91,7 +91,7 @@ export const Navbar: React.FC = (): ReactElement => {
           ))}
         </div>
 
-        {/* navbar de login y register */}
+        {/* navbar de login y register gsakdh*/}
         <div className="flex flex-row gap-5">
           <Link href="/Login" className="hidden lg:block">
             <button className="cursor-pointer uppercase bg-[#f1f1f1] text-[#5e1914] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]">
@@ -110,4 +110,4 @@ export const Navbar: React.FC = (): ReactElement => {
   );
 };
 
-export default Navbar;
+export default Navbar; 
