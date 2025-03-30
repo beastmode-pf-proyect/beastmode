@@ -33,16 +33,19 @@ export class MembershipsRepository{
 
         const updatedMembership = await this.membershipRepository.findOneBy({ id })
 
-        return `Membresia actualizada: ${updatedMembership}`
+        return `Membresia actualizada: ${updatedMembership.name}`
 
     }
 
     async createMembership(membership: Partial<MembershipPlan>){
-
-        const createdMembership = await this.membershipRepository.create(membership)
-
-        return `Membresia ${createdMembership.name} creada exitosamente `
-
+    
+        const createdMembership = await this.membershipRepository.save(membership);
+    
+        if (!createdMembership) {
+            throw new Error('No se pudo crear la membresía');
+        }
+    
+        return `Membresía ${createdMembership.name} creada exitosamente`;
     }
 
     async desactivateMembership(id:string){
