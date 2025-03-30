@@ -30,7 +30,7 @@ export const Navbar: React.FC = (): ReactElement => {
         {/* logo y nombre */}
         <div className={`${estilos.logoPosicion} flex flex-row items-end`}>
           <Image src={logo} alt="Logo" className={`${estilos.logo}`} />
-          <span className={`${estilos.tituloLogo} bg-amber-300`}>Beast Mode</span>
+          <span className={`${estilos.tituloLogo} `}>Beast Mode</span>
         </div>
 
         {/* menu hamburguesa */}
