@@ -1,10 +1,6 @@
-import {
-  Column,
-  Entity,
-  ManyToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
-import { User } from "./users.entity";
+
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinColumn } from 'typeorm';
+import { User } from './users.entity';
 
 @Entity("workout_routine")
 export class WorkoutRoutine {
