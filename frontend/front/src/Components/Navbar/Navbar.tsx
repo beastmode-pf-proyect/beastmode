@@ -21,6 +21,7 @@ import estilos from "./Navbar.module.css";
 
 export const Navbar: React.FC = (): ReactElement => {
 
+
   // esatdo para el menu hamburguesa
   const [mostrar, setMostrat] = useState(false);
 
@@ -83,4 +84,6 @@ export const Navbar: React.FC = (): ReactElement => {
     )
 }
 
+
 export default Navbar;
+

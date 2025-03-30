@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Footer from "@/Components/Footer/Footer";
 import Header from "@/Views/Header";
@@ -15,14 +14,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
-      <body className="h-full flex flex-col">
-        <Header />
-        <main className="flex-1 flex justify-center items-center">
-          {children}
-        </main>
-        <Footer />
-      </body>
+
+    <html lang="en">
+      <Header/>
+      <body>{children}</body>
+      <Footer/>
+
+    
+
     </html>
   );
 }

@@ -7,14 +7,16 @@ import Navbar from "@/Components/Navbar";
 import estilos from "./Header.module.css";
 
 export const Header: React.FC = (): ReactElement => {
-  return (
-    <div className={estilos.contenedorPrincipal}>
-      <div className="p-2  bg-[#a82717] min-h-16 content-center rounded-t-xl">
-        <Navbar />
-      </div>
 
-    </div>
-  );
-};
+
+    return (
+        <div className="mt-1 p-2 mb-20 bg-[#a82717] rounded-xl min-h-16 content-center">
+            <Navbar />
+        </div>
+    )
+}
+
+
+  
 
 export default Header;
