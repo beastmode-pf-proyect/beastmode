@@ -12,7 +12,6 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import typeOrm from './config/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { TestimonialsModule } from './testimonials/testimonials.module';
-import { FileUploadModule } from './file-upload/file-upload.module';
 
 
 @Module({

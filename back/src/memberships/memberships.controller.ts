@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Put, UseGuards, UseInterceptors } from '@nestjs/common';
 import { MembershipsService } from './memberships.service';
 import { updateMembershipDto } from 'src/dto/updateMembershipDto';
 import { MembershipPlan } from 'src/entities/membership.plan.entity';
@@ -34,10 +34,10 @@ export class MembershipsController {
   }
 
   @Post('create')
-  @Role(Roles.Admin)
-  @UseGuards(AuthGuardian, RolesGuard)
+  // @Role(Roles.Admin)
+  // @UseGuards(AuthGuardian, RolesGuard)
   @UseInterceptors(validateMembershipInteceptor)
-  createMembership(membership: Partial<MembershipPlan>){
+  createMembership(@Body()membership: Partial<MembershipPlan>){
     return this.membershipsService.createMembership(membership)
   }
 
