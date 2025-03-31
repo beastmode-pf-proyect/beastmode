@@ -47,39 +47,72 @@ export const Navbar: React.FC = (): ReactElement => {
           </button>
 
           {mostrar ? (
-            <div className={`${estilos.menuDesplegable} z-50`}>
-              {itemNavbar.map((elemento, index) => (
-                <Link href={elemento.href} key={index}>
-                  <button
-                    className="cursor-pointer uppercase bg-[#f1f1f1] text-[#5e1914] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]"
-                    onClick={visible}
-                  >
-                    {elemento.label}
-                  </button>
-                </Link>
-              ))}
+            <>
+              {isAuthenticated ? (
+                <div className={`${estilos.menuDesplegable} z-50`}>
+                  {itemNavbar.map((elemento, index) => (
+                    <Link href={elemento.href} key={index}>
+                      <button
+                        className="cursor-pointer uppercase bg-[#f1f1f1] text-[#5e1914] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]"
+                        onClick={visible}
+                      >
+                        {elemento.label}
+                      </button>
+                    </Link>
+                  ))}
 
-              <div className="flex flex-col gap-5">
-                <Link href="/Login">
-                  <button
-                    className="cursor-pointer uppercase bg-[#f1f1f1] text-[#5e1914] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]"
-                    onClick={visible}
-                  >
-                    Iniciar
-                  </button>
-                </Link>
+                  <div className="flex flex-col gap-5">
+                    <Link href="/dashboard">
+                      <button className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]">
+                        Dashboard
+                      </button>
+                    </Link>
+                    <button
+                      onClick={() => logout()}
+                      className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className={`${estilos.menuDesplegable} z-50`}>
+                  {itemNavbar.map((elemento, index) => (
+                    <Link href={elemento.href} key={index}>
+                      <button
+                        className="cursor-pointer uppercase bg-[#f1f1f1] text-[#5e1914] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]"
+                        onClick={visible}
+                      >
+                        {elemento.label}
+                      </button>
+                    </Link>
+                  ))}
 
-                <Link href="/Register">
-                  <button
-                    className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]"
-                    onClick={visible}
-                  >
-                    Registrarse
-                  </button>
-                </Link>
-              </div>
-            </div>
-          ) : null}
+                  <div className="flex flex-col gap-5">
+                    <Link href="/Login">
+                      <button
+                        className="cursor-pointer uppercase bg-[#f1f1f1] text-[#5e1914] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]"
+                        onClick={visible}
+                      >
+                        Iniciar
+                      </button>
+                    </Link>
+
+                    <Link href="/Register">
+                      <button
+                        className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]"
+                        onClick={visible}
+                      >
+                        Registrarse
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            null
+          )}
         </div>
 
         {/* navbar */}
@@ -95,34 +128,34 @@ export const Navbar: React.FC = (): ReactElement => {
 
         {/* navbar de login y register gsakdh*/}
         <div className="flex flex-row gap-5">
-        {isAuthenticated ? (
-                        <>
-                            <Link href="/dashboard">
-                                <button className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1]">
-                                    Dashboard
-                                </button>
-                            </Link>
-                            <button
-                                onClick={() => logout()}
-                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                            >
-                                Logout
-                            </button>
-                        </>
-                    ) : (
-                        <>
-                            <Link href={"/Login"} className="hidden lg:block">
-                                <button className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]">
-                                    Iniciar
-                                </button>
-                            </Link>
-                            <Link href="/Register" className="hidden lg:block">
-                                <button className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]">
-                                    Registrarse
-                                </button>
-                            </Link>
-                        </>
-                    )}
+          {isAuthenticated ? (
+            <>
+              <Link href="/dashboard" className="hidden lg:block">
+                <button className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]">
+                  Dashboard
+                </button>
+              </Link >
+              <button
+                onClick={() => logout()}
+                className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271] hidden lg:block" 
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href={"/Login"} className="hidden lg:block">
+                <button className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]">
+                  Iniciar
+                </button>
+              </Link>
+              <Link href="/Register" className="hidden lg:block">
+                <button className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]">
+                  Registrarse
+                </button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </>
