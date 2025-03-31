@@ -1,6 +1,7 @@
 "use client";
-
+import { useAuth0 } from "@auth0/auth0-react";
 import React, { ReactElement, useState } from "react";
+
 
 // importamos el menu harcodeado
 import { itemNavbar } from "./itemNavbar";
@@ -23,6 +24,7 @@ export const Navbar: React.FC = (): ReactElement => {
   function visible() {
     setMostrat(!mostrar);
   }
+  const { isAuthenticated, logout } = useAuth0();
 
   return (
     <>
@@ -93,17 +95,34 @@ export const Navbar: React.FC = (): ReactElement => {
 
         {/* navbar de login y register gsakdh*/}
         <div className="flex flex-row gap-5">
-          <Link href="/Login" className="hidden lg:block">
-            <button className="cursor-pointer uppercase bg-[#f1f1f1] text-[#5e1914] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]">
-              Iniciar
-            </button>
-          </Link>
-
-          <Link href="/Register" className="hidden lg:block">
-            <button className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]">
-              Registrarse
-            </button>
-          </Link>
+        {isAuthenticated ? (
+                        <>
+                            <Link href="/dashboard">
+                                <button className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1]">
+                                    Dashboard
+                                </button>
+                            </Link>
+                            <button
+                                onClick={() => logout()}
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                            >
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <Link href={"/Login"} className="hidden lg:block">
+                                <button className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]">
+                                    Iniciar
+                                </button>
+                            </Link>
+                            <Link href="/Register" className="hidden lg:block">
+                                <button className="cursor-pointer uppercase bg-[#5e1914] text-[#f1f1f1] px-4 py-2 rounded-sm transition shadow-md hover:bg-[#a82717] hover:text-[#f1f1f1] active:translate-x-0.5 active:translate-y-0.5 hover:shadow-[0.5rem_0.5rem_#5e1914,-0.5rem_-0.5rem_#777271]">
+                                    Registrarse
+                                </button>
+                            </Link>
+                        </>
+                    )}
         </div>
       </div>
     </>
