@@ -35,7 +35,7 @@ const Login: React.FC<{ isActive: boolean; onSwitch: () => void }> = ({
       }
 
       const data = await response.json();
-      navigate.push("/home");
+      navigate.push("/");
       console.log("Inicio de sesión exitoso:", data);
     } catch (err) {
       setError(

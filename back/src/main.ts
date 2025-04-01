@@ -7,7 +7,12 @@ import "reflect-metadata"
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.use(auth(config))
+  app.use(auth(config));
+  app.enableCors({
+    origin: 'http://localhost:3001', 
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
