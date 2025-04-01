@@ -45,7 +45,7 @@ const Register: React.FC<{ isActive: boolean; onSwitch: () => void }> = ({
      }
 
      const data = await response.json();
-     navigate.push("/Login");
+     navigate.push("/home");
      console.log("Registro exitoso:", data);
    } catch (err) {
      setError(

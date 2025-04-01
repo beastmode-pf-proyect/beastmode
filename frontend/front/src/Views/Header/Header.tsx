@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 
 // importamos el componente navbar
-import Navbar from "@/Components/Navbar";
+import Navbar from "@/Components/Navbarp/Navbar";
 
 
 export const Header: React.FC = (): ReactElement => {
