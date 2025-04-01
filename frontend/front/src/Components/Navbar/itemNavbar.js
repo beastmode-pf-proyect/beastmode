@@ -2,7 +2,7 @@ const itemNavbar = [
     {href:"/", label: "Home"},
     {href:"/About", label: "About Us"},
     {href:"/Landing", label: "Landing"},
-    {href:"/Subscriptions", label: "Subscriptions"},
+    {href:"/Goals", label: "Goals"},
     // {href:"/Landing", label: "Landing"}
 ]
 
