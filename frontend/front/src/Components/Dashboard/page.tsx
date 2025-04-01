@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 function Dashboard() {
   const { user, isAuthenticated, isLoading } = useAuth0();
@@ -41,24 +42,29 @@ function Dashboard() {
         </p>
 
         {/* Sección de Información del Usuario */}
-        <div className="mt-8 bg-[#f8f8f8] p-6 rounded-lg shadow-lg border border-[#5e1914]">
-          <h3 className="text-xl font-semibold text-[#5e1914]">Información del Usuario</h3>
+        <div className="mt-8 bg-[#f8f8f8] p-6 rounded-lg shadow-lg border border-red-950/95">
+          <h3 className="text-xl font-semibold text-red-950/95">Información del Usuario</h3>
           <div className="flex items-center space-x-6 mt-4">
             {/* Avatar del usuario */}
             {user.picture && (
-              <img 
-                src={user.picture} 
-                alt="Avatar" 
-                className="w-20 h-20 rounded-full border border-[#5e1914]" 
+              <div className="relative w-16 h-16">
+              <Image
+                src={user.picture}
+                alt="Avatar"
+                className="rounded-full border border-red-950/95"
+                layout="fill"
+                objectFit="cover"
               />
+              </div>
             )}
 
             {/* Datos del usuario */}
-            <div className="text-[#5e1914]">
+            <div className="text-red-950/95">
               <p><span className="font-semibold">Nombre:</span> {user.name}</p>
               <p><span className="font-semibold">Email:</span> {user.email}</p>
               <p><span className="font-semibold">ID de Usuario:</span> {user.sub}</p>
               <p><span className="font-semibold">Proveedor:</span> {user.sub?.split("|")[0]}</p>
+              <p><span className="font-semibold">Fecha de Creación:</span> {new Date(user.created_at).toLocaleDateString()}</p>
             </div>
           </div>
         </div>

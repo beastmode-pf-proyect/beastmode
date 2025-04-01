@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Footer from "@/Components/Footer/Footer";
-import Header from "@/Views/Header";
+
 import AuthProvider from "./AuthProvider";
+
+import Header from "@/Views/Header";
 
 export const metadata: Metadata = {
   title: "BeastMode",
@@ -15,12 +17,13 @@ export default function RootLayout({
   return (
     <AuthProvider>
       <html lang="en">
-        <body className="flex flex-col min-h-screen">
+        <body>
           {/* Header siempre arriba */}
-          <Header />
+          
 
           {/* Contenido principal se expande dinámicamente */}
-          <main className="flex-grow">{children}</main>
+          <Header />
+          {children}
 
           {/* Footer siempre abajo */}
           <Footer />
