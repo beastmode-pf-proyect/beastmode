@@ -1,31 +1,21 @@
 import React, { ReactElement } from "react";
+import Image from "next/image";
 import styles from "./not-found.module.css";
+import box from "../../public/img/box.gif";
+
 import Link from "next/link";
 
 export default function PageNotFound() {
-
     return (
-        <>
-            <div className={styles.wrapper}>
-                <div className={styles.page}>
-                    <div className={styles.container}>
-                        <div className={styles.ring}></div>
-                        <div className={styles.ring}></div>
-                        <div className={styles.ring}></div>
-                        <div className={styles.ring}></div>
-                        <div className={styles.text}>Error 404</div>
-                    </div>
-                </div>
+        <div className="flex justify-center h-full flex-col items-center m-10">
+            <Image src={box} alt="box" className={`${styles.imagen} rounded-3xl`}/>
+            <div className={styles.glitch} data-text="404">404</div>
+            <p>Oops!, Pagnina no encontrada</p>
 
-                <div className={styles.tooltip_container}>
-                    <Link href="/">
-                        <button className={styles.tooltip_trigger}>Home</button>
-                    </Link>
-                    <div className={styles.tooltip}>
-                        Página No Encontrada, Click Para Retornar a Home
-                    </div>
-                </div>
-            </div>
-        </>
-    )
+        <Link href={"/"} className="relative px-3 py-2 text-black text-3xl hover:text-red-600 transition-colors duration-300 group">
+        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 group-hover:w-full transition-all duration-300" />
+        Home
+        </Link>
+        </div>
+    );
 }
