@@ -1,17 +1,17 @@
+import Navbarp from "@/Components/Navbarp/Navbar";
 import React, { ReactElement } from "react";
 
 // importamos el componente navbar
-import Navbar from "@/Components/Navbarp/Navbar";
+
 
 
 export const Header: React.FC = (): ReactElement => {
 
   return (
-    <div className="mb-3 bg-gray-100 h-32">
-      <div className="p-2   bg-[#a82717] min-h-16 content-center rounded-t-xl">
-        <Navbar />
-      </div>
-    </div>
+    <header className="sticky top-0 z-50 w-full h-24"> {/* 64px */}
+    <Navbarp />
+  </header>
+    
   );
 };
 
