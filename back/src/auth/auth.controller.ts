@@ -1,13 +1,13 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersRepository } from 'src/users/users.repository';
-import { SignUpDto } from './dto/signUp.dto';
 import { SignInDto } from './dto/signIn.dto';
 import { UserLowerCaseInterceptor } from 'src/interceptors/user-data-lower-case.interceptor';
 import { AuthGuard } from '@nestjs/passport';
 import { validateUserInteceptor } from 'src/interceptors/validateUser.interceptor';
 import { Response } from 'express';
 import { Request } from 'express-jwt';
+import { CreateUserDto } from 'src/dto/createUserDto';
 
 
 @Controller()
@@ -17,7 +17,7 @@ export class AuthController {
 
     @Post('signup')
     @UseInterceptors(UserLowerCaseInterceptor, validateUserInteceptor)
-    async signUp(@Body() newUser: SignUpDto) {
+    async signUp(@Body() newUser: CreateUserDto) {
       return await this.authService.SignUp(newUser);
     }
   

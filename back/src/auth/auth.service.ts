@@ -5,8 +5,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import  * as bcrypt from "bcrypt"
 import { Repository } from 'typeorm';
-import { SignUpDto } from './dto/signUp.dto';
 import { SignInDto } from './dto/signIn.dto';
+import { CreateUserDto } from 'src/dto/createUserDto';
+import { Roles } from 'src/roles.enum';
+
 
 
 @Injectable()
@@ -17,7 +19,7 @@ export class AuthService{
     private readonly userEntity: Repository<User>,
   ){}
 
-  async SignUp(newUser: SignUpDto): Promise<Object> {
+  async SignUp(newUser: CreateUserDto): Promise<Object> {
     const userDb = await this.userRepository.getUserByEmail(newUser.email);
     if (userDb) throw new BadRequestException('Email Already Used');
 
@@ -53,7 +55,7 @@ export class AuthService{
     const userPayload = {
       id: userDb.id,
       email: userDb.email,
-      role: userDb.role,
+      roles: [ userDb.role ],
     };
 
     const token = await this.jwtService.sign(userPayload);
@@ -81,7 +83,7 @@ export class AuthService{
           confirmPassword: '',
           address: '',
           phone: '',
-          image: data.picture,
+          imageUrl: data.picture,
           dni: '',
           country: '',
         };
