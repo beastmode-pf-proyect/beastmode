@@ -1,65 +1,38 @@
-// import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsEmpty, IsNotEmpty, IsOptional, IsString, Length, Matches } from "class-validator";
 
 
 export class CreateUserDto {
-    // @ApiProperty({
-    //     description: 'Nombre de Usuario con un minimo de 3 caracteres y maximo de 80 caracteres',
-    //     example: 'Example'
-    // })
-    @IsNotEmpty()
-    @IsString()
-    @Length(3,80)
-    name: string
-
-    @IsNotEmpty()
-    @IsString()
-    @Length(3,80)
-    surname: string
-
-    @IsNotEmpty()
-    @IsString()
-    @Length(3,10)
-    dni: string
-
-    // @ApiProperty({
-    //     description: 'Email del Usuario',
-    //     example: 'Example@gmail.com'
-    // })
+    @ApiProperty({
+       description: 'Email del Usuario',
+       example: 'Example@gmail.com'
+    })
     @IsNotEmpty()
     @IsString()
     @IsEmail()
     email: string
 
+
+    @ApiProperty({
+        description: 'Contraseña del Usuario con un minimo de 8 caracteres y maximo de 15 caracteres',
+        example: 'Lavida#EsBell@2'
+    })
     @IsNotEmpty()
     @IsString()
-    @Length(3,80)
-    address: string
-
-    @IsNotEmpty()
-    @IsString()
-    @Length(3,80)
-    country: string
-
-    @IsOptional()
-    @IsString()
-    phone: string;
-
-    @IsNotEmpty()
-    @IsString()
-    @Length(8,15)
+    @Length(8,20)
     @Matches(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/)
     password: string
 
+    @ApiProperty({
+        description: 'Confirmar Contraseña del Usuario con un minimo de 8 caracteres y maximo de 15 caracteres',
+        example: 'Lavida#EsBell@2'
+    })
     @IsNotEmpty()
     @IsString()
-    @Length(8,15)
+    @Length(8,20)
     @Matches(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/)
     confirmPassword: string
-
-    @IsEmpty()
-    isUser?: string;
 
 }

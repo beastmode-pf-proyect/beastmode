@@ -18,38 +18,38 @@ export class WorkoutRoutineController {
   }
 
   @Get(':id')
-  @Role(Roles.Admin, Roles.Trainer)
-  @UseGuards(AuthGuardian, RolesGuard)
+  // @Role(Roles.Admin, Roles.Trainer)
+  // @UseGuards(AuthGuardian, RolesGuard)
   getWorkoutRoutineById(@Param('id', ParseUUIDPipe) id: string){
     return this.workoutRoutineService.getWorkoutRoutineById(id)
   }
 
   @Put(':id')
-  @Role(Roles.Admin, Roles.Trainer)
-  @UseGuards(AuthGuardian, RolesGuard)
+  // @Role(Roles.Admin, Roles.Trainer)
+  // @UseGuards(AuthGuardian, RolesGuard)
   @UseInterceptors(validateWorkoutRoutineInteceptor)
   updateWorkoutRoutine(@Param('id', ParseUUIDPipe) id: string, updateWorkoutRoutine: updateWorkoutRoutineDto){
     return this.workoutRoutineService.updateWorkoutRoutine(id, updateWorkoutRoutine)
   }
 
   @Post('create')
-  @Role(Roles.Admin, Roles.Trainer)
-  @UseGuards(AuthGuardian, RolesGuard)
+  // @Role(Roles.Admin, Roles.Trainer)
+  // @UseGuards(AuthGuardian, RolesGuard)
   @UseInterceptors(validateWorkoutRoutineInteceptor)
   createWorkoutRoutine(@Body() WorkoutRoutine: Partial<WorkoutRoutine>){
     return this.workoutRoutineService.createWorkoutRoutine(WorkoutRoutine)
   }
 
   @Put('desactivate/:id')
-  @Role(Roles.Admin, Roles.Trainer)
-  @UseGuards(AuthGuardian, RolesGuard)
+  // @Role(Roles.Admin, Roles.Trainer)
+  // @UseGuards(AuthGuardian, RolesGuard)
   desactivateWorkoutRoutine(@Param('id', ParseUUIDPipe) id: string){
     return this.workoutRoutineService.desactivateWorkoutRoutine(id)
   }
 
   @Put('activate/:id')
-  @Role(Roles.Admin, Roles.Trainer)
-  @UseGuards(AuthGuardian, RolesGuard)
+  // @Role(Roles.Admin, Roles.Trainer)
+  // @UseGuards(AuthGuardian, RolesGuard)
   activateWorkoutRoutine(@Param('id', ParseUUIDPipe) id: string){
     return this.workoutRoutineService.activateWorkoutRoutine(id)
   }
