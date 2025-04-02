@@ -2,8 +2,11 @@
 import React, { useState, FormEvent } from "react";
 import { FaUser, FaEnvelope, FaLock, FaPhone, FaGoogle } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import 'react-toastify/dist/ReactToastify.css';
 import { useAuth0 } from "@auth0/auth0-react";
 import { UserData } from "@/Components/interfaces/userData";
+import Swal from "sweetalert2";
+
 
 const Register: React.FC<{ isActive: boolean; onSwitch: () => void }> = ({
   isActive,
@@ -45,7 +48,12 @@ const Register: React.FC<{ isActive: boolean; onSwitch: () => void }> = ({
      }
 
      const data = await response.json();
-     navigate.push("/home");
+     Swal.fire({
+      title: "Registro exitoso !",
+      text: "Usuario registrado correctamente.",
+      icon: "success"
+    });
+     navigate.push("/Auth");
      console.log("Registro exitoso:", data);
    } catch (err) {
      setError(
