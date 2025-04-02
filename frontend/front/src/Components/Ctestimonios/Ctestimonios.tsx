@@ -3,6 +3,7 @@
 import React, { ReactElement, useState, useEffect } from "react";
 import testimonios from "./testimonios";
 import Image from "next/image";
+import estilos from "./Ctestimonios.module.css"
 
 export const Ctestimonios: React.FC = (): ReactElement => {
     const [listaTestimonios, setListaTestimonios] = useState<any[]>([]);
@@ -30,9 +31,13 @@ export const Ctestimonios: React.FC = (): ReactElement => {
         : testimonios;
 
     return (
+
         <>
+            <h1 className={`${estilos.tituloH2} text-center text-3xl font-bold text-[#5e1914] my-5`} >
+            La voz de quienes ya entrenan con nosotros
+            </h1>
             {visible ? (
-                <div className="relative ml-5 mr-5 mt-14 flex flex-col items-center">
+                <div className="relative ml-5 mr-5 mt-5 flex flex-col items-center">
                     {/* Input para filtrar por cantidad de estrellas */}
                     <div className="mb-4 flex items-center">
                         <label className="mr-2 font-semibold text-[#5e1914]">Filtrar por estrellas</label>
@@ -53,11 +58,11 @@ export const Ctestimonios: React.FC = (): ReactElement => {
 
                         {/* Botón de cierre */}
                         <div className="ml-5">
-                        <button
-                            onClick={() => setVisible(false)}
-                            className="text-2xl font-bold transition cursor-pointer w-10 p-1 rounded-4xl hover:scale-110 bg-red-600">
-                            ✖
-                        </button>
+                            <button
+                                onClick={() => setVisible(false)}
+                                className="text-2xl font-bold transition cursor-pointer w-10 p-1 rounded-4xl hover:scale-110 bg-red-600">
+                                ✖
+                            </button>
                         </div>
                     </div>
 
@@ -83,7 +88,7 @@ export const Ctestimonios: React.FC = (): ReactElement => {
                     </div>
                 </div>
             ) : (
-                <div className="ml-5 mr-5 mt-14 flex justify-center items-center">
+                <div className="ml-5 mr-5 mt-5 flex justify-center items-center">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 pt-6 pb-16">
                         {listaTestimonios.length > 0 ? (
                             listaTestimonios.map((elemento, index) => (
