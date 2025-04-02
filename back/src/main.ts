@@ -4,12 +4,26 @@ import { auth0Config as config } from './config/auth0.config';
 import { auth } from 'express-openid-connect';
 import "reflect-metadata"
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.use(auth(config))
+
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    exceptionFactory: ((errors) => {
+      const clearError = errors.map((error) => {
+        return {property: error.property, constraints: error.constraints}
+      })
+      return new BadRequestException({
+        alert:"Errors has been detected, this are:",
+        errors: clearError
+      })
+    })
+  }))
 
   const swaggerConfig = new DocumentBuilder()
   .setTitle('Beast Mode API')
@@ -19,6 +33,12 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, swaggerConfig)
   SwaggerModule.setup('api', app, document)
+
+  app.enableCors({
+    origin: 'http://localhost:3001',   ///PUERTO DE LA APP DE FRONT
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
 
   await app.listen(process.env.PORT ?? 3000);
 }

@@ -4,33 +4,6 @@ import { IsEmail, IsEmpty, IsNotEmpty, IsOptional, IsString, Length, Matches } f
 
 export class CreateUserDto {
     @ApiProperty({
-        description: 'Nombre de Usuario con un minimo de 3 caracteres y maximo de 80 caracteres',
-        example: 'Example'
-    })
-    @IsNotEmpty()
-    @IsString()
-    @Length(3,80)
-    name: string
-
-    @ApiProperty({
-        description: 'Apellido del Usuario con un minimo de 3 caracteres y maximo de 80 caracteres',
-        example: 'Example2'
-    })
-    @IsNotEmpty()
-    @IsString()
-    @Length(3,80)
-    surname: string
-
-    @ApiProperty({
-        description: 'DNI del Usuario con un minimo de 3 caracteres y maximo de 10 caracteres',
-        example: '26512563'
-    })
-    @IsNotEmpty()
-    @IsString()
-    @Length(3,10)
-    dni: string
-
-    @ApiProperty({
        description: 'Email del Usuario',
        example: 'Example@gmail.com'
     })
@@ -39,39 +12,6 @@ export class CreateUserDto {
     @IsEmail()
     email: string
 
-    @ApiProperty({
-        description: 'Direccion de Usuario con un minimo de 3 caracteres y maximo de 80 caracteres',
-        example: 'Calle de la República 1'
-    })
-    @IsNotEmpty()
-    @IsString()
-    @Length(3,80)
-    address: string
-
-    @ApiProperty({
-        description: 'Imagen del Usuario',
-        example: 'https://example.com/image.png'
-    })
-    @IsNotEmpty()
-    @IsString()
-    imageUrl: string
-
-    @ApiProperty({
-        description: 'País del Usuario',
-        example: 'Argentina'
-    })
-    @IsNotEmpty()
-    @IsString()
-    @Length(3,80)
-    country: string
-
-    @ApiProperty({
-        description: 'Teléfono del Usuario con un minimo de 3 caracteres y maximo de 10 caracteres',
-        example: '123456789'
-    })
-    @IsOptional()
-    @IsString()
-    phone: string;
 
     @ApiProperty({
         description: 'Contraseña del Usuario con un minimo de 8 caracteres y maximo de 15 caracteres',
@@ -79,7 +19,7 @@ export class CreateUserDto {
     })
     @IsNotEmpty()
     @IsString()
-    @Length(8,15)
+    @Length(8,20)
     @Matches(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/)
     password: string
@@ -90,12 +30,9 @@ export class CreateUserDto {
     })
     @IsNotEmpty()
     @IsString()
-    @Length(8,15)
+    @Length(8,20)
     @Matches(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/)
     confirmPassword: string
-
-    @IsEmpty()
-    isUser?: string;
 
 }

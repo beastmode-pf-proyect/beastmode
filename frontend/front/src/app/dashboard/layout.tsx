@@ -1,7 +1,29 @@
+"use client";
 import { HiHome, HiBookOpen, HiShoppingCart, HiOutlineStar,HiOutlineLogout } from "react-icons/hi";
 import Link from 'next/link';
+import { useAuth0 } from "@auth0/auth0-react";
+import Swal from "sweetalert2";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const {  isAuthenticated, isLoading } = useAuth0();
+  const router = useRouter();
+  // Muestra un mensaje de carga mientras obtiene los datos
+
+  
+    useEffect(() => {
+      if (!isLoading && !isAuthenticated) {
+        Swal.fire({
+          icon: "error",
+          title: "Acceso denegado",
+          text: "Debes iniciar sesión para acceder a esta página.",
+          confirmButtonText: "Aceptar",
+        }).then(() => {
+          router.push("/"); // Redirige al usuario a la página principal o de inicio de sesión
+        });
+      }
+    }, [isLoading, isAuthenticated, router]);
   // Datos del usuario
   const user = {
     name: "Juan Pérez",
@@ -9,6 +31,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     avatar: "https://via.placeholder.com/100",
     membership: "Premium",
   };
+
+  if (isLoading) {
+    return <div className="text-center text-xl text-gray-600">Cargando...</div>;
+  }
+
+  // Si el usuario no está autenticado, no renderiza el contenido
+  if (!isAuthenticated || !user) {
+    return null;
+  }
   
   return (
     <div className="flex min-h-screen bg-[#f8f8f8] text-[#333]">

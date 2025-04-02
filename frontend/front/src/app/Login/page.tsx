@@ -1,36 +1,42 @@
 "use client";
 import React, { useState } from "react";
-import { useAuth0, RedirectLoginOptions } from "@auth0/auth0-react";
-import { FaFacebook, FaGoogle, FaInstagram } from "react-icons/fa";
-import Button from "../../Components/Button/button";
-import { emailRegex, passwordRegex } from "@/utils/validaciones";
+import { useAuth0 } from "@auth0/auth0-react";
+import { FaFacebook, FaGoogle, FaEnvelope, FaLock } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
-const Login: React.FC = () => {
+const Login: React.FC<{ isActive: boolean; onSwitch: () => void }> = ({
+  isActive,
+  onSwitch,
+}) => {
   const { loginWithRedirect } = useAuth0();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!emailRegex.test(email.trim())) {
-      setError("Por favor, ingresa un correo electrónico válido.");
-      return;
-    }
-
-    if (!passwordRegex.test(password.trim())) {
-      setError(
-        "La contraseña debe tener al menos 8 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial."
-      );
-      return;
-    }
+    
 
     try {
-      await loginWithRedirect({
-        username: email,
-        password,
-      } as RedirectLoginOptions);
+      const response = await fetch("http://localhost:3000/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message || "Ocurrió un error al iniciar sesión.");
+        return;
+      }
+
+      const data = await response.json();
+      navigate.push("/");
+      console.log("Inicio de sesión exitoso:", data);
     } catch (err) {
       setError(
         "Ocurrió un error al iniciar sesión. Por favor, intenta de nuevo."
@@ -40,72 +46,57 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center ">
-      <div className="w-full max-w-md">
-        <div className="bg-[#a82817] rounded-t-lg px-8 py-6 mb-4">
-          <h1 className="text-3xl font-bold text-white">
-            ¡Inicia sesión y activa tu BeastMode!
-          </h1>
+    <form
+      onSubmit={handleSubmit}
+      className={`space-y-4 ${isActive ? "block" : "hidden"}`}>
+      {error && (
+        <div className="bg-red-500 text-white px-4 py-2 rounded mb-4">
+          {error}
         </div>
-        <form
-          onSubmit={handleSubmit}
-          style={{ backgroundColor: "#a82817" }}
-          className="shadow-md rounded-b-lg rounded-tr-lg px-8 pt-6 pb-8 mb-4">
-          {error && (
-            <div className="bg-red-500 text-white px-4 py-2 rounded mb-4">
-              {error}
-            </div>
-          )}
-          <div className="mb-4">
-            <label className="block text-white font-bold mb-2" htmlFor="email">
-              Correo electrónico
-            </label>
-            <input
-              className="bg-white shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
-              id="email"
-              type="email"
-              placeholder="Ingresa tu correo electrónico"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="mb-6">
-            <label
-              className="block text-white font-bold mb-2"
-              htmlFor="password">
-              Contraseña
-            </label>
-            <input
-              className="bg-white shadow appearance-none border rounded w-full py-2 px-3 text-black mb-3 leading-tight focus:outline-none focus:shadow-outline"
-              id="password"
-              type="password"
-              placeholder="Ingresa tu contraseña."
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <Button text="Iniciar sesion" variant="first" color="blue" />
-          </div>
-          <div className="mt-6">
-            <p className="text-center text-white">O inicia sesión con:</p>
-            <div className="flex justify-center gap-3 mt-4 space-x-4">
-              <button className="bg-white hover:bg-gray-300 rounded-full p-2 inline-flex items-center justify-center text-gray-500">
-                <FaFacebook className="h-6 w-6" />
-              </button>
-              <button className="bg-white hover:bg-gray-300 rounded-full p-2 inline-flex items-center justify-center text-gray-500">
-                <FaInstagram className="h-6 w-6" />
-              </button>
-              <button
-                className="bg-white hover:bg-gray-300 rounded-full p-2 inline-flex items-center justify-center text-gray-500"
-                onClick={() => loginWithRedirect()}> 
-                <FaGoogle className="h-6 w-6" />
-              </button>
-            </div>
-          </div>
-        </form>
+      )}
+      <div className="relative">
+        <input
+          type="email"
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
+          placeholder="Email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+        />
+        <FaEnvelope className="absolute left-3 top-3 text-gray-400" />
       </div>
-    </div>
+      <div className="relative">
+        <input
+          type="password"
+          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
+          placeholder="Password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+        />
+        <FaLock className="absolute left-3 top-3 text-gray-400" />
+      </div>
+      <button className="w-full bg-red-950/95 text-white py-2 rounded-md hover:opacity-90 transition-opacity duration-300 transform hover:scale-105">
+       Inicia sesion
+      </button>
+      <div className="mt-6">
+        <p className="text-center text-gray-600 mb-4">O inicia con:</p>
+        <div className="flex justify-center space-x-4">
+          <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300">
+            <FaFacebook className="mr-2" />
+          </button>
+          <button
+            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors duration-300"
+            onClick={() => loginWithRedirect()}>
+            <FaGoogle className="mr-2" />
+          </button>
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={onSwitch}
+        className="text-red-950/95 underline">
+        ¿No tienes una cuenta? Regístrate
+      </button>
+    </form>
   );
 };
 

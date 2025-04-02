@@ -46,10 +46,10 @@ export class UsersController {
     return this.usersService.updatetrainerUser(id);
 }
 
-@Get('/profile')
-getAuth0protected(@Req() req: Request) {
-  return JSON.stringify(req.oidc.user)
-}
+// @Get('/profile')
+// getAuth0protected(@Req() req: Request) {
+//   return JSON.stringify(req.oidc.user)
+// }
 
 }
 
