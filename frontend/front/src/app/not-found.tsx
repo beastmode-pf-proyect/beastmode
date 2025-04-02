@@ -8,7 +8,7 @@ import Link from "next/link";
 export default function PageNotFound() {
     return (
         <div className="flex justify-center h-full items-center m-10">
-            <div className="flex justify-center  h-full items-center m-10">
+            <div className="flex flex-col md:flex-row items-center justify-center text-center w-full">
                 <div className="m-5">
                     <Image src={box} alt="box" className={`${styles.imagen} rounded-3xl`} />
                 </div>
