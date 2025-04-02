@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Footer from "@/Components/Footer/Footer";
-
 import AuthProvider from "./AuthProvider";
-
 import Header from "@/Views/Header";
 
 export const metadata: Metadata = {
@@ -17,18 +15,13 @@ export default function RootLayout({
   return (
     <AuthProvider>
       <html lang="en">
-        <body>
-          {/* Header siempre arriba */}
-          
-
-          {/* Contenido principal se expande dinámicamente */}
+        <body className="flex flex-col min-h-screen">
           <Header />
-          {children}
-
-          {/* Footer siempre abajo */}
+          <main className="flex-grow">{children}</main>
           <Footer />
         </body>
       </html>
     </AuthProvider>
   );
 }
+
