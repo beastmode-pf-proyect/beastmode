@@ -4,13 +4,7 @@ import React, { ReactElement, useState, useEffect } from "react";
 import testimonios from "./testimonios";
 import Image from "next/image";
 
-/* 
-    📌 Componente Ctestimonios
-    - Muestra tarjetas con testimonios de clientes de forma aleatoria.
-    - Se puede alternar entre una vista reducida (6 testimonios aleatorios) 
-      y una vista extendida (todos los testimonios).
-    - Los testimonios en la vista reducida se actualizan automáticamente cada minuto.
-*/
+
 
 export const Ctestimonios: React.FC = (): ReactElement => {
     // Estado para almacenar los testimonios aleatorios
@@ -19,13 +13,7 @@ export const Ctestimonios: React.FC = (): ReactElement => {
     // Estado para controlar la visibilidad de todos los testimonios
     const [visible, setVisible] = useState(false);
 
-    /*
-        🔄 useEffect:
-        - Se ejecuta una vez al montar el componente.
-        - Inicializa el estado con 6 testimonios aleatorios.
-        - Configura un intervalo para actualizar los testimonios cada 60 segundos.
-        - Limpia el intervalo al desmontar el componente.
-    */
+
     useEffect(() => {
         setListaTestimonios(sacarTestimoniosRandom());
 
@@ -36,23 +24,14 @@ export const Ctestimonios: React.FC = (): ReactElement => {
         return () => clearInterval(intervalo);
     }, []);
 
-    /*
-        🎲 Función para obtener testimonios aleatorios:
-        - Copia el array original para evitar modificarlo directamente.
-        - Mezcla aleatoriamente los elementos.
-        - Retorna los primeros 6 testimonios de la lista mezclada.
-    */
+
     function sacarTestimoniosRandom() {
         const copiaTestimonios = [...testimonios];
         copiaTestimonios.sort(() => Math.random() - 0.5);
-        return copiaTestimonios.slice(0, 6);
+        return copiaTestimonios.slice(0, 3);
     }
 
-    /*
-        👁 Función para alternar la visibilidad:
-        - Si `visible` es `true`, se muestran todos los testimonios.
-        - Si `visible` es `false`, se muestran solo 6 testimonios aleatorios.
-    */
+
     function mostrar() {
         setVisible(!visible);
     }
