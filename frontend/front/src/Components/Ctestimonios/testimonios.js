@@ -32,169 +32,197 @@ const testimonios = [
     { 
         nombre: "Juan Pérez", 
         descripcion: "Maravilloso en todos los aspectos, lo recomendaría sin dudar.", 
-        calificacion: "⭐⭐⭐⭐⭐", 
+        calificacion: "⭐⭐⭐⭐", 
+        calificacionNumero: 5,
         imagen: juan_perez
     },
     { 
         nombre: "María Gómez", 
         descripcion: "La peor decisión que he tomado, una decepción total.", 
-        calificacion: "⭐", 
+        calificacion: "", 
+        calificacionNumero: 1,
         imagen: maria_gomez 
     },
     { 
         nombre: "Carlos Rodríguez", 
         descripcion: "No puedo estar más feliz con mi experiencia aquí.", 
-        calificacion: "⭐⭐⭐⭐", 
+        calificacion: "⭐⭐⭐", 
+        calificacionNumero: 4,
         imagen: carlos_rodriguez 
     },
     { 
         nombre: "Ana Fernández", 
         descripcion: "No cumplen lo que prometen, una gran decepción.", 
-        calificacion: "⭐⭐", 
+        calificacion: "⭐", 
+        calificacionNumero: 2,
         imagen: ana_fernandez 
     },
     { 
         nombre: "Pedro Sánchez", 
         descripcion: "Todo salió mejor de lo que esperaba, muy satisfecho.", 
-        calificacion: "⭐⭐⭐⭐⭐", 
+        calificacion: "⭐⭐⭐⭐", 
+        calificacionNumero: 5,
         imagen: pedro_sanchez 
     },
     { 
         nombre: "Laura Medina", 
         descripcion: "Un servicio aceptable, pero podría mejorar en algunos aspectos.", 
-        calificacion: "⭐⭐⭐", 
+        calificacion: "⭐⭐", 
+        calificacionNumero: 3,
         imagen: laura_medina 
     },
     { 
         nombre: "Jorge Ramírez", 
         descripcion: "Pésima experiencia, no lo recomendaría.", 
-        calificacion: "⭐", 
+        calificacion: "", 
+        calificacionNumero: 1,
         imagen: jorge_ramirez 
     },
     { 
         nombre: "Carmen Castillo", 
         descripcion: "Muy contenta con el servicio, superó mis expectativas.", 
-        calificacion: "⭐⭐⭐⭐⭐", 
+        calificacion: "⭐⭐⭐⭐", 
+        calificacionNumero: 5,
         imagen: carmen_castillo 
     },
     { 
         nombre: "Diego Herrera", 
         descripcion: "Nada especial, hay mejores opciones por ahí.", 
-        calificacion: "⭐⭐", 
+        calificacion: "⭐", 
+        calificacionNumero: 2,
         imagen: diego_herrera 
     },
     { 
         nombre: "Pablo López", 
         descripcion: "Increíble, definitivamente lo volvería a elegir.", 
-        calificacion: "⭐⭐⭐⭐⭐", 
+        calificacion: "⭐⭐⭐⭐", 
+        calificacionNumero: 5,
         imagen: pablo_lopez 
     },
     { 
         nombre: "Beatriz Núñez", 
         descripcion: "No lo recomiendo, no cumple con lo prometido.", 
-        calificacion: "⭐", 
+        calificacion: "", 
+        calificacionNumero: 1,
         imagen: beatriz_nunez 
     },
     { 
         nombre: "Santiago Ortega", 
         descripcion: "Aceptable, pero nada fuera de lo común.", 
-        calificacion: "⭐⭐⭐", 
+        calificacion: "⭐⭐", 
+        calificacionNumero: 3,
         imagen: santiago_ortega 
     },
     { 
         nombre: "Isabel Herrera", 
         descripcion: "Servicio excelente, me encantó.", 
-        calificacion: "⭐⭐⭐⭐⭐", 
+        calificacion: "⭐⭐⭐⭐", 
+        calificacionNumero: 5,
         imagen: isabel_herrera 
     },
     { 
         nombre: "Ricardo Gómez", 
         descripcion: "Bastante deficiente, esperaba algo mucho mejor.", 
-        calificacion: "⭐⭐", 
+        calificacion: "⭐", 
+        calificacionNumero: 2,
         imagen: ricardo_gomez 
     },
     { 
         nombre: "Monica Jiménez", 
         descripcion: "Volveré sin duda, me ha encantado.", 
-        calificacion: "⭐⭐⭐⭐⭐", 
+        calificacion: "⭐⭐⭐⭐", 
+        calificacionNumero: 5,
         imagen: monica_jimenez 
     },
     { 
         nombre: "Fernando Díaz", 
         descripcion: "No está mal, aunque podría mejorar.", 
-        calificacion: "⭐⭐⭐", 
+        calificacion: "⭐⭐", 
+        calificacionNumero: 3,
         imagen: fernando_diaz 
     },
     { 
         nombre: "Gabriela Sánchez", 
         descripcion: "Terrible experiencia, no lo recomiendo.", 
-        calificacion: "⭐", 
+        calificacion: "", 
+        calificacionNumero: 1,
         imagen: gabriela_sanchez 
     },
     { 
         nombre: "David Ramírez", 
         descripcion: "Muy satisfecho con todo, excelente servicio.", 
-        calificacion: "⭐⭐⭐⭐⭐", 
+        calificacion: "⭐⭐⭐⭐", 
+        calificacionNumero: 5,
         imagen: david_ramirez 
     },
     { 
         nombre: "Paula Torres", 
         descripcion: "Mediocre, esperaba más.", 
-        calificacion: "⭐", 
+        calificacion: "", 
+        calificacionNumero: 1,
         imagen: paula_torres 
     },
     { 
         nombre: "Luis Vargas", 
         descripcion: "Muy bueno en general, recomendable.", 
-        calificacion: "⭐⭐⭐⭐", 
+        calificacion: "⭐⭐⭐", 
+        calificacionNumero: 4,
         imagen: luis_vargas 
     },
     { 
         nombre: "Daniela Ríos", 
         descripcion: "Decepcionante, una gran pérdida de tiempo.", 
-        calificacion: "⭐", 
+        calificacion: "", 
+        calificacionNumero: 1,
         imagen: daniela_rios 
     },
     { 
         nombre: "Alejandro Castillo", 
         descripcion: "Mejor de lo que imaginaba, excelente.", 
-        calificacion: "⭐⭐⭐⭐⭐", 
+        calificacion: "⭐⭐⭐⭐", 
+        calificacionNumero: 5,
         imagen: alejandro_castillo 
     },
     { 
         nombre: "Rosa Medina", 
         descripcion: "No fue una buena experiencia, no lo recomendaría.", 
-        calificacion: "⭐⭐", 
+        calificacion: "⭐", 
+        calificacionNumero: 2,
         imagen: rosa_medina 
     },
     { 
         nombre: "Hugo Herrera", 
         descripcion: "No está mal, pero hay mejores opciones.", 
-        calificacion: "⭐⭐⭐", 
+        calificacion: "⭐⭐", 
+        calificacionNumero: 3,
         imagen: hugo_herrera 
     },
     { 
         nombre: "Natalia Pérez", 
         descripcion: "Un trato excelente, muy recomendable.", 
-        calificacion: "⭐⭐⭐⭐⭐", 
+        calificacion: "⭐⭐⭐⭐", 
+        calificacionNumero: 5,
         imagen: natalia_perez 
     },
     { 
         nombre: "Roberto Jiménez", 
         descripcion: "Regular, no sé si volvería a elegirlo.", 
-        calificacion: "⭐⭐⭐", 
+        calificacion: "⭐⭐", 
+        calificacionNumero: 3,
         imagen: roberto_jimenez 
     },
     { 
         nombre: "Lucía González", 
         descripcion: "Muy bueno, lo recomendaré a mis amigos.", 
-        calificacion: "⭐⭐⭐⭐⭐", 
+        calificacion: "⭐⭐⭐⭐", 
+        calificacionNumero: 5,
         imagen: lucia_gonzalez 
     },
     { 
         nombre: "Martín López", 
         descripcion: "Podría mejorar, no es lo que esperaba.", 
-        calificacion: "⭐⭐", 
+        calificacion: "⭐", 
+        calificacionNumero: 2,
         imagen: martin_lopez 
     }
 ];

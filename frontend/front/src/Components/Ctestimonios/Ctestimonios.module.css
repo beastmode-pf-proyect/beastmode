@@ -1,0 +1,8 @@
+@font-face {
+    font-family: "mephisto";
+    src: url("/Fuentes/MEPHISTO.TTF") format("truetype");
+}
+
+.tituloH2 {
+    font-family: mephisto;
+}
