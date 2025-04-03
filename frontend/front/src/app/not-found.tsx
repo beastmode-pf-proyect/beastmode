@@ -22,6 +22,7 @@ export default function PageNotFound() {
                         <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 group-hover:w-full transition-all duration-300" />
                         Home
                     </Link>
+                    
                 </div>
             </div>
         </div>
