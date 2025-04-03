@@ -33,7 +33,7 @@ const AuthPage: React.FC = () => {
                     ? "bg-red-950/95 text-white"
                     : "bg-gray-200 text-gray-700"
                 }`}>
-               Inicia sesion
+                Inicia sesion
               </button>
             </div>
             <Register
@@ -49,7 +49,9 @@ const AuthPage: React.FC = () => {
             className="hidden md:flex items-center justify-center w-1/2 bg-cover bg-center"
             style={{
               backgroundImage:
-                'url("https://cdn.pixabay.com/animation/2024/07/07/06/32/06-32-28-251_512.gif")',
+                activeTab === "signup"
+                  ? 'url("https://cdn.pixabay.com/animation/2024/07/07/06/32/06-32-28-251_512.gif")'
+                  : 'url("https://cdn.pixabay.com/animation/2024/07/07/07/05/07-05-11-50_512.gif")',
             }}></div>
         </div>
       </div>
