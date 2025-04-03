@@ -7,6 +7,7 @@ import { Role } from 'src/decorators/roles.decorators';
 import { Roles } from 'src/roles.enum';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 
 
@@ -14,32 +15,41 @@ import { Request } from 'express';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   
+  // @ApiBearerAuth()
   @Get()
-  //@Role(Roles.Admin)
-  //@UseGuards(AuthGuardian, RolesGuard)
+  // @Role(Roles.Admin)
+  // @UseGuards(AuthGuardian, RolesGuard)
   getUsers(){
     return this.usersService.getUsers();
   }
 
+  // @ApiBearerAuth()
   @Get(':id')
-  @Role(Roles.Admin)
-  @UseGuards(AuthGuardian, RolesGuard)
+  // @Role(Roles.Admin)
+  // @UseGuards(AuthGuardian, RolesGuard)
   getUserById(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.getUserById(id);
   }
 
+  // @ApiBearerAuth()
   @Put(':id')
-  @UseGuards(AuthGuardian)
+  // @UseGuards(AuthGuardian)
   updateUser(@Param('id', ParseUUIDPipe) id: string, @Body() updateUser: updateUserDto){
     return this.usersService.updateUser(id, updateUser);
   }
 
+  // @ApiBearerAuth()
   @Put('/Admin/:id')
-  @Role(Roles.Admin)
-  @UseGuards(AuthGuardian, RolesGuard)
+  // @Role(Roles.Admin)
+  // @UseGuards(AuthGuardian, RolesGuard)
   updatetrainerUser(@Param('id', ParseUUIDPipe) id: string){
     return this.usersService.updatetrainerUser(id);
 }
+
+// @Get('/profile')
+// getAuth0protected(@Req() req: Request) {
+//   return JSON.stringify(req.oidc.user)
+// }
 
 }
 

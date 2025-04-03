@@ -7,9 +7,9 @@ export class validateUserInteceptor implements NestInterceptor{
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
         const request = context.switchToHttp().getRequest();
         const body = { ...request.body};
-        const {email, name, surname, dni, password, confirmPassword, address, country, phone} = body;
+        const {email, password, confirmPassword,} = body;
 
-        if(!email || !name || !password || !address || !phone || !surname || !dni || !confirmPassword || !country){
+        if(!email || !password  || !confirmPassword ){
             throw new BadRequestException ("Faltan datos obligatorios. Por favor verifica el cuerpo de la solicitud.")
         }
         
