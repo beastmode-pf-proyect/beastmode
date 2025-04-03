@@ -1,6 +1,4 @@
-
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-
 import { Subscription } from "./subscription.entity";
 import { WorkoutRoutine } from "./workout.routine.entity";
 import { Testimony } from "./testimonies.entity";
@@ -10,7 +8,7 @@ export class User {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column()
+    @Column({ nullable: true })
     name: string;
     
     @Column()

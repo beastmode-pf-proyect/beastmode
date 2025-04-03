@@ -19,15 +19,15 @@ export class MembershipsController {
   }
 
   @Get(':id')
-  @Role(Roles.Admin)
-  @UseGuards(AuthGuardian, RolesGuard)
+  // @Role(Roles.Admin)
+  // @UseGuards(AuthGuardian, RolesGuard)
   getMembershipById(@Param('id', ParseUUIDPipe) id: string){
     return this.membershipsService.getMembershipById(id)
   }
 
   @Put(':id')
-  @Role(Roles.Admin)
-  @UseGuards(AuthGuardian, RolesGuard)
+  // @Role(Roles.Admin)
+  // @UseGuards(AuthGuardian, RolesGuard)
   @UseInterceptors(validateMembershipInteceptor)
   updateMembership(@Param('id', ParseUUIDPipe) id: string, updateMembership: updateMembershipDto){
     return this.membershipsService.updateMembership(id, updateMembership)
@@ -42,15 +42,15 @@ export class MembershipsController {
   }
 
   @Put('desactivate/:id')
-  @Role(Roles.Admin)
-  @UseGuards(AuthGuardian, RolesGuard)
+  // @Role(Roles.Admin)
+  // @UseGuards(AuthGuardian, RolesGuard)
   desactivateMembership(@Param('id', ParseUUIDPipe) id: string){
     return this.membershipsService.desactivateMembership(id)
   }
 
   @Put('activate/:id')
-  @Role(Roles.Admin)
-  @UseGuards(AuthGuardian, RolesGuard)
+  // @Role(Roles.Admin)
+  // @UseGuards(AuthGuardian, RolesGuard)
   activateMembership(@Param('id', ParseUUIDPipe) id: string){
     return this.membershipsService.activateMembership(id)
   }
