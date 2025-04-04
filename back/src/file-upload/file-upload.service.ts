@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileUploadRepository } from './file-upload.repository';
 import { Repository } from 'typeorm';
 import { User } from 'src/entities/users.entity';
+import { WorkoutRoutine } from 'src/entities/workout.routine.entity';
 
 @Injectable()
 export class FileUploadService {
@@ -10,6 +11,8 @@ export class FileUploadService {
         private readonly fileUploadRepository: FileUploadRepository,
         @InjectRepository(User)
         private readonly usersRepository: Repository<User>,
+        @InjectRepository(WorkoutRoutine)
+        private readonly WorkoutRoutineRepository: Repository<WorkoutRoutine>,
     ) {}
 
     async uploadUserImage(file: Express.Multer.File, userId: string) {
@@ -28,4 +31,20 @@ export class FileUploadService {
         // Retorna el user actualizado
         return await this.usersRepository.findOneBy({ id: userId });
     }
+
+    async uploadWorkoutImage(file: Express.Multer.File, workoutId: string) {
+        const workoutExists = await this.WorkoutRoutineRepository.findOneBy({id:workoutId});
+        if(!workoutExists) {
+            return 'La rutina no existe!';
+        }
+        // Sube la imagen a Cloudinary y obtiene la URL segura
+
+        const  uploadedImage = await this.fileUploadRepository.uploadImage(file);
+        // Actualiza la URL de la imagen en la base de datos
+        await this.WorkoutRoutineRepository.update(workoutId, { imageUrl: uploadedImage.secure_url });
+        
+        // Retorna el WorkoutRoutine actualizado
+        return await this.WorkoutRoutineRepository.findOneBy({ id: workoutId });
+    }
+
 }

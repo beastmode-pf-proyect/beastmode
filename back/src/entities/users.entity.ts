@@ -10,7 +10,7 @@ export class User {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column()
+    @Column({nullable: true})
     name: string;
     
     @Column()
@@ -19,7 +19,7 @@ export class User {
     @Column()
     password: string; 
 
-    @Column({ nullable: true })
+    @Column({nullable: true})
     imageUrl: string;
     
     @Column({ type: 'enum', enum:['admin', 'trainer', 'client'], default: 'client' })
@@ -40,7 +40,7 @@ export class User {
     workoutRoutines: WorkoutRoutine[];
 
      // Relación OneToMany con Testimony
-     @OneToMany(() => Testimony, (testimony) => testimony.user)
-     testimonies: Testimony[];
+    @OneToMany(() => Testimony, (testimony) => testimony.user)
+    testimonies: Testimony[];
 
 }
