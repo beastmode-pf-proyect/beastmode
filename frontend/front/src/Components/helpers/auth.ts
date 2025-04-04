@@ -1,58 +1,58 @@
 import { supabase } from "@/lib/supabaseClient";
+import { getAccessToken } from "@auth0/nextjs-auth0";
 
-// Define a more specific type for the Auth0 user if possible
+
+// Tipo más estricto para el usuario de Auth0
 interface Auth0User {
   sub: string;
   email: string;
   name?: string;
   picture?: string;
-  // Add other Auth0 user properties you might use
 }
 
-export const saveUserToSupabase = async (auth0User: Auth0User) => {
-  // Enhanced validation
-  if (!auth0User?.sub || !auth0User.sub.includes('|') || !auth0User.email) {
-    const error = new Error('Invalid Auth0 user data: missing or malformed sub or email');
-    console.error('Validation failed:', { auth0User, error });
-    throw error;
+// Obtener roles desde Auth0 en una API Route de Next.js
+export const getUserRoles = async (): Promise<string[]> => {
+  try {
+    const { accessToken } = await getAccessToken(); // ✅ Ahora sin argumentos
+    const namespace = "https://your-app.com/roles"; // Usa el namespace que configuraste en Auth0
+    return accessToken ? (accessToken[namespace] as string[]) || [] : [];
+  } catch (error) {
+    console.error("Error obteniendo los roles:", error);
+    return [];
+  }
+};
+
+// Guardar usuario y roles en Supabase
+export const saveUserToSupabase = async (auth0User: Auth0User, roles: string[]): Promise<Record<string, unknown>> => {
+  if (!auth0User?.sub || !auth0User.email) {
+    throw new Error("❌ Datos de usuario inválidos");
   }
 
   const userData = {
     auth0_id: auth0User.sub,
-    email: auth0User.email.toLowerCase().trim(), // normalize email
+    email: auth0User.email.toLowerCase().trim(),
     name: auth0User.name?.trim() || null,
     picture: auth0User.picture || null,
     last_login: new Date().toISOString(),
-    updated_at: new Date().toISOString() // track when record was last updated
+    updated_at: new Date().toISOString(),
+    roles: roles || [] // Evita null en la BD
   };
 
   try {
-    const { data, error, status } = await supabase
-      .from('users2')
-      .upsert(userData, { onConflict: 'auth0_id' })
+    const { data, error } = await supabase
+      .from("users2")
+      .upsert(userData, { onConflict: "auth0_id" })
       .select()
-      .single(); // Use single() if you expect exactly one record
+      .single();
 
     if (error) {
-      console.error('Supabase error:', {
-        status,
-        error,
-        userData,
-        timestamp: new Date().toISOString()
-      });
+      console.error("❌ Error guardando usuario en Supabase:", error.message);
       throw error;
     }
 
     return data;
   } catch (error) {
-    console.error('Failed to save user:', {
-      error,
-      userData: {
-        auth0_id: userData.auth0_id,
-        email: userData.email
-      },
-      timestamp: new Date().toISOString()
-    });
-    throw error; // Consider wrapping the error for better error handling upstream
+    console.error("❌ Error en la operación de Supabase:", error);
+    throw error;
   }
 };

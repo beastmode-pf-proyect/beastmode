@@ -53,7 +53,7 @@ const Register: React.FC<{ isActive: boolean; onSwitch: () => void }> = ({
       text: "Usuario registrado correctamente.",
       icon: "success"
     });
-     navigate.push("/Auth");
+     navigate.push("/dashboard");
      console.log("Registro exitoso:", data);
    } catch (err) {
      setError(
