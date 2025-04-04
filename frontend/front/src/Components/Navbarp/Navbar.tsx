@@ -5,6 +5,7 @@ import { itemNavbar } from "../Navbar/itemNavbar";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "../../../public/img/logo.png";
+import LoginForm from "../loginouth/login";
 
 export const Navbarp = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -76,12 +77,7 @@ export const Navbarp = () => {
               </div>
             ) : (
               <div className="flex items-center space-x-4">
-                <Link
-                  href="/Auth"
-                  className="px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-colors duration-300 shadow-lg shadow-red-900/20 hover:shadow-red-900/40"
-                >
-                  Empieza con Nosotros
-                </Link>
+                <LoginForm/>
                 
               </div>
             )}
@@ -134,13 +130,7 @@ export const Navbarp = () => {
                 </div>
               ) : (
                 <div className="space-y-2 pt-2">
-                  <Link
-                    href="/Auth"
-                    className="block w-full px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-colors duration-300 text-center"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Empieza con Nosotros
-                  </Link>
+                  <LoginForm/>
                 </div>
               )}
             </div>

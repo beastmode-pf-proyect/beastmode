@@ -1,18 +1,18 @@
 "use client";
 import React, { useState, FormEvent } from "react";
-import { FaUser, FaEnvelope, FaLock, FaPhone, FaGoogle } from "react-icons/fa";
+import { FaUser, FaEnvelope, FaLock, FaPhone} from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import 'react-toastify/dist/ReactToastify.css';
-import { useAuth0 } from "@auth0/auth0-react";
 import { UserData } from "@/Components/interfaces/userData";
 import Swal from "sweetalert2";
+import LoginForm from "@/Components/loginouth/login";
 
 
 const Register: React.FC<{ isActive: boolean; onSwitch: () => void }> = ({
   isActive,
   onSwitch,
 }) => {
-  const { loginWithRedirect } = useAuth0();
+  
   const [userData, setUserData] = useState<UserData>({
     name: "",
     surname: "",
@@ -53,7 +53,7 @@ const Register: React.FC<{ isActive: boolean; onSwitch: () => void }> = ({
       text: "Usuario registrado correctamente.",
       icon: "success"
     });
-     navigate.push("/Auth");
+     navigate.push("/dashboard");
      console.log("Registro exitoso:", data);
    } catch (err) {
      setError(
@@ -176,7 +176,7 @@ const Register: React.FC<{ isActive: boolean; onSwitch: () => void }> = ({
           <FaLock className="absolute left-3 top-3 text-gray-400" />
         </div>
       </div>
-      <button className="w-full bg-red-950/95 text-white py-2 rounded-md hover:opacity-90 transition-opacity duration-300 transform hover:scale-105">
+      <button className=" w-full bg-red-950/95 text-white py-2 rounded-md hover:opacity-90 transition-opacity duration-300 transform hover:scale-105">
         Registrate
       </button>
       <button
@@ -186,14 +186,7 @@ const Register: React.FC<{ isActive: boolean; onSwitch: () => void }> = ({
         ¿Ya tienes una cuenta? Inicia sesión.
       </button>
       <div className="mt-6">
-        <p className="text-center text-gray-600 mb-4">O inicia con:</p>
-        <div className="flex justify-center space-x-4">
-          <button
-            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors duration-300"
-            onClick={() => loginWithRedirect()}>
-            <FaGoogle className="mr-2" />
-          </button>
-        </div>
+           <LoginForm />
       </div>
     </form>
   );

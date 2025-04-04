@@ -5,8 +5,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import  * as bcrypt from "bcrypt"
 import { Repository } from 'typeorm';
-import { SignUpDto } from './dto/signUp.dto';
 import { SignInDto } from './dto/signIn.dto';
+import { CreateUserDto } from 'src/dto/createUserDto';
+import { Roles } from 'src/roles.enum';
+
 
 
 @Injectable()
@@ -17,18 +19,19 @@ export class AuthService{
     private readonly userEntity: Repository<User>,
   ){}
 
-  async SignUp(newUser: SignUpDto): Promise<Object> {
+  async SignUp(newUser: CreateUserDto): Promise<Object> {
     const userDb = await this.userRepository.getUserByEmail(newUser.email);
-    if (userDb) throw new BadRequestException('Email Already Used');
+    if (userDb) throw new BadRequestException('Email Already in Use');
 
+    if(newUser.password !== newUser.confirmPassword){
+      throw new BadRequestException ("passwords don't match")
+  }
     const hashedPassword = await bcrypt.hash(newUser.password, 10);
     if (!hashedPassword)
       throw new BadRequestException('Password could not be created');
 
-    const newUserDb: Partial<User> = await this.userRepository.createUser({
-      ...newUser,
-      password: hashedPassword,
-    });
+    await this.userRepository.createUser(newUser);
+    
     return {
       succes: 'User registered succesfully!',
     };
@@ -53,7 +56,7 @@ export class AuthService{
     const userPayload = {
       id: userDb.id,
       email: userDb.email,
-      role: userDb.role,
+      roles: [ userDb.role ],
     };
 
     const token = await this.jwtService.sign(userPayload);
@@ -67,58 +70,58 @@ export class AuthService{
 
 
   ///////// google
-  async googleLogin(data: any): Promise<{ createdUser: User; isNew: boolean }> {
-    return runWithTryCatchBadRequest(async () => {
-      const user: User = await this.userRepository.getUserByEmail(data.email);
-      if (!user) {
-        const name = data.firstName;
-        const email = data.email;
-        const newUser = {
-          name: name || '',
-          email: email,
-          surname: data.LastName,
-          password: '',
-          confirmPassword: '',
-          address: '',
-          phone: '',
-          image: data.picture,
-          dni: '',
-          country: '',
-        };
-        const createdUser: User = await this.userRepository.createUser(newUser);
-        return { createdUser, isNew: true };
-      } else {
-        return { createdUser: user, isNew: false };
-      }
-    });
-  }
+//   async googleLogin(data: any): Promise<{ createdUser: User; isNew: boolean }> {
+//     return runWithTryCatchBadRequest(async () => {
+//       const user: User = await this.userRepository.getUserByEmail(data.email);
+//       if (!user) {
+//         const name = data.firstName;
+//         const email = data.email;
+//         const newUser = {
+//           name: name || '',
+//           email: email,
+//           surname: data.LastName,
+//           password: '',
+//           confirmPassword: '',
+//           address: '',
+//           phone: '',
+//           imageUrl: data.picture,
+//           dni: '',
+//           country: '',
+//         };
+//         const createdUser: User = await this.userRepository.createUser(newUser);
+//         return { createdUser, isNew: true };
+//       } else {
+//         return { createdUser: user, isNew: false };
+//       }
+//     });
+//   }
 
-  async createJwtToken(user: User): Promise<string> {
-    const payload: any = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      imgUrl: user.imageUrl,
-      role: user.role,
-      isActive: user.isActive,
-      subscription: user.subscription,
-      workoutRoutines: user.workoutRoutines,
-    };
-    return this.jwtService.sign(payload, { secret: process.env.JWT_SECRET });
-  }
-}
+//   async createJwtToken(user: User): Promise<string> {
+//     const payload: any = {
+//       id: user.id,
+//       name: user.name,
+//       email: user.email,
+//       password: user.password,
+//       imgUrl: user.imageUrl,
+//       role: user.role,
+//       isActive: user.isActive,
+//       subscription: user.subscription,
+//       workoutRoutines: user.workoutRoutines,
+//     };
+//     return this.jwtService.sign(payload, { secret: process.env.JWT_SECRET });
+//   }
+// }
 
-  async function runWithTryCatchBadRequest<T>(fn: () => Promise<T>): Promise<T> {
-    try {
-      return await fn();
-    } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw error;
-      } else {
-        throw new InternalServerErrorException(error);
-      }
-    }
+//   async function runWithTryCatchBadRequest<T>(fn: () => Promise<T>): Promise<T> {
+//     try {
+//       return await fn();
+//     } catch (error) {
+//       if (error instanceof BadRequestException) {
+//         throw error;
+//       } else {
+//         throw new InternalServerErrorException(error);
+//       }
+//     }
 }
 
 
