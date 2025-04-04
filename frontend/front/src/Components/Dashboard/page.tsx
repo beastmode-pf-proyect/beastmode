@@ -8,7 +8,7 @@ import Image from "next/image";
 function Dashboard() {
   const { user, isAuthenticated, isLoading } = useAuth0();
   const router = useRouter();
-
+    console.log("esto es el user", user);
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       Swal.fire({
@@ -60,12 +60,14 @@ function Dashboard() {
 
             {/* Datos del usuario */}
             <div className="text-red-950/95">
+            conslo
               <p><span className="font-semibold">Nombre:</span> {user.name}</p>
               <p><span className="font-semibold">Email:</span> {user.email}</p>
               <p><span className="font-semibold">ID de Usuario:</span> {user.sub}</p>
               <p><span className="font-semibold">Proveedor:</span> {user.sub?.split("|")[0]}</p>
               <p><span className="font-semibold">Fecha de Creación:</span> {new Date(user.created_at).toLocaleDateString()}</p>
             </div>
+            
           </div>
         </div>
       </div>
