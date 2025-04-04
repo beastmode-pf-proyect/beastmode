@@ -1,11 +1,14 @@
-import React from 'react'
-import Dashboard from '../../Components/Dashboard/page'
+import Estadisticas from "@/Components/Estadisticas/Estadisticas"
+
+
 
 
 function page() {
   return (
     
-      <Dashboard/>
+  <h1>
+    <Estadisticas/>
+  </h1>
     
   )
 }
