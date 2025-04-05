@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { SuscriptionsModule } from './suscriptions/suscriptions.module';
 import { MembershipsModule } from './memberships/memberships.module';
 import { WorkoutRoutineModule } from './workout-routine/workout-routine.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
@@ -12,6 +11,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import typeOrm from './config/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { TestimonialsModule } from './testimonials/testimonials.module';
+import { SubscriptionsModule } from './suscriptions/suscriptions.module';
 
 
 @Module({
@@ -37,7 +37,7 @@ import { TestimonialsModule } from './testimonials/testimonials.module';
       },
     secret: process.env.JWT_SECRET,
   }),
-  UsersModule, SuscriptionsModule, MembershipsModule, WorkoutRoutineModule, AuthModule, TestimonialsModule, FileUploadModule
+  UsersModule, SubscriptionsModule, MembershipsModule, WorkoutRoutineModule, AuthModule, TestimonialsModule, FileUploadModule
   ],
   controllers: [AppController],
   providers: [AppService],

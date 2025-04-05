@@ -1,14 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
-import { FaFacebook, FaGoogle, FaEnvelope, FaLock } from "react-icons/fa";
+import {  FaEnvelope, FaLock } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import LoginFormP from "@/Components/loginouth/login";
 
 const Login: React.FC<{ isActive: boolean; onSwitch: () => void }> = ({
   isActive,
   onSwitch,
 }) => {
-  const { loginWithRedirect } = useAuth0();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -42,6 +41,7 @@ const Login: React.FC<{ isActive: boolean; onSwitch: () => void }> = ({
         "Ocurrió un error al iniciar sesión. Por favor, intenta de nuevo."
       );
       console.error("Error al iniciar sesión:", err);
+      
     }
   };
 
@@ -79,16 +79,7 @@ const Login: React.FC<{ isActive: boolean; onSwitch: () => void }> = ({
       </button>
       <div className="mt-6">
         <p className="text-center text-gray-600 mb-4">O inicia con:</p>
-        <div className="flex justify-center space-x-4">
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300">
-            <FaFacebook className="mr-2" />
-          </button>
-          <button
-            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors duration-300"
-            onClick={() => loginWithRedirect()}>
-            <FaGoogle className="mr-2" />
-          </button>
-        </div>
+        <LoginFormP/>
       </div>
       <button
         type="button"

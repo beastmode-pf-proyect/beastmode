@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Footer from "@/Components/Footer/Footer";
-
 import AuthProvider from "./AuthProvider";
-
 import Header from "@/Views/Header";
-import StripeProvider from "@/Components/Suscripcion/page";
 
 export const metadata: Metadata = {
   title: "BeastMode",
@@ -17,20 +14,20 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <AuthProvider>
-      <StripeProvider>
-        <html lang="en">
-          <body>
-            {/* Header siempre arriba */}
+      <html lang="en">
+        <body>
+          {/* Header siempre arriba */}
+          
 
-            {/* Contenido principal se expande dinámicamente */}
-            <Header />
-            {children}
+          {/* Contenido principal se expande dinámicamente */}
+          <Header />
+          {children}
 
-            {/* Footer siempre abajo */}
-            <Footer />
-          </body>
-        </html>
-      </StripeProvider>
+          {/* Footer siempre abajo */}
+          <Footer />
+        </body>
+      </html>
     </AuthProvider>
   );
 }
+
