@@ -1,5 +1,5 @@
 
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
 import { User } from './users.entity';
 
 @Entity("workout_routine")

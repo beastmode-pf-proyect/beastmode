@@ -21,6 +21,8 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.3.0",
+    "@cloudinary/react": "^1.14.1",
+    "@cloudinary/url-gen": "^1.21.0",
     "@nestjs/common": "^11.0.12",
     "@nestjs/config": "^4.0.1",
     "@nestjs/core": "^11.0.12",
