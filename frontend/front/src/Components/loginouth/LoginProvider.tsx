@@ -46,23 +46,21 @@ const LoginFormProvider = () => {
       setTimeout(() => {
         logout({ logoutParams: { returnTo: window.location.origin } });
       }, 300);
-      
-throw new Error("Usuario bloqueado");
+
+      throw new Error("Usuario bloqueado");
     }
 
     // Guardar o actualizar usuario
-    const { error: supabaseError } = await supabase
-      .from("users2")
-      .upsert(
-        {
-          auth0_id: auth0User.sub,
-          email: auth0User.email,
-          name: auth0User.name || null,
-          picture: auth0User.picture || null,
-          last_login: new Date().toISOString(),
-        },
-        { onConflict: "auth0_id" }
-      );
+    const { error: supabaseError } = await supabase.from("users2").upsert(
+      {
+        auth0_id: auth0User.sub,
+        email: auth0User.email,
+        name: auth0User.name || null,
+        picture: auth0User.picture || null,
+        last_login: new Date().toISOString(),
+      },
+      { onConflict: "auth0_id" }
+    );
 
     if (supabaseError) throw supabaseError;
   };
@@ -105,12 +103,8 @@ throw new Error("Usuario bloqueado");
               },
             });
           }
-
         } catch (error) {
-          if (
-            error instanceof Error &&
-            error.message === "Usuario bloqueado"
-          ) {
+          if (error instanceof Error && error.message === "Usuario bloqueado") {
             // No hacer nada, ya mostramos SweetAlert
           } else {
             console.error("Error de login:", error);
