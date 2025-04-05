@@ -23,4 +23,16 @@ export class UsersService {
         return this.usersRepository.updatetrainerUser(id)
     }
 
+    deleteUser(id:string){
+        return this.usersRepository.deleteUser(id)
+    }
+
+    desactivateUser(id:string){
+        return this.usersRepository.desactivateUser(id)
+    }
+
+    activateUser(id:string){
+        return this.usersRepository.activateUser(id)
+    }
+
 }

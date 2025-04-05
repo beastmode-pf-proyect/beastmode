@@ -20,7 +20,7 @@ export class AuthGuardian implements CanActivate{
             payload.iat = new Date (payload.iat * 1000)
             payload.exp = new Date (payload.exp * 1000)
 
-            if(payload.roles) payload.role = ['admin']//////<---------------ver
+            if(payload.roles) payload.role = ['admin']
             else if(payload.isTrainer) payload.role = ['trainer']
             else payload.role = ['user']
 
