@@ -68,60 +68,6 @@ export class AuthService{
     };
   }
 
-
-  ///////// google
-//   async googleLogin(data: any): Promise<{ createdUser: User; isNew: boolean }> {
-//     return runWithTryCatchBadRequest(async () => {
-//       const user: User = await this.userRepository.getUserByEmail(data.email);
-//       if (!user) {
-//         const name = data.firstName;
-//         const email = data.email;
-//         const newUser = {
-//           name: name || '',
-//           email: email,
-//           surname: data.LastName,
-//           password: '',
-//           confirmPassword: '',
-//           address: '',
-//           phone: '',
-//           imageUrl: data.picture,
-//           dni: '',
-//           country: '',
-//         };
-//         const createdUser: User = await this.userRepository.createUser(newUser);
-//         return { createdUser, isNew: true };
-//       } else {
-//         return { createdUser: user, isNew: false };
-//       }
-//     });
-//   }
-
-//   async createJwtToken(user: User): Promise<string> {
-//     const payload: any = {
-//       id: user.id,
-//       name: user.name,
-//       email: user.email,
-//       password: user.password,
-//       imgUrl: user.imageUrl,
-//       role: user.role,
-//       isActive: user.isActive,
-//       subscription: user.subscription,
-//       workoutRoutines: user.workoutRoutines,
-//     };
-//     return this.jwtService.sign(payload, { secret: process.env.JWT_SECRET });
-//   }
-// }
-
-//   async function runWithTryCatchBadRequest<T>(fn: () => Promise<T>): Promise<T> {
-//     try {
-//       return await fn();
-//     } catch (error) {
-//       if (error instanceof BadRequestException) {
-//         throw error;
-//       } else {
-//         throw new InternalServerErrorException(error);
-//       }
-//     }
 }
 
 
