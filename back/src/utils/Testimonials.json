@@ -1,0 +1,65 @@
+[
+  {
+      "id": 1,
+      "nombre": "María Rodríguez",
+      "edad": 35,
+      "ocupacion": "Diseñadora Gráfica",
+      "testimonio": "Desde que comencé a entrenar aquí, mi vida cambió completamente. Los instructores son increíbles y me ayudaron a superar mis límites. He perdido 12 kilos y me siento más fuerte que nunca.",
+      "puntuacion": 5,
+      "fecha": "2023-11-15"
+  },
+  {
+      "id": 2,
+      "nombre": "Carlos Méndez",
+      "edad": 42,
+      "ocupacion": "Ingeniero de Sistemas",
+      "testimonio": "Como profesional con poco tiempo, este gimnasio es perfecto. Clases de alta intensidad de 30 minutos, instructores que entienden mis necesidades y un ambiente motivador. Recomendado 100%.",
+      "puntuacion": 5,
+      "fecha": "2024-01-22"
+  },
+  {
+      "id": 3,
+      "nombre": "Sofía Gutierrez",
+      "edad": 28,
+      "ocupacion": "Nutricionista",
+      "testimonio": "El equipo de entrenadores es extraordinario. No solo me ayudan con rutinas, sino que también me brindan consejos nutricionales personalizados. Es más que un gimnasio, es un centro integral de bienestar.",
+      "puntuacion": 5,
+      "fecha": "2023-09-05"
+  },
+  {
+      "id": 4,
+      "nombre": "Juan Pérez",
+      "edad": 50,
+      "ocupacion": "Empresario",
+      "testimonio": "Después de años sin hacer ejercicio, encontré aquí un espacio adaptado para mi edad. Clases de funcional para adultos, instructores pacientes y un ambiente sin presión. Recuperé mi salud y energía.",
+      "puntuacion": 4,
+      "fecha": "2024-02-14"
+  },
+  {
+      "id": 5,
+      "nombre": "Lucía Torres",
+      "edad": 25,
+      "ocupacion": "Estudiante de Medicina",
+      "testimonio": "Las clases de yoga y spinning son increíbles. Un espacio perfecto para desconectar del estrés universitario. Los horarios son flexibles y se adaptan a mi agenda académica.",
+      "puntuacion": 5,
+      "fecha": "2023-12-03"
+  },
+  {
+      "id": 6,
+      "nombre": "Roberto Sánchez",
+      "edad": 45,
+      "ocupacion": "Profesor Universitario",
+      "testimonio": "Mi objetivo era bajar de peso y mejorar mi condición física. En 6 meses logré perder 15 kilos y ahora compito en maratones. El apoyo del equipo ha sido fundamental.",
+      "puntuacion": 5,
+      "fecha": "2024-03-10"
+  },
+  {
+      "id": 7,
+      "nombre": "Andrea Ramírez",
+      "edad": 32,
+      "ocupacion": "Arquitecta",
+      "testimonio": "Las instalaciones son de primer nivel. Equipamiento moderno, espacios limpios y amplios. Los vestuarios son impecables y tienen todo lo necesario para prepararte después del entrenamiento.",
+      "puntuacion": 4,
+      "fecha": "2023-10-18"
+  }
+]
