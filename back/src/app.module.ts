@@ -12,6 +12,7 @@ import typeOrm from './config/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { TestimonialsModule } from './testimonials/testimonials.module';
 import { SubscriptionsModule } from './suscriptions/suscriptions.module';
+import { ExerciseModule } from './exercise/exercise.module';
 
 
 @Module({
@@ -37,7 +38,7 @@ import { SubscriptionsModule } from './suscriptions/suscriptions.module';
       },
     secret: process.env.JWT_SECRET,
   }),
-  UsersModule, SubscriptionsModule, MembershipsModule, WorkoutRoutineModule, AuthModule, TestimonialsModule, FileUploadModule
+  UsersModule, SubscriptionsModule, MembershipsModule, WorkoutRoutineModule, AuthModule, TestimonialsModule, FileUploadModule, ExerciseModule
   ],
   controllers: [AppController],
   providers: [AppService],

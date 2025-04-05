@@ -38,7 +38,7 @@ export class User {
     workoutRoutines: WorkoutRoutine[];
 
      // Relación OneToMany con Testimony
-     @OneToMany(() => Testimony, (testimony) => testimony.user)
-     testimonies: Testimony[];
+    @OneToMany(() => Testimony, (testimony) => testimony.user)
+    testimonies: Testimony[];
 
 }

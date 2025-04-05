@@ -32,7 +32,6 @@ export class SubscriptionsController {
         return this.service.findById(id);
     }
 
-
     @Role(Roles.Admin)
     @UseGuards(AuthGuardian, RolesGuard)
     @UseInterceptors(SubscriptionValidationInterceptor)
