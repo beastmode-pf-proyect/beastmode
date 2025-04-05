@@ -29,5 +29,29 @@ export class FileUploadController {
   // Sube la imagen y la asocia al producto.
     return await this.fileUploadService.uploadUserImage(file, id);
 }
+
+  @Post('exercise/uploadImage/:id')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadExercise(
+    @Param('id') id: string,
+    @UploadedFile( // Valida el archivo.
+        new ParseFilePipe({
+            validators: [
+              // Valida que el archivo no sea muy grande.
+                new MaxFileSizeValidator({
+                    maxSize: 2000000,
+                    message: 'Tamaño de la imagen permitido es de 2MB',
+                }),
+                // Valida que el archivo sea una imagen.
+                new FileTypeValidator({
+                    fileType: /(jpg|jpeg|png|webp)$/,
+                }),
+            ],
+        })
+    ) file: Express.Multer.File,// Archivo validado.
+) {
+  // Sube la imagen y la asocia al producto.
+    return await this.fileUploadService.uploadExerciseImage(file, id);  
+}
   
 }
