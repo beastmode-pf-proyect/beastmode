@@ -119,7 +119,7 @@ const LoginFormProvider = () => {
     };
 
     handleAuth();
-  }, [isAuthenticated, user, router]);
+  }, [isAuthenticated, user, router,]);
 
   if (isLoading) return null;
   if (error) return null;
