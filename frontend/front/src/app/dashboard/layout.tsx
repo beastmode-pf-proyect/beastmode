@@ -10,7 +10,7 @@ import {
   HiChartBar,
   HiMenu,
   HiX,
-  HiUser
+  HiUser,
 } from "react-icons/hi";
 import Link from "next/link";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -20,9 +20,18 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import Trainer from "@/Components/Roles/Trainer";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { user: auth0User, isAuthenticated, isLoading, logout } = useAuth0();
-  const [userData, setUserData] = useState<{ name: string; email: string; avatar: string; role: string } | null>(null);
+  const [userData, setUserData] = useState<{
+    name: string;
+    email: string;
+    avatar: string;
+    role: string;
+  } | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
 
@@ -61,7 +70,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       name: data?.name || "Usuario",
       email: data?.email || "Sin correo",
       avatar: data?.picture || "https://via.placeholder.com/100",
-      role: data?.roles?.name ? data.roles.name.toUpperCase() : "SIN ROL",
+      role: data?.role_id,
     });
   }
 
@@ -74,19 +83,59 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   const adminMenu = [
-    { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/dashboard" },
-    { name: "Usuarios", icon: <HiUsers className="w-5 h-5" />, href: "/dashboard/usuarios" },
-    { name: "Clases", icon: <HiBookOpen className="w-5 h-5" />, href: "/dashboard/clases" },
-    { name: "Estadísticas", icon: <HiChartBar className="w-5 h-5" />, href: "/dashboard/estadisticas" },
-    { name: "Membresías", icon: <HiOutlineStar className="w-5 h-5" />, href: "/dashboard/membresias" },
-    { name: "Configuración", icon: <HiCog className="w-5 h-5" />, href: "/dashboard/configuracion" }
+    {
+      name: "Inicio",
+      icon: <HiHome className="w-5 h-5" />,
+      href: "/dashboard",
+    },
+    {
+      name: "Usuarios",
+      icon: <HiUsers className="w-5 h-5" />,
+      href: "/dashboard/usuarios",
+    },
+    {
+      name: "Clases",
+      icon: <HiBookOpen className="w-5 h-5" />,
+      href: "/dashboard/clases",
+    },
+    {
+      name: "Estadísticas",
+      icon: <HiChartBar className="w-5 h-5" />,
+      href: "/dashboard/estadisticas",
+    },
+    {
+      name: "Membresías",
+      icon: <HiOutlineStar className="w-5 h-5" />,
+      href: "/dashboard/membresias",
+    },
+    {
+      name: "Configuración",
+      icon: <HiCog className="w-5 h-5" />,
+      href: "/dashboard/configuracion",
+    },
   ];
 
   const standardMenu = [
-    { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/dashboard" },
-    { name: "Clases", icon: <HiBookOpen className="w-5 h-5" />, href: "/dashboard/clases" },
-    { name: "Membresía", icon: <HiOutlineStar className="w-5 h-5" />, href: "/dashboard/membresia" },
-    { name: "Historial", icon: <HiShoppingCart className="w-5 h-5" />, href: "/dashboard/compras" }
+    {
+      name: "Inicio",
+      icon: <HiHome className="w-5 h-5" />,
+      href: "/dashboard",
+    },
+    {
+      name: "Clases",
+      icon: <HiBookOpen className="w-5 h-5" />,
+      href: "/dashboard/clases",
+    },
+    {
+      name: "Membresía",
+      icon: <HiOutlineStar className="w-5 h-5" />,
+      href: "/dashboard/membresia",
+    },
+    {
+      name: "Historial",
+      icon: <HiShoppingCart className="w-5 h-5" />,
+      href: "/dashboard/compras",
+    },
   ];
 
   const currentMenu = userData.role === "ADMIN" ? adminMenu : standardMenu;
@@ -117,7 +166,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8] text-[#333]">
       {/* Navbar móvil */}
       <div className="md:hidden fixed top-4  mt-16 left-0 right-0 bg-white shadow-md z-30 p-2 flex justify-between items-center">
-        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 rounded-md text-[#5e1914]">
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-2 rounded-md text-[#5e1914]"
+        >
           {mobileMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
         </button>
       </div>
@@ -125,14 +177,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Sidebar desktop */}
       <div className="hidden md:block w-64 bg-white shadow-lg p-4">
         {roleIcon}
-        <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode</h1>
+        <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">
+          BeastMode
+        </h1>
         <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-          <img src={userData.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
+          <img
+            src={userData.avatar}
+            alt="Usuario"
+            className="w-10 h-10 rounded-full"
+          />
           <div>
-            <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
+            <h2 className="text-lg font-semibold text-[#5e1914]">
+              {userData.name}
+            </h2>
             <p className="text-sm text-[#5e1914]">{userData.email}</p>
             <p className="text-sm text-[#5e1914] font-bold">
-              ROL: {userData.role === "ADMIN" ? "Administrador" : userData.role === "TRAINER" ? "Entrenador" : "Usuario"}
+              ROL:{" "}
+              {userData.role === "ADMIN"
+                ? "Administrador"
+                : userData.role === "TRAINER"
+                ? "Entrenador"
+                : "Usuario"}
             </p>
           </div>
         </div>
@@ -140,7 +205,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <ul className="space-y-2">
           {currentMenu.map((item) => (
             <li key={item.name}>
-              <Link href={item.href} className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#5e1914]">
+              <Link
+                href={item.href}
+                className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#5e1914]"
+              >
                 {item.icon}
                 <span>{item.name}</span>
               </Link>
@@ -150,7 +218,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         <div className="mt-4">
           <button
-            onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+            onClick={() =>
+              logout({ logoutParams: { returnTo: window.location.origin } })
+            }
             className="w-full flex items-center justify-center gap-2 bg-[#5e1914] hover:bg-[#a82717] text-white p-2 rounded-md transition-all duration-300 transform hover:scale-105"
           >
             <HiOutlineLogout className="w-5 h-5" />
@@ -164,14 +234,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="fixed inset-0 z-40 mt-34 flex md:hidden">
           <div className="w-64 bg-white shadow-lg p-4">
             {roleIcon}
-            <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode</h1>
+            <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">
+              BeastMode
+            </h1>
             <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-              <img src={userData.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
+              <img
+                src={userData.avatar}
+                alt="Usuario"
+                className="w-10 h-10 rounded-full"
+              />
               <div>
-                <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
+                <h2 className="text-lg font-semibold text-[#5e1914]">
+                  {userData.name}
+                </h2>
                 <p className="text-sm text-[#5e1914]">{userData.email}</p>
                 <p className="text-sm text-[#5e1914] font-bold">
-                  ROL: {userData.role === "ADMIN" ? "Administrador" : userData.role === "TRAINER" ? "Entrenador" : "Usuario"}
+                  ROL:{" "}
+                  {userData.role === "ADMIN"
+                    ? "Administrador"
+                    : userData.role === "TRAINER"
+                    ? "Entrenador"
+                    : "Usuario"}
                 </p>
               </div>
             </div>
@@ -193,7 +276,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             <div className="mt-4">
               <button
-                onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+                onClick={() =>
+                  logout({ logoutParams: { returnTo: window.location.origin } })
+                }
                 className="w-full flex items-center justify-center gap-2 bg-[#5e1914] hover:bg-[#a82717] text-white p-2 rounded-md transition-all duration-300 transform hover:scale-105"
               >
                 <HiOutlineLogout className="w-5 h-5" />
@@ -202,7 +287,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
           </div>
 
-          <div className="flex-1 bg-[#5e191444]" onClick={() => setMobileMenuOpen(false)} />
+          <div
+            className="flex-1 bg-[#5e191444]"
+            onClick={() => setMobileMenuOpen(false)}
+          />
         </div>
       )}
 
@@ -210,20 +298,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="mb-6">
           {userData.role === "ADMIN" ? (
             <div className="bg-gradient-to-r from-[#fefefe] to-[#f8f8f8] p-6 rounded-xl shadow-xl">
-              <h3 className="text-2xl font-bold text-[#5e1914] mb-4">Panel de Administrador</h3>
-              <p className="text-[#5e1914] text-lg">Administra usuarios, clases, membresías y más.</p>
+              <h3 className="text-2xl font-bold text-[#5e1914] mb-4">
+                Panel de Administrador
+              </h3>
+              <p className="text-[#5e1914] text-lg">
+                Administra usuarios, clases, membresías y más.
+              </p>
             </div>
           ) : userData.role === "TRAINER" ? (
             <div className="bg-gradient-to-r from-[#fefefe] to-[#f8f8f8] p-6 rounded-xl shadow-xl">
-              <h3 className="text-2xl font-bold text-[#5e1914] mb-4">Panel de Entrenador</h3>
+              <h3 className="text-2xl font-bold text-[#5e1914] mb-4">
+                Panel de Entrenador
+              </h3>
               <div className="text-[#5e1914]">
                 <Trainer />
               </div>
             </div>
           ) : (
             <div className="bg-gradient-to-r from-[#fefefe] to-[#f8f8f8] p-6 rounded-xl shadow-xl">
-              <h3 className="text-2xl font-bold text-[#5e1914]">Panel de Usuario</h3>
-              <p className="text-[#5e1914] text-lg">Bienvenido a tu espacio personalizado.</p>
+              <h3 className="text-2xl font-bold text-[#5e1914]">
+                Panel de Usuario
+              </h3>
+              <p className="text-[#5e1914] text-lg">
+                Bienvenido a tu espacio personalizado.
+              </p>
             </div>
           )}
         </div>

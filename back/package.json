@@ -20,7 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@auth0/nextjs-auth0": "^4.3.0",
+    "@auth0/nextjs-auth0": "^3.7.0",
     "@cloudinary/react": "^1.14.1",
     "@cloudinary/url-gen": "^1.21.0",
     "@nestjs/common": "^11.0.12",
