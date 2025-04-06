@@ -1,10 +1,8 @@
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { CreateUserDto } from "src/dto/createUserDto";
 import { updateUserDto } from "src/dto/updateUserDto";
 import { User } from "src/entities/users.entity";
 import { Repository } from "typeorm";
-import * as bcrypt  from "bcrypt"
 
 
 export class UsersRepository{
@@ -103,13 +101,5 @@ async getUserByEmail(email: string): Promise <Partial<User>> {
   return user;
 }  
 
-async createUser(user: CreateUserDto) {
-  try {
-    const newUser = await this.usersRepository.save(user);
-    return newUser;
-  } catch (err) {
-    throw new Error('Error al crear el usuario');
-  }
-}
 
 }
