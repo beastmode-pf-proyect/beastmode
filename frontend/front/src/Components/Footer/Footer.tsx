@@ -1,5 +1,9 @@
 import React, { ReactElement } from "react";
 import Link from "next/link";
+import logon from "../../../public/img/logon.png";
+import Image from "next/image";
+
+
 
 export const Footer: React.FC = (): ReactElement => {
   return (
@@ -11,27 +15,23 @@ export const Footer: React.FC = (): ReactElement => {
             aria-label="Ir a inicio"
             title="Empresa"
             className="inline-flex items-center">
-            <svg
-              className="w-8 text-deep-purple-accent-400"
-              viewBox="0 0 24 24"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeMiterlimit="10"
-              stroke="currentColor"
-              fill="none">
-              <rect x="3" y="1" width="7" height="12"></rect>
-              <rect x="3" y="17" width="7" height="6"></rect>
-              <rect x="14" y="1" width="7" height="6"></rect>
-              <rect x="14" y="11" width="7" height="12"></rect>
-            </svg>
+           <div className="relative">
+                         <Image 
+                           src={logon} 
+                           alt="Logo" 
+                           width={50} 
+                           height={50} 
+                           className="relative z-10 transform transition-transform duration-300 group-hover:rotate-6"
+                         />
+                         <div className="" />
+                       </div>
             <span className="ml-2 text-xl font-bold tracking-wide text-gray-800 uppercase">
               BeastMode
             </span>
           </Link>
           <div className="mt-6 lg:max-w-sm">
             <p className="text-sm text-gray-800">
-              Transformando vidas a través de programas de fitness de élite y
+              Transformando vidas a través de programas fitness de élite y
               guía nutricional.
             </p>
           </div>
@@ -115,13 +115,7 @@ export const Footer: React.FC = (): ReactElement => {
           © Copyright 2025 BeastMode. Todos los derechos reservados.
         </p>
         <ul className="flex flex-col mb-3 space-y-2 lg:mb-0 sm:space-y-0 sm:space-x-5 sm:flex-row">
-          <li>
-            <Link
-              href="/"
-              className="text-sm text-gray-600 transition-colors duration-300 hover:text-deep-purple-accent-400">
-              Preguntas Frecuentes
-            </Link>
-          </li>
+          
           <li>
             <Link
               href="/"

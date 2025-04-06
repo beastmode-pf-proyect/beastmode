@@ -4,7 +4,7 @@ import Footer from "@/Components/Footer/Footer";
 import AuthProvider from "./AuthProvider";
 import Header from "@/Views/Header";
 import StripeProvider from "@/Components/Suscripcion/page";
-import LoginFormProvider from "@/Components/loginouth/LoginProvider";
+// import LoginFormProvider from "@/Components/loginouth/LoginProvider";
 
 export const metadata: Metadata = {
   title: "BeastMode",
@@ -22,7 +22,7 @@ export default function RootLayout({
         <body className="flex flex-col min-h-screen">
           <Header />
 
-          <LoginFormProvider/>
+          {/* <LoginFormProvider/> */}
           {children}
           <Footer />
         </body>

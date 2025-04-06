@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { Plan } from "../memberships/memberships";
 
 interface SubscriptionModalProps {
@@ -15,119 +14,77 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const stripe = useStripe();
-  const elements = useElements();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setLoading(true);
+    setError(null);
 
     try {
-      // Obtener los datos de la tarjeta del usuario
-      const cardElement = elements?.getElement(CardElement);
-      if (!cardElement || !stripe) {
-        throw new Error("Stripe no está inicializado correctamente.");
+      const userId = localStorage.getItem("userId");
+
+      if (!userId || !plan?.id) {
+        throw new Error("Faltan datos del usuario o del plan.");
       }
 
-      // Crear un token o una fuente de pago con Stripe
-      const { error, paymentMethod } = await stripe.createPaymentMethod({
-        type: "card",
-        card: cardElement,
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      // Enviar la información de pago y el plan seleccionado al backend
-      const planId = plan?.id || "";
-      const response = await fetch("/api/subscription", {
+      const response = await fetch(`http://localhost:3001/stripe/${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          paymentMethodId: paymentMethod.id,
-          planId,
-        }),
+        body: JSON.stringify({ id: plan.id }),
       });
 
-      if (!response.ok) {
-        throw new Error("Error al procesar la suscripción.");
+      const data = await response.json();
+
+      if (!response.ok || !data.url) {
+        throw new Error(data.message || "No se pudo iniciar el pago.");
       }
 
-      // Redirigir al usuario a una página de confirmación o mostrar un mensaje de éxito
-      // ...
-
-      setLoading(false);
-      onClose();
-    } catch (err) {
-      setError(
-        "Ocurrió un error al procesar el pago. Por favor, inténtalo de nuevo."
-      );
-      setLoading(false);
-      console.error(err);
+      window.location.href = data.url;
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Error desconocido al procesar el pago.");
+      }
     }
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-[#5e19147b]">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
-        <h2 className=" text-2xl font-bold mb-4">Suscripción</h2>
+    <div className="fixed inset-0 bg-black/40 z-50 flex justify-center items-center">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded-lg shadow-md max-w-md w-full">
+        <h2 className="text-xl font-bold mb-4">Suscripción</h2>
+
         {plan && (
           <div className="mb-4">
-            <p className="text-gray-600 font-medium">Plan seleccionado:</p>
-            <p className="text-red-950 text-2xl font-extrabold">{plan.name}</p>
-            <p className="text-gray-700 font-medium">
-              Precio: ${plan.price} /al mes
-            </p>
+            <p className="font-semibold">Plan seleccionado:</p>
+            <p>{plan.name}</p>
+            <p>${plan.price} / al mes</p>
           </div>
         )}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="card-element" className="block font-medium mb-2">
-              Información de tarjeta
-            </label>
-            <CardElement
-              id="card-element"
-              options={{
-                style: {
-                  base: {
-                    fontSize: "16px",
-                    color: "#424770",
-                    "::placeholder": {
-                      color: "#aab7c4",
-                    },
-                  },
-                  invalid: {
-                    color: "#9e2146",
-                  },
-                },
-              }}
-              className="border border-gray-300 rounded-md px-4 py-2 w-full"
-            />
-          </div>
-          {error && (
-            <div className="bg-red-500 text-white px-4 py-2 rounded">
-              {error}
-            </div>
-          )}
+
+        {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
+
+        <div className="flex justify-end space-x-2 mt-4">
           <button
             type="submit"
+            disabled={loading}
             className={`w-full bg-red-950/95 text-white py-2 rounded-md hover:bg-red-950/90 transition-colors duration-300 ${
               loading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            disabled={loading}>
+            }`}>
             {loading ? "Procesando..." : "Suscribirse"}
           </button>
           <button
             type="button"
-            className="w-full bg-gray-200 text-gray-700 py-2 rounded-md hover:bg-gray-300 transition-colors duration-300"
-            onClick={onClose}>
+            onClick={onClose}
+            className="w-full bg-gray-300 text-black py-2 rounded-md hover:bg-gray-400">
             Cancelar
           </button>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   );
 };
