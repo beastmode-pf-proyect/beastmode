@@ -28,6 +28,13 @@ export class SubscriptionsController {
         return this.service.findAll();
     }
 
+    @Get(':id')   
+    @Role(Roles.Admin)
+    @UseGuards(AuthGuardian, RolesGuard)
+    async findOne(@Param('id') id: string) {
+        return this.service.findById(id);
+    }
+
         
     // @Role(Roles.Admin)
     // @UseGuards(AuthGuardian, RolesGuard)
