@@ -168,7 +168,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
 
         <div className="mb-4">
           <label htmlFor="email" className="block font-medium mb-1">
-            Correo electrónico.
+            Correo electrónico
           </label>
           <input
             type="email"
