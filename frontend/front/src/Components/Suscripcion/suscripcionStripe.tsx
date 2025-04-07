@@ -29,8 +29,16 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
     try {
       const userId = localStorage.getItem("userId");
 
-      if (!userId || !plan?.id || !stripe || !elements) {
-        throw new Error("Faltan datos del usuario, del plan o de Stripe.");
+      if (!userId) {
+        throw new Error("Falta el ID de usuario.");
+      }
+
+      if (!plan?.id) {
+        throw new Error("Falta el plan seleccionado.");
+      }
+
+      if (!stripe || !elements) {
+        throw new Error("Falta la inicialización de Stripe.");
       }
 
       const cardElement = elements.getElement(CardElement);
