@@ -13,7 +13,7 @@ export class UsersRepository{
     async getUsers() : Promise <Partial<User>[]> {
       let users = await this.usersRepository.find()
   
-      const userWithoutPassword = users.map(({password, ...user}) => user)
+      const userWithoutPassword = users.map(({ ...user}) => user)
   
       return userWithoutPassword
     }
@@ -28,7 +28,7 @@ export class UsersRepository{
         throw new NotFoundException('Usuario no encontrado')
       }
       
-          const { password, role, ...userWithoutPassword} = user
+          const { role, ...userWithoutPassword} = user
           return userWithoutPassword;
     }
 
@@ -37,7 +37,7 @@ export class UsersRepository{
       
       const updateUser = await this.usersRepository.findOneBy({ id })
     
-      const {password, role, ...userWithoutPassword } = updateUser
+      const {role, ...userWithoutPassword } = updateUser
     
       return 'Usuario Actualizado'
     }
@@ -49,7 +49,7 @@ export class UsersRepository{
           throw new BadRequestException ("Usuario Inexistente")
       }
   
-      serchUser.role = 'trainer';
+      serchUser.role.name = 'trainer';
   
        await this.usersRepository.save(serchUser);
     }
@@ -74,7 +74,7 @@ export class UsersRepository{
           return 'Usuario no encontrada'
       }
 
-      findingUser.isActive = false
+      findingUser.is_blocked = true
 
       return `Usuario ${findingUser.name} desactivado exitosamente`
   }
@@ -87,7 +87,7 @@ export class UsersRepository{
           return 'Usuario no encontrada'
       }
 
-      findingUser.isActive = true
+      findingUser.is_blocked = false
 
       return `Usuario ${findingUser.name} activado exitosamente`
   }

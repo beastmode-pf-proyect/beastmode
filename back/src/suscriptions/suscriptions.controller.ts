@@ -24,7 +24,6 @@ export class SubscriptionsController {
         return this.service.findAll();
     }
 
-
     @UseInterceptors(SubscriptionValidationInterceptor)
     @Put(":id")  
     async update(@Param("id", ParseUUIDPipe) id: string, @Body() data: UpdateSubscriptionDto) {

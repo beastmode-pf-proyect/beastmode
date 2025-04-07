@@ -10,7 +10,12 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import typeOrm from './config/typeorm';
 import { TestimonialsModule } from './testimonials/testimonials.module';
 import { SubscriptionsModule } from './suscriptions/suscriptions.module';
+import { ExerciseModule } from './exercise/exercise.module';
+import { RoutineExerciseModule } from './routine_exercise/routine_exercise.module';
+import { UserWorkoutRoutineModule } from './user_workout_routine/user_workout_routine.module';
 import { StripeModule } from './stripe/stripe.module';
+import { JwtModule } from '@nestjs/jwt';
+
 
 
 @Module({
@@ -29,7 +34,18 @@ import { StripeModule } from './stripe/stripe.module';
       return typeOrmConfig;
     },
   }),
-  UsersModule, SubscriptionsModule, MembershipsModule, WorkoutRoutineModule, TestimonialsModule, FileUploadModule, StripeModule
+  JwtModule.register({
+    global: true,
+    signOptions: {
+      expiresIn: '1h',
+      },
+    secret: process.env.JWT_SECRET,
+  }),
+
+  UsersModule, SubscriptionsModule, 
+  MembershipsModule, WorkoutRoutineModule, 
+  TestimonialsModule, FileUploadModule, 
+  ExerciseModule, RoutineExerciseModule, RoutineExerciseModule, UserWorkoutRoutineModule, StripeModule
   ],
   controllers: [AppController],
   providers: [AppService],
