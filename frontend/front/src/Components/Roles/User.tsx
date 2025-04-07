@@ -1,6 +1,6 @@
 import React from 'react'
 
-function UserPanel () {
+function User () {
   return (
     <div>
         User Panel
@@ -9,4 +9,4 @@ function UserPanel () {
   )
 }
 
-export default UserPanel 
+export default User

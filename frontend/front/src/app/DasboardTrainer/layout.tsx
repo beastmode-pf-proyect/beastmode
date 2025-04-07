@@ -4,7 +4,6 @@ import {
   HiBookOpen,
   HiOutlineStar,
   HiOutlineLogout,
-  HiUsers,
   HiCog,
   HiChartBar,
   HiMenu,
@@ -17,7 +16,6 @@ import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-import Trainer from "@/Components/Roles/Trainer";
 
 interface UserData {
   name: string;
@@ -28,6 +26,8 @@ interface UserData {
     name: string;
   };
 }
+
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user: auth0User, isAuthenticated, isLoading, logout } = useAuth0();
   const [userData, setUserData] = useState<{ name: string; email: string; avatar: string; role: string } | null>(null);
@@ -81,16 +81,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return null;
   }
 
-  const adminMenu = [
-    { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/dashboard" },
-    { name: "Usuarios", icon: <HiUsers className="w-5 h-5" />, href: "/dashboard/usuarios" },
-    { name: "Rutinas", icon: <HiBookOpen className="w-5 h-5" />, href: "/dashboard/rutina" },
-    { name: "Estadísticas", icon: <HiChartBar className="w-5 h-5" />, href: "/dashboard/estadisticas" },
-    { name: "Membresías", icon: <HiOutlineStar className="w-5 h-5" />, href: "/dashboard/membresias" },
-    { name: "Configuración", icon: <HiCog className="w-5 h-5" />, href: "/dashboard/configuracion" }
+
+//------Menú estándar para usuarios y entrenadores------//
+  const standardMenuT = [
+    { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/DasboardTrainer" },
+    { name: "Usuarios", icon: <HiBookOpen className="w-5 h-5" />, href: "/DasboardTrainer/usertrainer" },
+    { name: "Asignar Rutina", icon: <HiOutlineStar className="w-5 h-5" />, href: "/DasboardTrainer/Asignar-Rutina" },
+    { name: "Ejercicios", icon: <HiOutlineStar className="w-5 h-5" />, href: "/DasboardTrainer/rutina" },
   ];
 
-  const currentMenu = userData.role === "TRAINER" ? adminMenu : adminMenu; ;
+
+  const currentMenu = userData.role === "TRAINER" ? standardMenuT : standardMenuT; ;
 
   const roleIcon = (
     <div
@@ -218,7 +219,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="bg-gradient-to-r from-[#fefefe] to-[#f8f8f8] p-6 rounded-xl shadow-xl">
               <h3 className="text-2xl font-bold text-[#5e1914] mb-4">Panel de Entrenador</h3>
               <div className="text-[#5e1914]">
-                <Trainer />
+               
               </div>
             </div>
           ) : (

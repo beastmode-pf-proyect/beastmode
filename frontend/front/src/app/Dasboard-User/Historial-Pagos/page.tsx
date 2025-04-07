@@ -1,10 +1,9 @@
-import Estadisticas from '@/Components/Estadisticas/Estadisticas'
 import React from 'react'
 
 function page() {
   return (
     <div>
-      <Estadisticas/>
+      Mi historial de pagos
     </div>
   )
 }

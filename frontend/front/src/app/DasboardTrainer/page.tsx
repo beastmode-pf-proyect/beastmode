@@ -1,10 +1,13 @@
-import Estadisticas from '@/Components/Estadisticas/Estadisticas'
+
+import Trainer from '@/Components/Roles/Trainer'
+
 import React from 'react'
 
 function page() {
   return (
     <div>
-      <Estadisticas/>
+   <Trainer/>
+     
     </div>
   )
 }

@@ -2,9 +2,9 @@
 import {
   HiHome,
   HiBookOpen,
+  HiShoppingCart,
   HiOutlineStar,
   HiOutlineLogout,
-  HiUsers,
   HiCog,
   HiChartBar,
   HiMenu,
@@ -28,6 +28,8 @@ interface UserData {
     name: string;
   };
 }
+
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user: auth0User, isAuthenticated, isLoading, logout } = useAuth0();
   const [userData, setUserData] = useState<{ name: string; email: string; avatar: string; role: string } | null>(null);
@@ -54,24 +56,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [auth0User]);
 
   async function fetchUserData(auth0_id: string) {
-    const { data, error } = await supabase
-      .from("users2")
-      .select("name, email, picture, role_id, roles(name)")
-      .eq("auth0_id", auth0_id)
-      .single<UserData>();
-  
-    if (error) {
-      console.error("❌ Error obteniendo datos del usuario:", error.message);
-      return;
+      const { data, error } = await supabase
+        .from("users2")
+        .select("name, email, picture, role_id, roles(name)")
+        .eq("auth0_id", auth0_id)
+        .single<UserData>();
+    
+      if (error) {
+        console.error("❌ Error obteniendo datos del usuario:", error.message);
+        return;
+      }
+    
+      setUserData({
+        name: data?.name ?? "Usuario",
+        email: data?.email ?? "Sin correo",
+        avatar: data?.picture ?? "https://via.placeholder.com/100",
+        role: data?.roles?.name ? data.roles.name.toUpperCase() : "SIN ROL",
+      });
     }
-  
-    setUserData({
-      name: data?.name ?? "Usuario",
-      email: data?.email ?? "Sin correo",
-      avatar: data?.picture ?? "https://via.placeholder.com/100",
-      role: data?.roles?.name ? data.roles.name.toUpperCase() : "SIN ROL",
-    });
-  }
 
   if (isLoading) {
     return <div className="text-center text-xl text-gray-600">Cargando...</div>;
@@ -81,16 +83,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return null;
   }
 
-  const adminMenu = [
-    { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/dashboard" },
-    { name: "Usuarios", icon: <HiUsers className="w-5 h-5" />, href: "/dashboard/usuarios" },
-    { name: "Rutinas", icon: <HiBookOpen className="w-5 h-5" />, href: "/dashboard/rutina" },
-    { name: "Estadísticas", icon: <HiChartBar className="w-5 h-5" />, href: "/dashboard/estadisticas" },
-    { name: "Membresías", icon: <HiOutlineStar className="w-5 h-5" />, href: "/dashboard/membresias" },
-    { name: "Configuración", icon: <HiCog className="w-5 h-5" />, href: "/dashboard/configuracion" }
+
+
+  //------Menú estándar para usuarios ------//
+  const standardMenuUsers = [
+    { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/Dasboard-User" },
+    { name: "Rutina", icon: <HiBookOpen className="w-5 h-5" />, href: "/Dasboard-User/Rutina" },
+    { name: "Membesias Activas", icon: <HiOutlineStar className="w-5 h-5" />, href: "/Dasboard-User/Mi-membresia" },
+    { name: "Historial", icon: <HiShoppingCart className="w-5 h-5" />, href: "/Dasboard-User/Historial-Pagos" }
   ];
 
-  const currentMenu = userData.role === "TRAINER" ? adminMenu : adminMenu; ;
+  const currentMenu = standardMenuUsers;
 
   const roleIcon = (
     <div

@@ -21,6 +21,7 @@ function Classes() {
   );
 
   return (
+    
     <div className="p-6">
       <h2 className="text-3xl font-semibold text-[#5e1914]">Clases</h2>
       <p className="mt-4 text-[#5e1914]">
@@ -62,7 +63,9 @@ function Classes() {
           </div>
         ))}
       </div>
+      
     </div>
+    
   );
 }
 

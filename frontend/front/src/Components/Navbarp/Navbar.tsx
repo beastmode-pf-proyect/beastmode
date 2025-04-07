@@ -6,11 +6,15 @@ import Link from "next/link";
 import Image from "next/image";
 import logo from "../../../public/img/logo.png";
 import LoginForm from "../loginouth/login";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 
 export const Navbarp = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { isAuthenticated, logout } = useAuth0();
+  const [userRole, setUserRole] = useState<"ADMIN" | "TRAINER" | "USER" | null>(null);
+  const { isAuthenticated, logout, user } = useAuth0();
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +23,40 @@ export const Navbarp = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      if (user?.sub) {
+        const { data, error } = await supabase
+          .from("users2")
+          .select("roles(name)")
+          .eq("auth0_id", user.sub)
+          .single();
+
+        if (!error && data?.roles?.name) {
+          setUserRole(data.roles.name.toUpperCase());
+        }
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchRole();
+    }
+  }, [isAuthenticated, user]);
+
+  const handleDashboardRedirect = () => {
+    switch (userRole) {
+      case "ADMIN":
+        router.push("/dashboard");
+        break;
+      case "TRAINER":
+        router.push("/DasboardTrainer");
+        break;
+      case "USER":
+        router.push("/Dasboard-User");
+        
+    }
+  };
 
   return (
     <nav className={`fixed w-full z-50 transition-all duration-500 ${
@@ -62,12 +100,12 @@ export const Navbarp = () => {
 
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
-                <Link
-                  href="/dashboard"
+                <button
+                  onClick={handleDashboardRedirect}
                   className="px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-colors duration-300 shadow-lg shadow-red-900/20 hover:shadow-red-900/40"
                 >
                   Dashboard
-                </Link>
+                </button>
                 <button
                   onClick={() => logout()}
                   className="px-4 py-2 border border-red-700 text-white rounded-lg hover:bg-red-700/20 transition-all duration-300"
@@ -78,7 +116,6 @@ export const Navbarp = () => {
             ) : (
               <div className="flex items-center space-x-4">
                 <LoginForm/>
-                
               </div>
             )}
           </div>
@@ -88,9 +125,9 @@ export const Navbarp = () => {
             onClick={() => setIsOpen(!isOpen)}
             className="lg:hidden p-2 rounded-lg text-gray-100 hover:bg-red-900/50 focus:outline-none transition-colors duration-300"
           >
-            <div className="w-6 h-0.5 bg-current mb-1.5 transition-all duration-300 transform origin-center" />
-            <div className="w-6 h-0.5 bg-current mb-1.5 transition-all duration-300 transform origin-center" />
-            <div className="w-6 h-0.5 bg-current transition-all duration-300 transform origin-center" />
+            <div className="w-6 h-0.5 bg-current mb-1.5" />
+            <div className="w-6 h-0.5 bg-current mb-1.5" />
+            <div className="w-6 h-0.5 bg-current" />
           </button>
         </div>
 
@@ -111,13 +148,15 @@ export const Navbarp = () => {
             <div className="pt-2 mt-2 border-t border-red-900/50">
               {isAuthenticated ? (
                 <div className="space-y-2 pt-2">
-                  <Link
-                    href="/dashboard"
+                  <button
+                    onClick={() => {
+                      handleDashboardRedirect();
+                      setIsOpen(false);
+                    }}
                     className="block w-full px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-colors duration-300 text-center"
-                    onClick={() => setIsOpen(false)}
                   >
                     Dashboard
-                  </Link>
+                  </button>
                   <button
                     onClick={() => {
                       logout();
