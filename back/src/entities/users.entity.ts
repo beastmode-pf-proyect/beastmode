@@ -1,7 +1,8 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Subscription } from "./subscription.entity";
-import { WorkoutRoutine } from "./workout.routine.entity";
 import { Testimony } from "./testimonies.entity";
+import { UserWorkoutRoutine } from "./user_workout_routine.entity";
+
 
 @Entity("users")
 export class User {
@@ -29,16 +30,12 @@ export class User {
     @OneToMany(() => Subscription, (subscription) => subscription.user)
     subscription: Subscription[];
 
-    @ManyToMany(() => WorkoutRoutine, (workoutroutine) => workoutroutine.users)
-    @JoinTable({
-        name: "user_workout_routines",
-        joinColumn: { name: "user_id", referencedColumnName: "id" },
-        inverseJoinColumn: { name: "workout_routine_id", referencedColumnName: "id" }
-    })
-    workoutRoutines: WorkoutRoutine[];
 
-     // Relación OneToMany con Testimony
     @OneToMany(() => Testimony, (testimony) => testimony.user)
     testimonies: Testimony[];
+
+    @OneToMany(() => UserWorkoutRoutine, (ur) => ur.user)
+    userWorkoutRoutines: UserWorkoutRoutine[];
+    
 
 }

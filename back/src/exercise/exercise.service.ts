@@ -30,6 +30,10 @@ export class ExerciseService {
   }
 
   async delete(id: string): Promise<void> {
+    const exists = await this.exerciseRepository.exists(id);
+    if (!exists) {
+      throw new NotFoundException('Exercise not found');
+    }
     await this.exerciseRepository.delete(id);
   }
 }

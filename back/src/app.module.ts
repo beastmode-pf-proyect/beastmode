@@ -13,6 +13,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { TestimonialsModule } from './testimonials/testimonials.module';
 import { SubscriptionsModule } from './suscriptions/suscriptions.module';
 import { ExerciseModule } from './exercise/exercise.module';
+import { RoutineExerciseModule } from './routine_exercise/routine_exercise.module';
+import { UserWorkoutRoutineModule } from './user_workout_routine/user_workout_routine.module';
 
 
 @Module({
@@ -38,7 +40,11 @@ import { ExerciseModule } from './exercise/exercise.module';
       },
     secret: process.env.JWT_SECRET,
   }),
-  UsersModule, SubscriptionsModule, MembershipsModule, WorkoutRoutineModule, AuthModule, TestimonialsModule, FileUploadModule, ExerciseModule
+  UsersModule, SubscriptionsModule, 
+  MembershipsModule, WorkoutRoutineModule, 
+  AuthModule, TestimonialsModule, FileUploadModule, 
+  ExerciseModule, RoutineExerciseModule, RoutineExerciseModule, UserWorkoutRoutineModule, 
+  
   ],
   controllers: [AppController],
   providers: [AppService],

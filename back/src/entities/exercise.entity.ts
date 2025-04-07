@@ -19,5 +19,5 @@ export class Exercise {
     isActive: boolean;
 
     @OneToMany(() => RoutineExercise, (routineExercise) => routineExercise.exercise)
-    routineExercises: RoutineExercise[];
+    routineExercises: RoutineExercise[];    
 }

@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, OneToMany } from 'typeorm';
-import { User } from './users.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany} from 'typeorm';
 import { RoutineExercise } from './Routine.exercise.entity';
+import { UserWorkoutRoutine } from './user_workout_routine.entity';
 
 @Entity("workout_routine")
 export class WorkoutRoutine {
@@ -18,13 +18,11 @@ export class WorkoutRoutine {
 
   @Column({ default: true })
   isActive: boolean;
-
-  @ManyToMany(() => User, (user) => user.workoutRoutines)
-  users: User[];
-
-  @Column({ nullable: true })
-  created_by: string;
-
-  @OneToMany(() => RoutineExercise, (routineExercise) => routineExercise.workoutRoutine)
+  
+  @OneToMany(() => UserWorkoutRoutine, (ur) => ur.routine)
+  userRoutines: UserWorkoutRoutine[];  
+  
+  // Agrega esta nueva relación con RoutineExercise
+  @OneToMany(() => RoutineExercise, (routineExercise) => routineExercise.routine)
   routineExercises: RoutineExercise[];
 }

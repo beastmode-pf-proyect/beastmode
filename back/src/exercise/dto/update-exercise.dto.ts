@@ -6,4 +6,4 @@ export class UpdateExerciseDto extends PartialType(CreateExerciseDto) {
     @IsBoolean()
     @IsOptional()
     isActive?: boolean;
-    }
+}

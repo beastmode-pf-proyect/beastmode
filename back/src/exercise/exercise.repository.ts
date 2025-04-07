@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ExerciseRepository {
+    [x: string]: any;    
     constructor(
         @InjectRepository(Exercise)
         private readonly repository: Repository<Exercise>
@@ -33,4 +34,14 @@ export class ExerciseRepository {
     async delete(id: string): Promise<void> {
         await this.repository.update(id, { isActive: false });
     }
+
+    async exists(id: string): Promise<boolean> {
+        const count = await this.repository.count({ where: { id } });
+        return count > 0;
+    }
+    
+    async findOneById(id: string): Promise<Exercise | null> {
+        return this.repository.findOne({ where: { id } });
+    }
+    
 }

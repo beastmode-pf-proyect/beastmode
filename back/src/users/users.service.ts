@@ -23,4 +23,16 @@ export class UsersService {
         return this.usersRepository.updatetrainerUser(id)
     }
 
+    async userExists(id: string): Promise<boolean> {
+        try {
+            const user = await this.usersRepository.getById(id);
+            return !!user;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (error) {
+            return false;
+        }
+    }
+
+    
+
 }

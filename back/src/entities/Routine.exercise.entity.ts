@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { WorkoutRoutine } from './workout.routine.entity';
 import { Exercise } from './exercise.entity';
+import { WorkoutRoutine } from './workout.routine.entity';
 
 @Entity('routine_exercise')
 export class RoutineExercise {
@@ -8,24 +9,27 @@ export class RoutineExercise {
     id: string;
 
     @ManyToOne(() => WorkoutRoutine, (routine) => routine.routineExercises)
-    @JoinColumn({ name: 'workout_routine_id' })
-    workoutRoutine: WorkoutRoutine;
+    @JoinColumn({ name: 'routine_id' })
+    routine: WorkoutRoutine;
 
     @ManyToOne(() => Exercise, (exercise) => exercise.routineExercises)
     @JoinColumn({ name: 'exercise_id' })
     exercise: Exercise;
 
-    @Column({ type: 'int', nullable: true })
+    @Column({ type: 'int' })
     sets: number;
 
-    @Column({ type: 'int', nullable: true })
+    @Column({ type: 'int' })
     reps: number;
 
     @Column({ type: 'int', nullable: true })
-    restSeconds: number;
+    duration: number; // en segundos, para ejercicios de tiempo
 
     @Column({ type: 'int', nullable: true })
-    order: number;
+    rest: number; // en segundos, descanso entre series
+
+    @Column({ type: 'int' })
+    order: number; // orden en la rutina
 
     @Column({ default: true })
     isActive: boolean;

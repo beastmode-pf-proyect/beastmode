@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Subscription } from "../entities/subscription.entity";
@@ -36,10 +36,14 @@ export class SubscriptionsRepository {
     }
 
     async delete(id: string): Promise<void> {
-        await this.repository.update(id, { 
+        const result = await this.repository.update(id, { 
             isActive: false,
             endDate: new Date()
         });
+    
+        if (result.affected === 0) {
+            throw new NotFoundException("Exercise not found"); 
+        }
     }
 
     async restore(id: string): Promise<void> {
