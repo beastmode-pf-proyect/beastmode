@@ -1,15 +1,11 @@
-import Estadisticas from "@/Components/Estadisticas/Estadisticas"
-
-
-
+import Estadisticas from '@/Components/Estadisticas/Estadisticas'
+import React from 'react'
 
 function page() {
   return (
-    
-  <h1>
-    <Estadisticas/>
-  </h1>
-    
+    <div>
+      <Estadisticas/>
+    </div>
   )
 }
 

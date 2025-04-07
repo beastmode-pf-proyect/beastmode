@@ -31,8 +31,19 @@ export class UsersService {
         } catch (error) {
             return false;
         }
+    }    
+
+    deleteUser(id:string){
+        return this.usersRepository.deleteUser(id)
     }
 
-    
+    desactivateUser(id:string){
+        return this.usersRepository.desactivateUser(id)
+    }
+
+    activateUser(id:string){
+        return this.usersRepository.activateUser(id)
+    }
+
 
 }

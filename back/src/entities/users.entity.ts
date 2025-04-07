@@ -9,7 +9,9 @@ export class User {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @Column({ nullable: true })
+
+    @Column({nullable: true})
+
     name: string;
     
     @Column()
@@ -18,7 +20,7 @@ export class User {
     @Column()
     password: string; 
 
-    @Column({ nullable: true })
+    @Column({nullable: true})
     imageUrl: string;
     
     @Column({ type: 'enum', enum:['admin', 'trainer', 'client'], default: 'client' })
@@ -30,12 +32,12 @@ export class User {
     @OneToMany(() => Subscription, (subscription) => subscription.user)
     subscription: Subscription[];
 
-
     @OneToMany(() => Testimony, (testimony) => testimony.user)
     testimonies: Testimony[];
 
     @OneToMany(() => UserWorkoutRoutine, (ur) => ur.user)
     userWorkoutRoutines: UserWorkoutRoutine[];
     
+
 
 }

@@ -6,9 +6,11 @@ import { CloudinaryConfig } from '../config/cloudinary';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/entities/users.entity';
 import { Exercise } from 'src/entities/exercise.entity';
+import { WorkoutRoutine } from 'src/entities/workout.routine.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User,Exercise])],
+  imports: [TypeOrmModule.forFeature([User,WorkoutRoutine,Exercise])],
+
   controllers: [FileUploadController],
   providers: [FileUploadService,FileUploadRepository,CloudinaryConfig],
   exports: [CloudinaryConfig]

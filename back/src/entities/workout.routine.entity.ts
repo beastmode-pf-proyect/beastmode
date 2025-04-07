@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany} from 'typeorm';
 import { RoutineExercise } from './Routine.exercise.entity';
 import { UserWorkoutRoutine } from './user_workout_routine.entity';
 
+
 @Entity("workout_routine")
 export class WorkoutRoutine {
   @PrimaryGeneratedColumn("uuid")

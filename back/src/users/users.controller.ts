@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { updateUserDto } from 'src/dto/updateUserDto';
 import { RolesGuard } from 'src/guards/roles.guard';
@@ -44,12 +44,28 @@ export class UsersController {
   // @UseGuards(AuthGuardian, RolesGuard)
   updatetrainerUser(@Param('id', ParseUUIDPipe) id: string){
     return this.usersService.updatetrainerUser(id);
-}
+  }
 
-// @Get('/profile')
-// getAuth0protected(@Req() req: Request) {
-//   return JSON.stringify(req.oidc.user)
-// }
+  @Delete(':id')
+  // @Role(Roles.Admin)
+  // @UseGuards(AuthGuardian, RolesGuard)
+  deleteUser(@Param('id', ParseUUIDPipe) id: string) {
+  return this.usersService.deleteUser(id);
+  }
+
+  @Put('desactivate/:id')
+  // @Role(Roles.Admin)
+  // @UseGuards(AuthGuardian, RolesGuard)
+  desactivateUser(@Param('id', ParseUUIDPipe) id: string){
+    return this.usersService.desactivateUser(id)
+  }
+
+  @Put('activate/:id')
+  // @Role(Roles.Admin)
+  // @UseGuards(AuthGuardian, RolesGuard)
+  activateUser(@Param('id', ParseUUIDPipe) id: string){
+    return this.usersService.activateUser(id)
+  } 
 
 }
 

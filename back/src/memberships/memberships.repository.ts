@@ -1,3 +1,4 @@
+import { NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { updateMembershipDto } from "src/dto/updateMembershipDto";
 import { MembershipPlan } from "src/entities/membership.plan.entity";
@@ -21,7 +22,7 @@ export class MembershipsRepository{
 
         const membership = await this.membershipRepository.findOneBy({ id })
         if(!membership){
-            return 'Membresia Inexistente'
+            throw new NotFoundException('Membresia Inexistente')
         }
 
         return membership
@@ -53,7 +54,7 @@ export class MembershipsRepository{
         const findingMembership = await this.membershipRepository.findOneBy({ id })
 
         if(!findingMembership){
-            return 'Membresia no encontrada'
+            throw new NotFoundException ('Membresia no encontrada')
         }
 
         findingMembership.isActive = false
@@ -66,7 +67,7 @@ export class MembershipsRepository{
         const findingMembership = await this.membershipRepository.findOneBy({ id })
 
         if(!findingMembership){
-            return 'Membresia no encontrada'
+            throw new NotFoundException ('Membresia no encontrada')
         }
 
         findingMembership.isActive = true

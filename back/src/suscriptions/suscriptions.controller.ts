@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, ParseUUIDPipe, UseInterceptors } from "@nestjs/common";
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, ParseUUIDPipe, UseInterceptors, Query } from "@nestjs/common";
 import { SubscriptionsService } from "./suscriptions.service";
 import { CreateSubscriptionDto } from "src/dto/createSubscriptionDto";
 import { UpdateSubscriptionDto } from "src/dto/UpdateSubscriptionDto";
@@ -7,11 +7,14 @@ import { Role } from "src/decorators/roles.decorators";
 import { AuthGuardian } from "src/guards/authorization.guard";
 import { RolesGuard } from "src/guards/roles.guard";
 import { SubscriptionValidationInterceptor } from "src/interceptors/subscription.interceptor";
+import { StripeService } from "src/stripe/stripe.service";
 
 
 @Controller("subscriptions")
 export class SubscriptionsController {
-    constructor(private readonly service: SubscriptionsService) {}
+    constructor(private readonly service: SubscriptionsService,
+                private readonly stripeService: StripeService
+    ) {}
 
 
     @UseInterceptors(SubscriptionValidationInterceptor)
@@ -32,25 +35,48 @@ export class SubscriptionsController {
         return this.service.findById(id);
     }
 
-    @Role(Roles.Admin)
-    //@UseGuards(AuthGuardian, RolesGuard)
-   // @UseInterceptors(SubscriptionValidationInterceptor)
+        
+    // @Role(Roles.Admin)
+    // @UseGuards(AuthGuardian, RolesGuard)
+    @UseInterceptors(SubscriptionValidationInterceptor)
     @Put(":id")  
     async update(@Param("id", ParseUUIDPipe) id: string, @Body() data: UpdateSubscriptionDto) {
         return this.service.update(id, data);
     }
-
-    @Role(Roles.Admin)
-    //@UseGuards(AuthGuardian, RolesGuard)
+    
+    // @Role(Roles.Admin)
+    // @UseGuards(AuthGuardian, RolesGuard)
     @Delete(":id")
     async delete(@Param("id", ParseUUIDPipe) id: string) {
         return this.service.delete(id);
     }
-
-    @Role(Roles.Admin)
-    @UseGuards(AuthGuardian, RolesGuard)
+    
+    // @Role(Roles.Admin)
+    // @UseGuards(AuthGuardian, RolesGuard)
     @Post(":id/restore") 
     async restore(@Param("id", ParseUUIDPipe) id: string) {
         return this.service.restore(id);
     }
-}
+    
+    // Endpoint que maneja la redirección después de un pago exitoso
+    @Get('success')
+    async handleSuccessfulPayment(
+        @Query('session_id') sessionId: string,
+        @Query('transaction_id') transactionId: string,
+    ) {
+        return this.stripeService.verifyPaymentAndCreateSubscription(sessionId, transactionId);
+    }
+        
+    // Endpoint que maneja la redirección después de un pago cancelado
+    @Get('cancel')
+    handleCancelledPayment() {
+        return { success: false, message: 'Pago cancelado' };
+    }
+
+    @Get(':id')   
+    // @Role(Roles.Admin)
+    // @UseGuards(AuthGuardian, RolesGuard)
+    async findOne(@Param('id') id: string) {
+        return this.service.findById(id);
+    }
+    }

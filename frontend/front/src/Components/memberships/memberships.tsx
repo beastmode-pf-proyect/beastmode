@@ -1,3 +1,4 @@
+// components/memberships/MembershipSection.tsx
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -54,17 +55,22 @@ const MembershipSection = () => {
   ];
 
   return (
-    <div className="w-full px-4 py-12 sm:py-20 lg:px-8 xl:px-20">
+    <div
+      className={`w-full px-4 py-12 sm:py-20 lg:px-8 xl:px-20 `}>
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-red-950">
-          ELIGE TU PLAN BEASTMODE
+        <h2 className="text-3xl md:text-4xl  font-medium text-center mb-12 text-red-950">
+          ELIGE TU PLAN Y ACTIVA TU BEASTMODE
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
           {plans.map(plan => (
             <div
               key={plan.id}
-              className="border-2 border-gray-200 rounded-4xl bg-white shadow-xl hover:shadow-2xl transition-all duration-300 p-6 flex flex-col">
+              className={`border-2 ${
+                plan.id === "pro"
+                  ? "border-red-900 rounded-4xl bg-white shadow-xl hover:shadow-2xl transition-all duration-300 p-6 flex flex-col relative"
+                  : "border-gray-200 rounded-4xl bg-white shadow-xl hover:shadow-2xl transition-all duration-300 p-6 flex flex-col"
+              }`}>
               {plan.id === "pro" && (
                 <div className="absolute top-0 right-0 bg-red-900 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-4xl">
                   POPULAR

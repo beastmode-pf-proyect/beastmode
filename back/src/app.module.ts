@@ -17,6 +17,7 @@ import { RoutineExerciseModule } from './routine_exercise/routine_exercise.modul
 import { UserWorkoutRoutineModule } from './user_workout_routine/user_workout_routine.module';
 
 
+
 @Module({
   imports: [ConfigModule.forRoot({
     isGlobal: true,
@@ -40,11 +41,13 @@ import { UserWorkoutRoutineModule } from './user_workout_routine/user_workout_ro
       },
     secret: process.env.JWT_SECRET,
   }),
+
   UsersModule, SubscriptionsModule, 
   MembershipsModule, WorkoutRoutineModule, 
   AuthModule, TestimonialsModule, FileUploadModule, 
   ExerciseModule, RoutineExerciseModule, RoutineExerciseModule, UserWorkoutRoutineModule, 
   
+
   ],
   controllers: [AppController],
   providers: [AppService],

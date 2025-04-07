@@ -2,7 +2,6 @@
 import {
   HiHome,
   HiBookOpen,
-  HiShoppingCart,
   HiOutlineStar,
   HiOutlineLogout,
   HiUsers,
@@ -20,6 +19,15 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import Trainer from "@/Components/Roles/Trainer";
 
+interface UserData {
+  name: string;
+  email: string;
+  picture: string;
+  role_id: number;
+  roles: {
+    name: string;
+  };
+}
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user: auth0User, isAuthenticated, isLoading, logout } = useAuth0();
   const [userData, setUserData] = useState<{ name: string; email: string; avatar: string; role: string } | null>(null);
@@ -48,19 +56,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   async function fetchUserData(auth0_id: string) {
     const { data, error } = await supabase
       .from("users2")
-      .select("name, email, picture, role_id, roles!inner(name)")
+      .select("name, email, picture, role_id, roles(name)")
       .eq("auth0_id", auth0_id)
-      .single();
-
+      .single<UserData>();
+  
     if (error) {
       console.error("❌ Error obteniendo datos del usuario:", error.message);
       return;
     }
-
+  
     setUserData({
-      name: data?.name || "Usuario",
-      email: data?.email || "Sin correo",
-      avatar: data?.picture || "https://via.placeholder.com/100",
+      name: data?.name ?? "Usuario",
+      email: data?.email ?? "Sin correo",
+      avatar: data?.picture ?? "https://via.placeholder.com/100",
       role: data?.roles?.name ? data.roles.name.toUpperCase() : "SIN ROL",
     });
   }
@@ -76,20 +84,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const adminMenu = [
     { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/dashboard" },
     { name: "Usuarios", icon: <HiUsers className="w-5 h-5" />, href: "/dashboard/usuarios" },
-    { name: "Clases", icon: <HiBookOpen className="w-5 h-5" />, href: "/dashboard/clases" },
+    { name: "Rutinas", icon: <HiBookOpen className="w-5 h-5" />, href: "/dashboard/rutina" },
     { name: "Estadísticas", icon: <HiChartBar className="w-5 h-5" />, href: "/dashboard/estadisticas" },
     { name: "Membresías", icon: <HiOutlineStar className="w-5 h-5" />, href: "/dashboard/membresias" },
     { name: "Configuración", icon: <HiCog className="w-5 h-5" />, href: "/dashboard/configuracion" }
   ];
 
-  const standardMenu = [
-    { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/dashboard" },
-    { name: "Clases", icon: <HiBookOpen className="w-5 h-5" />, href: "/dashboard/clases" },
-    { name: "Membresía", icon: <HiOutlineStar className="w-5 h-5" />, href: "/dashboard/membresia" },
-    { name: "Historial", icon: <HiShoppingCart className="w-5 h-5" />, href: "/dashboard/compras" }
-  ];
-
-  const currentMenu = userData.role === "ADMIN" ? adminMenu : standardMenu;
+  const currentMenu = userData.role === "TRAINER" ? adminMenu : adminMenu; ;
 
   const roleIcon = (
     <div
