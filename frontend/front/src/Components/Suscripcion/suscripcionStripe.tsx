@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Plan } from "../memberships/memberships";
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
 interface SubscriptionModalProps {
   plan: Plan | null;
@@ -14,6 +15,11 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const stripe = useStripe();
+  const elements = useElements();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -23,8 +29,40 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
     try {
       const userId = localStorage.getItem("userId");
 
-      if (!userId || !plan?.id) {
-        throw new Error("Faltan datos del usuario o del plan.");
+      if (!userId) {
+        throw new Error("Falta el ID de usuario.");
+      }
+
+      if (!plan?.id) {
+        throw new Error("Falta el plan seleccionado.");
+      }
+
+      if (!stripe || !elements) {
+        throw new Error("Falta la inicialización de Stripe.");
+      }
+
+      const cardElement = elements.getElement(CardElement);
+      if (!cardElement) {
+        throw new Error("No se pudo obtener el elemento de tarjeta.");
+      }
+
+      const { paymentMethod, error: stripeError } =
+        await stripe.createPaymentMethod({
+          type: "card",
+          card: cardElement,
+          billing_details: {
+            name,
+            email,
+            phone,
+          },
+        });
+
+      if (stripeError) {
+        throw new Error(stripeError.message || "No se pudo procesar el pago.");
+      }
+
+      if (!paymentMethod) {
+        throw new Error("No se pudo obtener el método de pago.");
       }
 
       const response = await fetch(`http://localhost:3001/stripe/${userId}`, {
@@ -32,7 +70,10 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id: plan.id }),
+        body: JSON.stringify({
+          id: plan.id,
+          paymentMethodId: paymentMethod.id,
+        }),
       });
 
       const data = await response.json();
@@ -49,6 +90,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         setError("Error desconocido al procesar el pago.");
       }
     }
+    setLoading(false);
   };
 
   return (
@@ -65,6 +107,72 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
             <p>${plan.price} / al mes</p>
           </div>
         )}
+
+        <div className="mb-4">
+          <label htmlFor="name" className="block font-medium mb-1">
+            Nombre
+          </label>
+          <input
+            type="text"
+            id="name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-2 w-full"
+            required
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="email" className="block font-medium mb-1">
+            Correo electrónico.
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-2 w-full"
+            required
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="phone" className="block font-medium mb-1">
+            Teléfono
+          </label>
+          <input
+            type="tel"
+            id="phone"
+            value={phone}
+            onChange={e => setPhone(e.target.value)}
+            className="border border-gray-300 rounded-md px-3 py-2 w-full"
+            required
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="card-element" className="block font-medium mb-1">
+            Información de la tarjeta
+          </label>
+          <CardElement
+            id="card-element"
+            options={{
+              style: {
+                base: {
+                  fontSize: "16px",
+                  color: "#424770",
+                  "::placeholder": {
+                    color: "#aab7c4",
+                  },
+                },
+                invalid: {
+                  color: "#9e2146",
+                },
+              },
+            }}
+            className="border border-gray-300 rounded-md px-3 py-2 w-full"
+          />
+        </div>
 
         {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
 
