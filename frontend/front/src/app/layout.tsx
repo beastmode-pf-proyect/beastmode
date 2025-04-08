@@ -18,19 +18,20 @@ export default function RootLayout({
   return (
     <AuthProvider>
       <SessionUserProvider>
+
       <StripeProvider>
       <html lang="en">
         <body className="flex flex-col min-h-screen">
           <Header />
 
-          <LoginFormProvider/>
-          {children}
-          <Footer />
-        </body>
-      </html>
-      </StripeProvider>
+
+              <LoginFormProvider />
+              {children}
+              <Footer />
+            </body>
+          </html>
+        </StripeProvider>
       </SessionUserProvider>
     </AuthProvider>
   );
 }
-

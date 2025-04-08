@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 
 const GoalsPage = () => {
@@ -24,7 +23,7 @@ const GoalsPage = () => {
           <div className="flex flex-col lg:flex-row gap-12 items-center">
             <div className="lg:w-1/2">
               <Image
-                src="/images/imgAbout.jpg"
+                src="/images/gym000.png"
                 alt="Misión BeastMode Gym"
                 width={600}
                 height={400}
@@ -134,7 +133,8 @@ const GoalsPage = () => {
             ].map((value, index) => (
               <div
                 key={index}
-                className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
+                className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow"
+              >
                 <div className="text-5xl mb-4">{value.icon}</div>
                 <h3 className="text-2xl font-bold text-gray-800 mb-3">
                   {value.title}
