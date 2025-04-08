@@ -1,23 +1,34 @@
 "use client";
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
 
 const WorkoutRoutineForm = () => {
   const [routine, setRoutine] = useState({
-    name: '',
-    description: '',
-    imageUrl: ''
+    name: "",
+    description: "",
+    imageUrl: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:3000/workout-routine/create', routine);
-      alert('Rutina creada exitosamente');
-      setRoutine({ name: '', description: '', imageUrl: '' });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/workout-routine/create`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(routine),
+        }
+      );
+
+      if (!response.ok) throw new Error("Error al crear la rutina");
+
+      alert("Rutina creada exitosamente");
+      setRoutine({ name: "", description: "", imageUrl: "" });
     } catch (error) {
       console.error(error);
-      alert('Error al crear la rutina');
+      alert("Error al crear la rutina");
     }
   };
 
@@ -30,7 +41,7 @@ const WorkoutRoutineForm = () => {
           <input
             type="text"
             value={routine.name}
-            onChange={(e) => setRoutine({...routine, name: e.target.value})}
+            onChange={e => setRoutine({ ...routine, name: e.target.value })}
             className="w-full p-2 border rounded"
             required
           />
@@ -40,7 +51,9 @@ const WorkoutRoutineForm = () => {
           <label className="block text-sm font-medium mb-2">Descripción</label>
           <textarea
             value={routine.description}
-            onChange={(e) => setRoutine({...routine, description: e.target.value})}
+            onChange={e =>
+              setRoutine({ ...routine, description: e.target.value })
+            }
             className="w-full p-2 border rounded"
             rows={4}
             required
@@ -48,11 +61,13 @@ const WorkoutRoutineForm = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">URL de la imagen</label>
+          <label className="block text-sm font-medium mb-2">
+            URL de la imagen
+          </label>
           <input
             type="url"
             value={routine.imageUrl}
-            onChange={(e) => setRoutine({...routine, imageUrl: e.target.value})}
+            onChange={e => setRoutine({ ...routine, imageUrl: e.target.value })}
             className="w-full p-2 border rounded"
             required
           />
@@ -60,8 +75,7 @@ const WorkoutRoutineForm = () => {
 
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-        >
+          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
           Crear Rutina
         </button>
       </form>
