@@ -22,120 +22,131 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   const stripe = useStripe();
   const elements = useElements();
 
- const handleSubmit = async (event: React.FormEvent) => {
-   event.preventDefault();
-   setLoading(true);
-   setError(null);
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setLoading(true);
+    setError(null);
 
-   try {
-     const userId = sessionStorage.getItem("id");
+    try {
+      const userId = sessionStorage.getItem("id");
 
-     if (!userId) {
-       Swal.fire({
-         title: "Error",
-         text: "Debes registrarte o iniciar sesión.",
-         icon: "error",
-         confirmButtonText: "Aceptar",
-       });
-       throw new Error("Debes registrarte o iniciar sesión.");
-     }
+      if (!userId) {
+        Swal.fire({
+          title: "Error",
+          text: "Debes registrarte o iniciar sesión.",
+          icon: "error",
+          confirmButtonText: "Aceptar",
+        });
+        throw new Error("Debes registrarte o iniciar sesión.");
+      }
 
-     if (!plan?.id) {
-       Swal.fire({
-         title: "Error",
-         text: "Falta el plan seleccionado.",
-         icon: "error",
-         confirmButtonText: "Aceptar",
-       });
-       throw new Error("Falta el plan seleccionado.");
-     }
+      if (!plan?.id) {
+        Swal.fire({
+          title: "Error",
+          text: "Falta el plan seleccionado.",
+          icon: "error",
+          confirmButtonText: "Aceptar",
+        });
+        throw new Error("Falta el plan seleccionado.");
+      }
 
-     if (!stripe || !elements) {
-       Swal.fire({
-         title: "Error",
-         text: "Falta la inicialización de Stripe.",
-         icon: "error",
-         confirmButtonText: "Aceptar",
-       });
-       throw new Error("Falta la inicialización de Stripe.");
-     }
+      if (!stripe || !elements) {
+        Swal.fire({
+          title: "Error",
+          text: "Falta la inicialización de Stripe.",
+          icon: "error",
+          confirmButtonText: "Aceptar",
+        });
+        throw new Error("Falta la inicialización de Stripe.");
+      }
 
-     const cardElement = elements.getElement(CardElement);
-     if (!cardElement) {
-       Swal.fire({
-         title: "Error",
-         text: "No se pudo obtener el elemento de tarjeta.",
-         icon: "error",
-         confirmButtonText: "Aceptar",
-       });
-       throw new Error("No se pudo obtener el elemento de tarjeta.");
-     }
+      const cardElement = elements.getElement(CardElement);
+      if (!cardElement) {
+        Swal.fire({
+          title: "Error",
+          text: "No se pudo obtener el elemento de tarjeta.",
+          icon: "error",
+          confirmButtonText: "Aceptar",
+        });
+        throw new Error("No se pudo obtener el elemento de tarjeta.");
+      }
 
-     const { paymentMethod, error: stripeError } =
-       await stripe.createPaymentMethod({
-         type: "card",
-         card: cardElement,
-         billing_details: {
-           name,
-           email,
-           phone,
-         },
-       });
+      const { paymentMethod, error: stripeError } =
+        await stripe.createPaymentMethod({
+          type: "card",
+          card: cardElement,
+          billing_details: {
+            name,
+            email,
+            phone,
+          },
+        });
 
-     if (stripeError) {
-       Swal.fire({
-         title: "Error",
-         text: stripeError.message || "No se pudo procesar el pago.",
-         icon: "error",
-         confirmButtonText: "Aceptar",
-       });
-       throw new Error(stripeError.message || "No se pudo procesar el pago.");
-     }
+      if (stripeError) {
+        Swal.fire({
+          title: "Error",
+          text: stripeError.message || "No se pudo procesar el pago.",
+          icon: "error",
+          confirmButtonText: "Aceptar",
+        });
+        throw new Error(stripeError.message || "No se pudo procesar el pago.");
+      }
 
-     if (!paymentMethod) {
-       Swal.fire({
-         title: "Error",
-         text: "No se pudo obtener el método de pago.",
-         icon: "error",
-         confirmButtonText: "Aceptar",
-       });
-       throw new Error("No se pudo obtener el método de pago.");
-     }
+      if (!paymentMethod) {
+        Swal.fire({
+          title: "Error",
+          text: "No se pudo obtener el método de pago.",
+          icon: "error",
+          confirmButtonText: "Aceptar",
+        });
+        throw new Error("No se pudo obtener el método de pago.");
+      }
 
-     const response = await fetch(`http://localhost:3000/stripe/${userId}`, {
-       method: "POST",
-       headers: {
-         "Content-Type": "application/json",
-       },
-       body: JSON.stringify({
-         id: plan.id,
-         paymentMethodId: paymentMethod.id,
-       }),
-     });
+      const response = await fetch(`http://localhost:3000/stripe/${userId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: plan.id,
+          paymentMethodId: paymentMethod.id,
+        }),
+      });
 
-     const data = await response.json();
+      if (!response.ok) {
+        const errorData = await response.json();
+        Swal.fire({
+          title: "Error",
+          text: errorData.message || "No se pudo iniciar el pago.",
+          icon: "error",
+          confirmButtonText: "Aceptar",
+        });
+        throw new Error(errorData.message || "No se pudo iniciar el pago.");
+      }
 
-     if (!response.ok || !data.url) {
-       Swal.fire({
-         title: "Error",
-         text: data.message || "No se pudo iniciar el pago.",
-         icon: "error",
-         confirmButtonText: "Aceptar",
-       });
-       throw new Error(data.message || "No se pudo iniciar el pago.");
-     }
+      const data = await response.json();
 
-     window.location.href = data.url;
-   } catch (err: unknown) {
-     if (err instanceof Error) {
-       setError(err.message);
-     } else {
-       setError("Error desconocido al procesar el pago.");
-     }
-   }
-   setLoading(false);
- };
+      if (!data.url) {
+        Swal.fire({
+          title: "Error",
+          text: "No se recibió la URL de redirección.",
+          icon: "error",
+          confirmButtonText: "Aceptar",
+        });
+        throw new Error("No se recibió la URL de redirección.");
+      }
 
+      window.location.href = data.url;
+
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Error desconocido al procesar el pago.");
+      }
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex justify-center items-center">

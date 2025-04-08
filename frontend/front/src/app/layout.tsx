@@ -18,11 +18,12 @@ export default function RootLayout({
   return (
     <AuthProvider>
       <SessionUserProvider>
-        <StripeProvider>
-          <html lang="en">
-            <body className="flex flex-col min-h-screen">
-              <Header />
-              {/* <main className="flex-grow">{children}</main> */}
+
+      <StripeProvider>
+      <html lang="en">
+        <body className="flex flex-col min-h-screen">
+          <Header />
+
 
               <LoginFormProvider />
               {children}
