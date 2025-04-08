@@ -31,7 +31,7 @@ export class FileUploadService {
         const uploadedImage = await this.fileUploadRepository.uploadImage(file);
 
         // Actualiza la URL de la imagen en la base de datos
-        await this.usersRepository.update(userId, { imageUrl: uploadedImage.secure_url });
+        await this.usersRepository.update(userId, { picture: uploadedImage.secure_url });
 
         // Retorna el user actualizado
         return await this.usersRepository.findOneBy({ id: userId });

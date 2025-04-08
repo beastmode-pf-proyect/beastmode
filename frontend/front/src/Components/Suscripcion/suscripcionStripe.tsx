@@ -28,7 +28,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
    setError(null);
 
    try {
-     const userId = localStorage.getItem("userId");
+     const userId = sessionStorage.getItem("id");
 
      if (!userId) {
        Swal.fire({

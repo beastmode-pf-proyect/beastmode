@@ -1,33 +1,39 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Subscription } from "./subscription.entity";
 import { Testimony } from "./testimonies.entity";
 import { UserWorkoutRoutine } from "./user_workout_routine.entity";
+import { Role } from "./roles.entity";
 
 
-@Entity("users")
+@Entity("users2")
 export class User {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
+    @Column({type: 'text', unique: true, nullable: true})
+    auth0_id: string;
 
-    @Column({nullable: true})
-
-    name: string;
-    
-    @Column()
+    @Column({type: 'text', unique: true, nullable: true})
     email: string;
 
-    @Column()
-    password: string; 
+    @Column({ type: 'text', nullable: true })
+    name: string;
 
-    @Column({nullable: true})
-    imageUrl: string;
-    
-    @Column({ type: 'enum', enum:['admin', 'trainer', 'client'], default: 'client' })
-    role: string;
+    @Column({ type: 'text', nullable: true })
+    picture: string | null;
 
-    @Column({ default: true })
-    isActive: boolean;
+    @Column({ type: 'timestamp', default: () => 'NOW()' })
+    last_login: Date;
+
+    @CreateDateColumn({ type: 'timestamp', default: () => 'NOW()' })
+    created_at: Date;
+
+    @Column({ type: 'boolean', default: false })
+    is_blocked: boolean;
+
+    @ManyToOne(() => Role, role => role.users)
+    @JoinColumn({ name: 'role_id' }) // Esto crea la columna role_id en la tabla users2
+    role: Role;
 
     @OneToMany(() => Subscription, (subscription) => subscription.user)
     subscription: Subscription[];
@@ -37,7 +43,5 @@ export class User {
 
     @OneToMany(() => UserWorkoutRoutine, (ur) => ur.user)
     userWorkoutRoutines: UserWorkoutRoutine[];
-    
-
 
 }

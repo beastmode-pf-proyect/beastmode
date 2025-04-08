@@ -4,8 +4,6 @@ import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { ExerciseValidationInterceptor } from 'src/interceptors/exercise.interceptor';
-import { AuthGuardian } from 'src/guards/authorization.guard';
-import { RolesGuard } from 'src/guards/roles.guard';
 
 @ApiTags('exercises')
 @Controller('exercises')
@@ -24,13 +22,11 @@ export class ExerciseController {
   }
 
   @Get(':id')  
-  //@UseGuards(AuthGuardian, RolesGuard)
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.exerciseService.findOne(id);
   }
 
   @UseInterceptors(ExerciseValidationInterceptor)
-  //@UseGuards(AuthGuardian, RolesGuard)
   @Put(':id')  
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -40,7 +36,6 @@ export class ExerciseController {
   }
 
 
-  //@UseGuards(AuthGuardian, RolesGuard)
   @Delete(':id')
   delete(@Param('id', ParseUUIDPipe) id: string) {
     return this.exerciseService.delete(id);

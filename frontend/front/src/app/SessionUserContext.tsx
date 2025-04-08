@@ -10,6 +10,7 @@ interface SessionUser {
   picture?: string;
 }
 
+
 interface SessionUserContextType {
   user: SessionUser | null;
   loading: boolean;
@@ -19,6 +20,7 @@ const SessionUserContext = createContext<SessionUserContextType>({
   user: null,
   loading: true,
 });
+
 
 export const SessionUserProvider = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading, user } = useAuth0();
@@ -34,11 +36,12 @@ export const SessionUserProvider = ({ children }: { children: React.ReactNode })
           name: user.name,
           picture: user.picture,
         };
+
         setSessionUser(userData);
-        localStorage.setItem('sessionUser', JSON.stringify(userData)); // opcional
+        sessionStorage.setItem('sessionUser', JSON.stringify(userData));
       } else {
         setSessionUser(null);
-        localStorage.removeItem('sessionUser'); // opcional
+        sessionStorage.removeItem('sessionUser');
       }
 
       setLoading(false);
@@ -52,5 +55,5 @@ export const SessionUserProvider = ({ children }: { children: React.ReactNode })
   );
 };
 
-// Hook personalizado para consumirlo fácilmente
+
 export const useSessionUser = () => useContext(SessionUserContext);

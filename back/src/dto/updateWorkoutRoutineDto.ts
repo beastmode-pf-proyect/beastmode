@@ -3,7 +3,6 @@ import { IsNotEmpty, IsString, Length } from "class-validator";
 
 
 export class updateWorkoutRoutineDto{
-
 @ApiProperty({
     description: 'Nombre del Plan con un minimo de 3 caracteres y maximo de 80 caracteres',
     example: 'Power Push'
