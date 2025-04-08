@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Footer from "@/Components/Footer/Footer";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import AuthProvider from "./AuthProvider";
+import Header from "@/Views/Header";
+import LoginFormProvider from "@/Components/loginouth/LoginProvider";
+import StripeProvider from "@/Components/Suscripcion/page";
+import { SessionUserProvider } from "./SessionUserContext";
 
 export const metadata: Metadata = {
   title: "BeastMode",
@@ -20,15 +14,24 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}>
-        <div style={{ flex: 1 }}>{children}</div>
-        <Footer />
-      </body>
-    </html>
+    <AuthProvider>
+      <SessionUserProvider>
+
+      <StripeProvider>
+      <html lang="en">
+        <body className="flex flex-col min-h-screen">
+          <Header />
+
+
+              <LoginFormProvider />
+              {children}
+              <Footer />
+            </body>
+          </html>
+        </StripeProvider>
+      </SessionUserProvider>
+    </AuthProvider>
   );
 }
