@@ -7,7 +7,7 @@ export class validateMembershipInteceptor implements NestInterceptor{
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
         const request = context.switchToHttp().getRequest();
         const body = { ...request.body};
-        const {name, price, duration, benefits} = body;
+        const {name, price, duration, description} = body;
 
         if(!price){
             throw new BadRequestException (`Falta rellenar el campo ${price}`);
@@ -15,8 +15,8 @@ export class validateMembershipInteceptor implements NestInterceptor{
             throw new BadRequestException (`Falta rellenar el campo ${name}`);
         }else if(!duration){
             throw new BadRequestException (`Falta rellenar el campo ${duration}`);
-        }else if(!benefits){
-            throw new BadRequestException (`Falta rellenar el campo ${benefits}`);
+        }else if(!description){
+            throw new BadRequestException (`Falta rellenar el campo ${description}`);
         }
         
         return next.handle();

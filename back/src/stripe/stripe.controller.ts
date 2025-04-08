@@ -9,7 +9,7 @@ export class StripeController {
     // Endpoint para iniciar el proceso de pago
     @Post(':id')
     checkout(
-        @Param('id', ParseUUIDPipe) id: string, 
+        @Param('id') id: string, 
         @Body('id', ParseUUIDPipe) membershipId: string
     ) {
         return this.stripeService.payment(id, membershipId);
