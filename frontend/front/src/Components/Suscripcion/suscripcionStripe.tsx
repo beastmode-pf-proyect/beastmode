@@ -14,6 +14,8 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
   plan,
   onClose,
 }) => {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -102,7 +104,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         throw new Error("No se pudo obtener el método de pago.");
       }
 
-      const response = await fetch(`http://localhost:3000/stripe/${userId}`, {
+      const response = await fetch(`${backendUrl}/stripe/${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
