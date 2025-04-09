@@ -3,10 +3,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useSessionUser } from '@/app/SessionUserContext';
-import { supabase } from '@/lib/supabaseClient';
-
-export default function UserWorkoutRoutines() {
-  const { user, loading: userLoading } = useSessionUser();
+import Image from 'next/image';
 
 interface Routine {
   routine_id: number;
@@ -53,7 +50,7 @@ export default function UserWorkoutRoutines() {
       const supabaseUserId = userRow.id;
 
       const { data: routineData, error: routineError } = await supabase
-        .from('user_workout_routines')
+        .from('user_workout_routines') // Eliminado el tipo genérico aquí
         .select('routine_id, workout_routine(*)')
         .eq('user_id', userId);
 
@@ -63,12 +60,12 @@ export default function UserWorkoutRoutines() {
         return;
       }
 
-      const formattedRoutines = (routineData || []).map((routine: any) => ({
+      const formattedRoutines = (routineData || []).map((routine: RoutineData) => ({
         routine_id: routine.routine_id,
         workout_routine: {
           name: routine.workout_routine.name,
           description: routine.workout_routine.description,
-          imageUrl: routine.workout_routine.imageUrl,
+          imageUrl: routine.workout_routine.image_url, // Cambia a image_url si es necesario
         },
       }));
       setRoutines(formattedRoutines);
@@ -117,9 +114,11 @@ export default function UserWorkoutRoutines() {
             className="bg-white shadow-md rounded-2xl p-4 border border-gray-200 hover:shadow-lg transition-shadow"
           >
             {item.workout_routine.imageUrl && (
-              <img
+              <Image
                 src={item.workout_routine.imageUrl}
                 alt={item.workout_routine.name}
+                width={400} // Ajusta el tamaño según sea necesario
+                height={160} // Ajusta el tamaño según sea necesario
                 className="rounded-xl mb-4 w-full h-40 object-cover"
               />
             )}

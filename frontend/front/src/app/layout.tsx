@@ -4,6 +4,8 @@ import Footer from "@/Components/Footer/Footer";
 import AuthProvider from "./AuthProvider";
 import Header from "@/Views/Header";
 import LoginFormProvider from "@/Components/loginouth/LoginProvider";
+import StripeProvider from "@/Components/Suscripcion/page";
+import { SessionUserProvider } from "./SessionUserContext";
 
 export const metadata: Metadata = {
   title: "BeastMode",
@@ -15,17 +17,21 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <AuthProvider>
+      <SessionUserProvider>
+
+      <StripeProvider>
       <html lang="en">
         <body className="flex flex-col min-h-screen">
           <Header />
-          <main className="flex-grow">{children}</main>
 
-          <LoginFormProvider/>
-          {children}
-          <Footer />
-        </body>
-      </html>
+
+              <LoginFormProvider />
+              {children}
+              <Footer />
+            </body>
+          </html>
+        </StripeProvider>
+      </SessionUserProvider>
     </AuthProvider>
   );
 }
-

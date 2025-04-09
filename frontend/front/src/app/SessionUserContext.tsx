@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
+import { createContext, useContext, useEffect, useState } from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 
 interface SessionUser {
   id: string;
@@ -21,8 +21,11 @@ const SessionUserContext = createContext<SessionUserContextType>({
   loading: true,
 });
 
-
-export const SessionUserProvider = ({ children }: { children: React.ReactNode }) => {
+export const SessionUserProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const { isAuthenticated, isLoading, user } = useAuth0();
   const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -31,16 +34,17 @@ export const SessionUserProvider = ({ children }: { children: React.ReactNode })
     if (!isLoading) {
       if (isAuthenticated && user) {
         const userData: SessionUser = {
-          id: user.sub || '',
-          email: user.email || '',
+          id: user.sub || "",
+          email: user.email || "",
           name: user.name,
           picture: user.picture,
         };
+
         setSessionUser(userData);
-        sessionStorage.setItem('sessionUser', JSON.stringify(userData)); // opcional
+        sessionStorage.setItem("id", userData.id);
       } else {
         setSessionUser(null);
-        sessionStorage.removeItem('sessionUser'); // opcional
+        sessionStorage.removeItem("id");
       }
 
       setLoading(false);
@@ -54,5 +58,4 @@ export const SessionUserProvider = ({ children }: { children: React.ReactNode })
   );
 };
 
-// Hook personalizado para consumirlo fácilmente
 export const useSessionUser = () => useContext(SessionUserContext);

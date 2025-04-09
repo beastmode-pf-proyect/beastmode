@@ -1,17 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { auth0Config as config } from './config/auth0.config';
-import { auth } from 'express-openid-connect';
 import "reflect-metadata"
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
-import * as express from 'express';
 
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  app.use(auth(config))
 
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
@@ -26,16 +21,10 @@ async function bootstrap() {
     })
   }))
 
-  // app.use(
-  //   '/webhooks/stripe',
-  //   express.raw({ type: 'application/json' }),
-  // );
-
   const swaggerConfig = new DocumentBuilder()
   .setTitle('Beast Mode API')
   .setDescription('Esta es una Api construida con Nest JS para ser empleada en las demos del backend de Beast Mode')
-  .setVersion('1.0')
-  .addBearerAuth().build();
+  .setVersion('1.0').build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig)
   SwaggerModule.setup('api', app, document)
