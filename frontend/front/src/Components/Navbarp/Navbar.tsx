@@ -26,25 +26,25 @@ export const Navbarp = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // useEffect(() => {
-  //   const fetchRole = async () => {
-  //     if (user?.sub) {
-  //       const { data, error } = await supabase
-  //         .from("users2")
-  //         .select("roles(name)")
-  //         .eq("auth0_id", user.sub)
-  //         .single();
+  useEffect(() => {
+    const fetchRole = async () => {
+      if (user?.sub) {
+        const { data, error } = await supabase
+          .from("users2")
+          .select("roles(name)")
+          .eq("auth0_id", user.sub)
+          .single();
 
-  //       if (!error && data?.roles?.name) {
-  //         setUserRole(data.roles.name.toUpperCase());
-  //       }
-  //     }
-  //   };
+        if (!error && data?.roles?.name) {
+          setUserRole(data.roles.name.toUpperCase());
+        }
+      }
+    };
 
-  //   if (isAuthenticated) {
-  //     fetchRole();
-  //   }
-  // }, [isAuthenticated, user]);
+    if (isAuthenticated) {
+      fetchRole();
+    }
+  }, [isAuthenticated, user]);
 
   const handleDashboardRedirect = () => {
     switch (userRole) {
