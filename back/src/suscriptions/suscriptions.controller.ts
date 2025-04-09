@@ -39,21 +39,6 @@ export class SubscriptionsController {
     async restore(@Param("id", ParseUUIDPipe) id: string) {
         return this.service.restore(id);
     }
-    
-    // Endpoint que maneja la redirección después de un pago exitoso
-    @Get('success')
-    async handleSuccessfulPayment(
-        @Query('session_id') sessionId: string,
-        @Query('transaction_id') transactionId: string,
-    ) {
-        return this.stripeService.verifyPaymentAndCreateSubscription(sessionId, transactionId);
-    }
-        
-    // Endpoint que maneja la redirección después de un pago cancelado
-    @Get('cancel')
-    handleCancelledPayment() {
-        return { success: false, message: 'Pago cancelado' };
-    }
 
     @Get(':id')   
     async findOne(@Param('id') id: string) {
