@@ -1,4 +1,5 @@
 "use client";
+import Image from 'next/image';
 import React, { useState } from 'react';
 
 function Classes() {
@@ -49,7 +50,7 @@ function Classes() {
         {filteredClasses.map((clase) => (
           <div key={clase.id} className="bg-[#ffffff] rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
             <div className="h-48 bg-[#7a7a7a] flex items-center justify-center">
-              <img src={clase.image} alt={`Imagen de ${clase.name}`} className="h-full w-full object-cover" />
+              <Image src={clase.image} alt={`Imagen de ${clase.name}`} className="h-full w-full object-cover" />
             </div>
             <div className="p-6">
               <h3 className="text-xl text-[#5e1914] font-semibold mb-2">{clase.name}</h3>

@@ -10,11 +10,13 @@ interface RoleStats {
 }
 
 interface UserWithRole {
-    role_id: number;
-    roles?: {
-      name?: string;
-    } | [] | null| undefined;
-  }
+  role_id: number;
+  roles?:
+    | {
+        name?: string;
+      }[]
+    | null; // Cambiado a un array de objetos
+}
 
 const Estadisticas = () => {
   const [stats, setStats] = useState<RoleStats>({
@@ -40,8 +42,9 @@ const Estadisticas = () => {
           USER: 0,
         };
 
-        (data as UserWithRole[]).forEach((user) => {
-          const roleName = user.roles?.name?.toUpperCase();
+        (data as UserWithRole[]).forEach(user => {
+          // Asegurarse de que roles no sea null
+          const roleName = user.roles?.[0]?.name?.toUpperCase(); // Acceder al primer elemento del array
           if (roleName && Object.keys(counts).includes(roleName)) {
             counts[roleName as keyof RoleStats]++;
           }
@@ -58,7 +61,8 @@ const Estadisticas = () => {
     fetchRoleCounts();
   }, []);
 
-  if (loading) return <p className="text-center text-lg">Cargando estadísticas...</p>;
+  if (loading)
+    return <p className="text-center text-lg">Cargando estadísticas...</p>;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

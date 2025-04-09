@@ -16,6 +16,7 @@ import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
+import Image from "next/image";
 
 interface UserData {
   name: string;
@@ -129,7 +130,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {roleIcon}
         <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode</h1>
         <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-          <img src={userData.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
+          <Image src={userData.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
           <div>
             <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
             <p className="text-sm text-[#5e1914]">{userData.email}</p>
@@ -168,7 +169,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {roleIcon}
             <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode</h1>
             <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-              <img src={userData.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
+              <Image src={userData.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
               <div>
                 <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
                 <p className="text-sm text-[#5e1914]">{userData.email}</p>

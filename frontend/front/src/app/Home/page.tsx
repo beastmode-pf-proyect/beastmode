@@ -1,10 +1,6 @@
 import React from "react";
-import Image from "next/image";
-import { FaArrowRight } from "react-icons/fa";
-import Carrusel from "@/Components/Carrusel inicio/carrusel";
-import MembershipSection from "@/Components/memberships/memberships";
 import Link from "next/link";
-import ExercisesComp from "@/Components/EjercicioCard/exerciseComp";
+import MembershipSection from "@/Components/memberships/memberships";
 import Ctestimonios from "@/Components/Ctestimonios";
 
 const Home: React.FC = () => {
@@ -33,7 +29,7 @@ const Home: React.FC = () => {
 
       {/* Dashboard rápido */}
       <section className="py-12 px-4">
-        <p>Esto solo aparecera para los NOVATO y PRO</p>
+        <p>Esto solo aparecerá para los NOVATO y PRO</p>
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Tarjeta de último entrenamiento */}
           <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-red-600">
@@ -43,8 +39,7 @@ const Home: React.FC = () => {
             <p className="text-2xl font-bold">{user.lastWorkout}</p>
             <Link
               href="/workouts"
-              className="text-red-600 hover:text-red-700 mt-4 inline-block font-medium"
-            >
+              className="text-red-600 hover:text-red-700 mt-4 inline-block font-medium">
               Ver detalles →
             </Link>
           </div>
@@ -55,8 +50,7 @@ const Home: React.FC = () => {
             <p className="text-2xl font-bold">{user.nextSession}</p>
             <Link
               href="/schedule"
-              className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium"
-            >
+              className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium">
               Ver agenda →
             </Link>
           </div>
@@ -68,12 +62,6 @@ const Home: React.FC = () => {
               <div className="h-full bg-green-500 rounded-full w-3/4"></div>
             </div>
             <p className="text-sm text-gray-600">75% de tu meta mensual</p>
-            {/* <Link
-              href="/progress"
-              className="text-green-600 hover:text-green-700 mt-4 inline-block font-medium"
-            >
-              Ver estadísticas →
-            </Link> */}
           </div>
         </div>
       </section>
@@ -84,8 +72,9 @@ const Home: React.FC = () => {
           <h2 className="text-2xl md:text-3xl font-bold text-red-950 mb-6">
             Tu Entrenamiento de Hoy
           </h2>
-          "Una rutina random o la rutina mas reciente del traineer"
-          {/* <ExerciseCard /> */}
+          <p>
+            &apos;Una rutina random o la rutina más reciente del traineer&apos;
+          </p>
         </div>
       </section>
 
@@ -99,7 +88,6 @@ const Home: React.FC = () => {
           <h2 className="text-2xl md:text-3xl font-bold text-red-950 mb-6">
             Opiniones de la Comunidad
           </h2>
-
           <Ctestimonios />
         </div>
       </section>

@@ -1,7 +1,7 @@
 "use client";
 import { useAuth0 } from "@auth0/auth0-react";
 import React, { useState, useEffect } from "react";
-import { itemNavbar } from "../Navbar/itemNavbar";
+import { itemNavbar } from "./itemNavbar";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "../../../public/img/logo.png";
