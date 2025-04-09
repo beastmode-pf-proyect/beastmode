@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 
+
 const SuccessPage = () => {
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ;
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -17,7 +19,7 @@ const SuccessPage = () => {
       if (!session_id || !transaction_id) return;
 
       try {
-        const response = await fetch("http://localhost:3000/stripe/verify", {
+        const response = await fetch(`${backendUrl}/stripe/verify`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
