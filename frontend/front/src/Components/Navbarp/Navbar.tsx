@@ -35,8 +35,13 @@ export const Navbarp = () => {
           .eq("auth0_id", user.sub)
           .single();
 
-        if (!error && data?.roles?.name) {
-          setUserRole(data.roles.name.toUpperCase());
+        if (
+          !error &&
+          data?.roles &&
+          Array.isArray(data.roles) &&
+          data.roles.length > 0
+        ) {
+          setUserRole(data.roles[0].name.toUpperCase()); // Acceder al primer elemento del array
         }
       }
     };
@@ -56,6 +61,9 @@ export const Navbarp = () => {
         break;
       case "USER":
         router.push("/Dasboard-User");
+        break;
+      default:
+        break;
     }
   };
 
@@ -73,8 +81,8 @@ export const Navbarp = () => {
         scrolled
           ? "bg-red-950/95 shadow-lg backdrop-blur-sm py-2"
           : "bg-red-950/90 py-4"
-      }`}
-    >
+      }`}>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo Section */}
@@ -100,8 +108,7 @@ export const Navbarp = () => {
               <Link
                 key={index}
                 href={item.href}
-                className="relative px-3 py-2 text-gray-100 hover:text-white transition-colors duration-300 group"
-              >
+                className="relative px-3 py-2 text-gray-100 hover:text-white transition-colors duration-300 group">
                 <span>{item.label}</span>
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gray-100 group-hover:w-full transition-all duration-300" />
               </Link>
@@ -113,14 +120,12 @@ export const Navbarp = () => {
               <div className="flex items-center space-x-4">
                 <button
                   onClick={handleDashboardRedirect}
-                  className="px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-colors duration-300 shadow-lg shadow-red-900/20 hover:shadow-red-900/40"
-                >
+                  className="px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-colors duration-300 shadow-lg shadow-red-900/20 hover:shadow-red-900/40">
                   Dashboard
                 </button>
                 <button
                   onClick={() => logout()}
-                  className="px-4 py-2 border border-red-700 text-white rounded-lg hover:bg-red-700/20 transition-all duration-300"
-                >
+                  className="px-4 py-2 border border-red-700 text-white rounded-lg hover:bg-red-700/20 transition-all duration-300">
                   Logout
                 </button>
               </div>
@@ -134,8 +139,7 @@ export const Navbarp = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 rounded-lg text-gray-100 hover:bg-red-900/50 focus:outline-none transition-colors duration-300"
-          >
+            className="lg:hidden p-2 rounded-lg text-gray-100 hover:bg-red-900/50 focus:outline-none transition-colors duration-300">
             <div className="w-6 h-0.5 bg-current mb-1.5" />
             <div className="w-6 h-0.5 bg-current mb-1.5" />
             <div className="w-6 h-0.5 bg-current" />
@@ -146,16 +150,15 @@ export const Navbarp = () => {
         <div
           className={`lg:hidden transition-all duration-300 ${
             isOpen ? "max-h-96" : "max-h-0 overflow-hidden"
-          }`}
-        >
+          }`}>
+
           <div className="pt-2 pb-4 space-y-2">
             {itemNavbar.map((item, index) => (
               <Link
                 key={index}
                 href={item.href}
                 className="block px-4 py-2 text-gray-100 hover:bg-red-900/50 rounded-lg transition-colors duration-300"
-                onClick={() => setIsOpen(false)}
-              >
+                onClick={() => setIsOpen(false)}>
                 {item.label}
               </Link>
             ))}
@@ -168,8 +171,7 @@ export const Navbarp = () => {
                       handleDashboardRedirect();
                       setIsOpen(false);
                     }}
-                    className="block w-full px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-colors duration-300 text-center"
-                  >
+                    className="block w-full px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-colors duration-300 text-center">
                     Dashboard
                   </button>
                   <button
@@ -177,8 +179,7 @@ export const Navbarp = () => {
                       logout();
                       setIsOpen(false);
                     }}
-                    className="block w-full px-4 py-2 border border-red-700 text-white rounded-lg hover:bg-red-700/20 transition-all duration-300 text-center"
-                  >
+                    className="block w-full px-4 py-2 border border-red-700 text-white rounded-lg hover:bg-red-700/20 transition-all duration-300 text-center">
                     Logout
                   </button>
                 </div>
