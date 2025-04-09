@@ -18,6 +18,6 @@ export class updateUserDto {
     })
     @IsNotEmpty()
     @IsString()
-    @Length(8,100)
-    imgUrl: string
+    @Length(8,2000)
+    picture: string
 }
