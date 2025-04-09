@@ -66,50 +66,11 @@ export class StripeService {
     // Por simplicidad, este ejemplo no implementa el almacenamiento actual
   }
 
-  // Método que se llamará desde el controlador cuando el usuario sea redirigido a la URL de éxito
-  // async verifyPaymentAndCreateSubscription(
-  //   sessionId: string,
-  //   transactionId: string,
-  // ) {
-  //   console.log(sessionId);
-  //   console.log(transactionId);
-  //   try {
-  //     // Verificar el estado de la sesión de pago
-  //     const session = await this.stripe.checkout.sessions.retrieve(sessionId);
-
-  //     // Verificar que el pago fue exitoso
-  //     if (session.payment_status === 'paid') {
-  //       // Extraer los IDs del transactionId
-  //       const [userId, membershipId] = transactionId.split('_', 2);
-
-  //       // Crear la suscripción en la base de datos
-  //       await this.subscriptionsService.create({
-  //         userId: userId,
-  //         membershipPlanId: membershipId,
-  //         startDate: new Date(),
-  //         endDate: new Date(new Date().setDate(new Date().getDate() + 30)),
-  //         isPago: true,
-  //         isActive: true,
-  //       });
-
-  //       return { success: true, message: 'Suscripción activada correctamente' };
-  //     }
-
-  //     return {
-  //       success: false,
-  //       message: 'El pago no se ha completado correctamente',
-  //     };
-  //   } catch (error) {
-  //     throw new BadRequestException('Error al verificar el pago');
-  //   }
-  // }
-
   async verifyPaymentAndCreateSubscription(
     sessionId: string,
     transactionId: string,
   ) {
-    console.log('🔍 Verificando sesión de Stripe:', sessionId);
-    console.log('🔍 Transaction ID recibido:', transactionId);
+
 
     // Validar parámetros
     if (!sessionId || !transactionId) {
@@ -119,8 +80,6 @@ export class StripeService {
     try {
       // Recuperar sesión de Stripe
       const session = await this.stripe.checkout.sessions.retrieve(sessionId);
-
-      console.log('📦 Sesión recuperada:', session);
 
       if (session.payment_status === 'paid') {
         const [userId, membershipId] = transactionId.split('_', 2);
@@ -138,8 +97,6 @@ export class StripeService {
           isPago: true,
           isActive: true,
         });
-
-        console.log('✅ Suscripción creada:', subscription);
 
         return {
           success: true,
