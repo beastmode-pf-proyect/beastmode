@@ -3,9 +3,17 @@ import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateSubscriptionDto {
+    @ApiProperty({
+        description: 'Id del usuario',
+        example: '7da788a8-c2a6-4fb3-a4be-8992e142ab64'
+    })
     @IsString()
     userId: string;
 
+    @ApiProperty({
+        description: 'Id de la membresia',
+        example: '3eeebca9-bfbc-47eb-b8d5-c15b955dbb92'
+    })
     @IsString()
     membershipPlanId: string;
 

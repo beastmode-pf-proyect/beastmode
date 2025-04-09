@@ -21,7 +21,7 @@ export class UsersRepository{
   
     async getById(id : string) {
       const user = await this.usersRepository.findOne({
-        where:{ id }
+        where:{ auth0_id : id }
       });
     
       if(!user){

@@ -59,6 +59,7 @@ export class WorkoutRoutineRepository{
         }
 
         findingWorkoutRoutine.isActive = false
+        await this.workoutRuotineRepository.save(findingWorkoutRoutine) ///Guardar el cambio
 
         return `Rutina ${findingWorkoutRoutine.name} desactivada exitosamente`
     }
