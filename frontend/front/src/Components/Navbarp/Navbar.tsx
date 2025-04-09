@@ -67,6 +67,14 @@ export const Navbarp = () => {
     }
   };
 
+  const filteredNavItems = itemNavbar.filter((item) => {
+    // Mostrar siempre todos los items excepto "Inicio" si no está autenticado
+    if (item.label === "Inicio") {
+      return isAuthenticated;
+    }
+    return true;
+  });
+
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-500 ${
@@ -74,6 +82,7 @@ export const Navbarp = () => {
           ? "bg-red-950/95 shadow-lg backdrop-blur-sm py-2"
           : "bg-red-950/90 py-4"
       }`}>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo Section */}
@@ -95,7 +104,7 @@ export const Navbarp = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex lg:items-center lg:space-x-8">
-            {itemNavbar.map((item, index) => (
+            {filteredNavItems.map((item, index) => (
               <Link
                 key={index}
                 href={item.href}
@@ -142,6 +151,7 @@ export const Navbarp = () => {
           className={`lg:hidden transition-all duration-300 ${
             isOpen ? "max-h-96" : "max-h-0 overflow-hidden"
           }`}>
+
           <div className="pt-2 pb-4 space-y-2">
             {itemNavbar.map((item, index) => (
               <Link

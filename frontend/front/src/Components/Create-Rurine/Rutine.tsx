@@ -12,22 +12,24 @@ interface User {
 }
 
 const UserTable: React.FC = () => {
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/users');
+        const response = await axios.get(`${backendUrl}/users`);
         setUsers(response.data);
         setLoading(false);
       } catch (err) {
-        setError('Error al cargar los usuarios');
+        setError("Error al cargar los usuarios");
         setLoading(false);
-        console.error('Error:', err);
+        console.error("Error:", err);
       }
     };
 
@@ -42,28 +44,36 @@ const UserTable: React.FC = () => {
   const handleSave = async (updatedUser: Partial<User>) => {
     try {
       if (selectedUser) {
-        const response = await axios.put(`http://localhost:3000/users/${selectedUser.id}`, updatedUser);
-        setUsers(users.map(user => 
-          user.id === selectedUser.id ? { ...user, ...response.data } : user
-        ));
+        const response = await axios.put(
+          `http://localhost:3000/users/${selectedUser.id}`,
+          updatedUser
+        );
+        setUsers(
+          users.map(user =>
+            user.id === selectedUser.id ? { ...user, ...response.data } : user
+          )
+        );
       }
     } catch (err) {
-      console.error('Error al actualizar usuario:', err);
+      console.error("Error al actualizar usuario:", err);
     }
   };
 
   const handleUpdateTrainer = async (userId: string) => {
     try {
-      await axios.put(`http://localhost:3000/users/Admin/${userId}`);
-      setUsers(users.map(user => 
-        user.id === userId ? { ...user, isTrainer: !user.isTrainer } : user
-      ));
+      await axios.put(`${backendUrl}/users/Admin/${userId}`);
+      setUsers(
+        users.map(user =>
+          user.id === userId ? { ...user, isTrainer: !user.isTrainer } : user
+        )
+      );
     } catch (err) {
-      console.error('Error al actualizar estado de entrenador:', err);
+      console.error("Error al actualizar estado de entrenador:", err);
     }
   };
 
-  if (loading) return <div className="text-center p-4">Cargando usuarios...</div>;
+  if (loading)
+    return <div className="text-center p-4">Cargando usuarios...</div>;
   if (error) return <div className="text-red-500 text-center p-4">{error}</div>;
 
   return (
@@ -91,10 +101,12 @@ const UserTable: React.FC = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {users.map((user) => (
+            {users.map(user => (
               <tr key={user.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                  <div className="text-sm font-medium text-gray-900">
+                    {user.name}
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-500">{user.email}</div>
@@ -108,19 +120,17 @@ const UserTable: React.FC = () => {
                   <button
                     onClick={() => handleUpdateTrainer(user.id)}
                     className={`px-2 py-1 rounded ${
-                      user.isTrainer 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-gray-100 text-gray-800'
-                    }`}
-                  >
-                    {user.isTrainer ? 'Sí' : 'No'}
+                      user.isTrainer
+                        ? "bg-green-100 text-green-800"
+                        : "bg-gray-100 text-gray-800"
+                    }`}>
+                    {user.isTrainer ? "Sí" : "No"}
                   </button>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <button
                     onClick={() => handleEdit(user)}
-                    className="text-indigo-600 hover:text-indigo-900 mr-4"
-                  >
+                    className="text-indigo-600 hover:text-indigo-900 mr-4">
                     Editar
                   </button>
                 </td>
