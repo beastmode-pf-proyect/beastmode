@@ -1,56 +1,45 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
 import { useSessionUser } from '@/app/SessionUserContext';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function UserWorkoutRoutines() {
   const { user, loading: userLoading } = useSessionUser();
 
-interface Routine {
-  routine_id: number;
-  workout_routine: {
-    name: string;
-    description: string;
-    imageUrl?: string;
-  };
-}
-
-interface RoutineData {
-  routine_id: number;
-  workout_routine: {
-    name: string;
-    description: string;
-    image_url?: string; // Asegúrate de que el nombre de la propiedad coincida con el de la base de datos
-  };
-}
-
-export default function UserWorkoutRoutines() {
-  const { user, loading: userLoading } = useSessionUser();
+  interface Routine {
+    routine_id: number;
+    workout_routine: {
+      name: string;
+      description: string;
+      imageUrl?: string;
+    };
+  }
 
   const [routines, setRoutines] = useState<Routine[]>([]);
+  const [filteredRoutines, setFilteredRoutines] = useState<Routine[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     const fetchRoutines = async () => {
-      if (!user?.email || userLoading) return;
+      if (!user || userLoading) return;
 
       setLoading(true);
 
-      const { data: userRow, error: userError } = await supabase
+      const { data: userData, error: userError } = await supabase
         .from('users2')
         .select('id')
-        .eq('email', user.email)
+        .eq('auth0_id', user.id)
         .single();
 
-      if (userError || !userRow) {
-        console.error('Usuario no encontrado en Supabase:', userError);
+      if (userError || !userData) {
+        console.error('Error buscando en users2:', userError);
         setLoading(false);
         return;
       }
 
-      const supabaseUserId = userRow.id;
+      const userId = userData.id;
 
       const { data: routineData, error: routineError } = await supabase
         .from('user_workout_routines')
@@ -79,24 +68,17 @@ export default function UserWorkoutRoutines() {
     fetchRoutines();
   }, [user, userLoading]);
 
-  if (userLoading) {
-    return <p className="p-4">Cargando sesión...</p>;
-  }
-
-  if (!user) {
-    return (
-      <div className="p-4 text-center">
-        <h2 className="text-lg font-semibold mb-2">Acceso requerido</h2>
-        <p className="mb-4">Debes iniciar sesión para ver tus rutinas de entrenamiento.</p>
-        <button
-          onClick={() => loginWithRedirect()}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-        >
-          Iniciar sesión
-        </button>
-      </div>
+  useEffect(() => {
+    const lowerSearch = search.toLowerCase();
+    const filtered = routines.filter((item) =>
+      item.workout_routine.name.toLowerCase().includes(lowerSearch)
     );
-  }
+    setFilteredRoutines(filtered);
+  }, [search, routines]);
+
+  if (userLoading || loading) return <p>Cargando...</p>;
+  if (!user) return <p>No estás logueado.</p>;
+  if (routines.length === 0) return <p>No tienes rutinas asignadas.</p>;
 
   return (
     <div className="p-4 max-w-5xl mx-auto">

@@ -1,13 +1,16 @@
+import UserWorkoutRoutines from '@/Components/Mis rutinas/Misrutinas';
 
-import MyRoutine from '@/Components/Mis rutinas/Misrutinas'
 
-import React from 'react'
 
-function page() {
+import React from 'react';
+
+function Page() {
   return (
-    <MyRoutine/>
-    
-  )
+    <div className="space-y-8">
+      <UserWorkoutRoutines />
+      
+    </div>
+  );
 }
 
-export default page
+export default Page;

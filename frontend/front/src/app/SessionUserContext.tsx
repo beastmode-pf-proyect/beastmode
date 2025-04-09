@@ -10,6 +10,7 @@ interface SessionUser {
   picture?: string;
 }
 
+
 interface SessionUserContextType {
   user: SessionUser | null;
   loading: boolean;
@@ -19,6 +20,7 @@ const SessionUserContext = createContext<SessionUserContextType>({
   user: null,
   loading: true,
 });
+
 
 export const SessionUserProvider = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading, user } = useAuth0();
@@ -35,10 +37,10 @@ export const SessionUserProvider = ({ children }: { children: React.ReactNode })
           picture: user.picture,
         };
         setSessionUser(userData);
-        localStorage.setItem('sessionUser', JSON.stringify(userData)); // opcional
+        sessionStorage.setItem('sessionUser', JSON.stringify(userData)); // opcional
       } else {
         setSessionUser(null);
-        localStorage.removeItem('sessionUser'); // opcional
+        sessionStorage.removeItem('sessionUser'); // opcional
       }
 
       setLoading(false);

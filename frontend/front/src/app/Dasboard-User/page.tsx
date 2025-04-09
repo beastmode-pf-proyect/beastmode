@@ -3,7 +3,7 @@ import React from 'react'
 
 function page() {
   return (
-    <h1>Hola</h1>
+    <h1>Bienvenidos al Tu panel de Usuario</h1>
   )
 }
 

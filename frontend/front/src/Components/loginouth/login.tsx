@@ -23,7 +23,7 @@ const LoginForm = () => {
 
       // Verificar si ya existe el usuario
       const { data: existingUser } = await supabase
-        .from("users2")
+        .from("users")
         .select("id")
         .eq("auth0_id", auth0User.sub)
         .single();
@@ -32,7 +32,7 @@ const LoginForm = () => {
 
       // Insertar o actualizar usuario
       const { data, error: supabaseError } = await supabase
-        .from("users2")
+        .from("users")
         .upsert(
           {
             auth0_id: auth0User.sub,
