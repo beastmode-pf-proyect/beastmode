@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
@@ -18,52 +18,55 @@ const LoginFormProvider = () => {
     picture?: string;
   }
 
-  const saveUserToSupabase = async (auth0User: Auth0User) => {
-    if (!auth0User.sub || !auth0User.email) {
-      throw new Error("Datos de usuario incompletos");
-    }
+  // Función para guardar el usuario en Supabase
+  const saveUserToSupabase = useCallback(
+    async (auth0User: Auth0User) => {
+      if (!auth0User.sub || !auth0User.email) {
+        throw new Error("Datos de usuario incompletos");
+      }
 
-    // Verificar si el usuario está bloqueado
-    const { data, error: fetchError } = await supabase
-      .from("users2")
-      .select("is_blocked")
-      .eq("auth0_id", auth0User.sub)
-      .single();
+      // Verificar si el usuario está bloqueado
+      const { data, error: fetchError } = await supabase
+        .from("users2")
+        .select("is_blocked")
+        .eq("auth0_id", auth0User.sub)
+        .single();
 
-    if (fetchError && fetchError.code !== "PGRST116") {
-      throw fetchError;
-    }
+      if (fetchError && fetchError.code !== "PGRST116") {
+        throw fetchError;
+      }
 
-    if (data?.is_blocked) {
-      Swal.fire({
-        icon: "error",
-        title: "Usuario bloqueado",
-        text: "Tu cuenta ha sido bloqueada. Por favor, comunícate con el administrador.",
-        confirmButtonText: "Entendido",
-      });
-      // Opcional: cerrar sesión automáticamente
-      // Esperamos a que el modal se cierre y luego deslogueamos
-      setTimeout(() => {
-        logout({ logoutParams: { returnTo: window.location.origin } });
-      }, 300);
+      if (data?.is_blocked) {
+        Swal.fire({
+          icon: "error",
+          title: "Usuario bloqueado",
+          text: "Tu cuenta ha sido bloqueada. Por favor, comunícate con el administrador.",
+          confirmButtonText: "Entendido",
+        });
+        // Opcional: cerrar sesión automáticamente
+        setTimeout(() => {
+          logout({ logoutParams: { returnTo: window.location.origin } });
+        }, 300);
 
-      throw new Error("Usuario bloqueado");
-    }
+        throw new Error("Usuario bloqueado");
+      }
 
-    // Guardar o actualizar usuario
-    const { error: supabaseError } = await supabase.from("users2").upsert(
-      {
-        auth0_id: auth0User.sub,
-        email: auth0User.email,
-        name: auth0User.name || null,
-        picture: auth0User.picture || null,
-        last_login: new Date().toISOString(),
-      },
-      { onConflict: "auth0_id" }
-    );
+      // Guardar o actualizar usuario
+      const { error: supabaseError } = await supabase.from("users2").upsert(
+        {
+          auth0_id: auth0User.sub,
+          email: auth0User.email,
+          name: auth0User.name || null,
+          picture: auth0User.picture || null,
+          last_login: new Date().toISOString(),
+        },
+        { onConflict: "auth0_id" }
+      );
 
-    if (supabaseError) throw supabaseError;
-  };
+      if (supabaseError) throw supabaseError;
+    },
+    [logout]
+  ); // Agregar logout a las dependencias
 
   useEffect(() => {
     const handleAuth = async () => {
@@ -119,7 +122,7 @@ const LoginFormProvider = () => {
     };
 
     handleAuth();
-  }, [isAuthenticated, user, router,]);
+  }, [isAuthenticated, user, saveUserToSupabase, router]); 
 
   if (isLoading) return null;
   if (error) return null;

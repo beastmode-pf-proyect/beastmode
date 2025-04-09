@@ -52,7 +52,7 @@ const SuccessPage = () => {
     };
 
     verifyPayment();
-  }, [session_id, transaction_id]);
+  }, [session_id, transaction_id, router, backendUrl]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">

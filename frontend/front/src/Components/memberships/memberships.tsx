@@ -13,7 +13,7 @@ export type Plan = {
 };
 
 const MembershipSection = () => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
@@ -39,7 +39,7 @@ const MembershipSection = () => {
       }
     };
     fetchPlans();
-  }, []);
+  }, );
 
   const handleNavigation = (id: string) => {
     const plan = plans.find(p => p.id === id);
