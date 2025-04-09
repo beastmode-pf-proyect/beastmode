@@ -12,7 +12,9 @@ import { supabase } from "@/lib/supabaseClient";
 export const Navbarp = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [userRole, setUserRole] = useState<"ADMIN" | "TRAINER" | "USER" | null>(null);
+  const [userRole, setUserRole] = useState<"ADMIN" | "TRAINER" | "USER" | null>(
+    null
+  );
   const { isAuthenticated, logout, user } = useAuth0();
   const router = useRouter();
 
@@ -24,25 +26,25 @@ export const Navbarp = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    const fetchRole = async () => {
-      if (user?.sub) {
-        const { data, error } = await supabase
-          .from("users2")
-          .select("roles(name)")
-          .eq("auth0_id", user.sub)
-          .single();
+  // useEffect(() => {
+  //   const fetchRole = async () => {
+  //     if (user?.sub) {
+  //       const { data, error } = await supabase
+  //         .from("users2")
+  //         .select("roles(name)")
+  //         .eq("auth0_id", user.sub)
+  //         .single();
 
-        if (!error && data?.roles?.name) {
-          setUserRole(data.roles.name.toUpperCase());
-        }
-      }
-    };
+  //       if (!error && data?.roles?.name) {
+  //         setUserRole(data.roles.name.toUpperCase());
+  //       }
+  //     }
+  //   };
 
-    if (isAuthenticated) {
-      fetchRole();
-    }
-  }, [isAuthenticated, user]);
+  //   if (isAuthenticated) {
+  //     fetchRole();
+  //   }
+  // }, [isAuthenticated, user]);
 
   const handleDashboardRedirect = () => {
     switch (userRole) {
@@ -54,26 +56,35 @@ export const Navbarp = () => {
         break;
       case "USER":
         router.push("/Dasboard-User");
-        
     }
   };
 
+  const filteredNavItems = itemNavbar.filter((item) => {
+    // Mostrar siempre todos los items excepto "Inicio" si no está autenticado
+    if (item.label === "Inicio") {
+      return isAuthenticated;
+    }
+    return true;
+  });
+
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-500 ${
-      scrolled 
-        ? "bg-red-950/95 shadow-lg backdrop-blur-sm py-2" 
-        : "bg-red-950/90 py-4"
-    }`}>
+    <nav
+      className={`fixed w-full z-50 transition-all duration-500 ${
+        scrolled
+          ? "bg-red-950/95 shadow-lg backdrop-blur-sm py-2"
+          : "bg-red-950/90 py-4"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo Section */}
           <Link href="/" className="flex items-center space-x-3 group">
             <div className="relative">
-              <Image 
-                src={logo} 
-                alt="Logo" 
-                width={50} 
-                height={50} 
+              <Image
+                src={logo}
+                alt="Logo"
+                width={50}
+                height={50}
                 className="relative z-10 transform transition-transform duration-300 group-hover:rotate-6"
               />
               <div className="absolute inset-0 bg-red-600 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity duration-300" />
@@ -85,7 +96,7 @@ export const Navbarp = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex lg:items-center lg:space-x-8">
-            {itemNavbar.map((item, index) => (
+            {filteredNavItems.map((item, index) => (
               <Link
                 key={index}
                 href={item.href}
@@ -115,7 +126,7 @@ export const Navbarp = () => {
               </div>
             ) : (
               <div className="flex items-center space-x-4">
-                <LoginForm/>
+                <LoginForm />
               </div>
             )}
           </div>
@@ -132,7 +143,11 @@ export const Navbarp = () => {
         </div>
 
         {/* Mobile Menu */}
-        <div className={`lg:hidden transition-all duration-300 ${isOpen ? "max-h-96" : "max-h-0 overflow-hidden"}`}>
+        <div
+          className={`lg:hidden transition-all duration-300 ${
+            isOpen ? "max-h-96" : "max-h-0 overflow-hidden"
+          }`}
+        >
           <div className="pt-2 pb-4 space-y-2">
             {itemNavbar.map((item, index) => (
               <Link
@@ -169,7 +184,7 @@ export const Navbarp = () => {
                 </div>
               ) : (
                 <div className="space-y-2 pt-2">
-                  <LoginForm/>
+                  <LoginForm />
                 </div>
               )}
             </div>
