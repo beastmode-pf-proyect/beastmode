@@ -26,7 +26,6 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState<number | null>(null);
 
-  // Definición de fetchData
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -44,8 +43,8 @@ export default function AdminPanel() {
   };
 
   useEffect(() => {
-    fetchData(); 
-  }, );
+    fetchData();
+  }, []);
 
   async function fetchUsers() {
     const { data, error } = await supabase
@@ -167,14 +166,13 @@ export default function AdminPanel() {
           Panel de Administración
         </h1>
         <button
-          onClick={fetchData} // Llama a fetchData cuando se presiona el botón
+          onClick={fetchData}
           disabled={loading}
           className="px-4 py-2 bg-[#5e1914] text-white rounded hover:bg-[#7a2b24] disabled:opacity-50 text-sm">
           {loading ? "Cargando..." : "Actualizar"}
         </button>
       </div>
 
-      {/* Tabla en escritorio */}
       <div className="overflow-x-auto shadow border rounded-xl bg-white w-full hidden md:block">
         <table className="min-w-[800px] w-full divide-y divide-gray-200">
           <thead className="bg-[#5e1914] text-white">
@@ -212,14 +210,15 @@ export default function AdminPanel() {
                 <tr key={user.id}>
                   <td className="px-2 py-3">
                     <div className="flex items-center gap-3">
-                      <Image
-                        src={
-                          user.picture ||
-                          "https://www.gravatar.com/avatar/?d=mp"
-                        }
-                        alt={`Foto de ${user.name || "usuario"}`}
-                        className="h-10 w-10 rounded-full object-cover"
-                      />
+                    <div className="relative w-10 h-10">
+                        <Image
+                          src={user.picture || "https://www.gravatar.com/avatar/?d=mp"}
+                          alt={`Foto de ${user.name || "usuario"}`}
+                          fill
+                          className="rounded-full object-cover"
+                          sizes="40px"
+                        />
+                      </div>
                       <div>
                         <p className="text-sm font-medium">
                           {user.name || "Sin Nombre"}
@@ -289,7 +288,6 @@ export default function AdminPanel() {
         </table>
       </div>
 
-      {/* Cards en móvil */}
       <div className="block md:hidden">
         {users.length === 0 ? (
           <p className="text-center text-gray-500 text-sm mt-4">
@@ -307,7 +305,9 @@ export default function AdminPanel() {
                       user.picture || "https://www.gravatar.com/avatar/?d=mp"
                     }
                     alt={`Foto de ${user.name || "usuario"}`}
-                    className="h-10 w-10 rounded-full object-cover"
+                    width={40}
+                    height={40}
+                    className="rounded-full object-cover"
                   />
                   <div>
                     <p className="text-sm font-medium">

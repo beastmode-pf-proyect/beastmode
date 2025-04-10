@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   /** @type {import('next').NextConfig} */
 
   images: {
-    domains: ['s.gravatar.com', 'lh3.googleusercontent.com'],
+    domains: ['www.gravatar.com','s.gravatar.com', 'lh3.googleusercontent.com','res.cloudinary.com', 'encrypted-tbn0.gstatic.com'],
     remotePatterns: [
       {
         protocol: "https",
