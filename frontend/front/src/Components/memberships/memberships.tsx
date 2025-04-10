@@ -13,32 +13,49 @@ export type Plan = {
 };
 
 const MembershipSection = () => {
-
   const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL; 
 
   useEffect(() => {
-    const fetchPlans = async () => {
+    const obtenerPlanes = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/memberships`, {
+        setIsLoading(true);
+        setError(null);
+        const respuesta = await fetch(`${backendUrl}/memberships`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
         });
-        const data = await response.json();
-        if (Array.isArray(data)) {
-          setPlans(data);
+
+        if (!respuesta.ok) {
+          throw new Error(`Error HTTP: ${respuesta.status}`);
+        }
+
+        const datos = await respuesta.json();
+        console.log("Respuesta de la API:", datos);
+
+        if (Array.isArray(datos)) {
+          setPlans(datos);
+        } else if (datos.plans && Array.isArray(datos.plans)) {
+          setPlans(datos.plans);
         } else {
-          console.error("Unexpected data format from API:", data);
+          setError("Formato de datos inesperado");
+          console.error("Formato de datos inesperado:", datos);
         }
       } catch (error) {
-        console.error("Error fetching plans:", error);
+        setError("Error al cargar los planes");
+        console.error("Error al obtener los planes:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchPlans();
-  }, );
+    obtenerPlanes();
+  }, [backendUrl]);
 
   const handleNavigation = (id: string) => {
     const plan = plans.find(p => p.id === id);
@@ -52,6 +69,22 @@ const MembershipSection = () => {
   const handleCloseModal = () => {
     setSelectedPlan(null);
   };
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-64 flex items-center justify-center">
+        <p className="text-gray-600">Cargando planes...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full h-64 flex items-center justify-center">
+        <p className="text-red-600">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className={`w-full px-4 py-12 sm:py-20 lg:px-8 xl:px-20`}>
