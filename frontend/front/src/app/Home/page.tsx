@@ -6,6 +6,7 @@ import MembershipSection from "@/Components/memberships/memberships";
 import Link from "next/link";
 import ExercisesComp from "@/Components/EjercicioCard/exerciseComp";
 import Ctestimonios from "@/Components/Ctestimonios";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const Home: React.FC = () => {
   // Datos del usuario (simulado)
