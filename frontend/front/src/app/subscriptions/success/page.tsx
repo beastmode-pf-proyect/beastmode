@@ -55,9 +55,9 @@ const SuccessPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center">
       {verifying ? (
-        <p className="text-lg font-semibold">Verificando tu pago...</p>
+        <p className="text-lg font-semibold">Verificando tu pago.....</p>
       ) : (
-        <p className="text-lg font-semibold">Redirigiendo...</p>
+        <p className="text-lg font-semibold">Redirigiendo.....</p>
       )}
     </div>
   );
