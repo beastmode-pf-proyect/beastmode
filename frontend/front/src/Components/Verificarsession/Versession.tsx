@@ -11,5 +11,5 @@ export default function CheckSession() {
     check()
   }, [])
 
-  return <p>Revisando sesión en consola...</p>
+  return <p>Revisando sesión en consola..</p>
 }
