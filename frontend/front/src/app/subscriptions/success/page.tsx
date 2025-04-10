@@ -1,16 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 
-const SuccessPage = () => {
+interface SuccessPageProps {
+  session_id: string | null;
+  transaction_id: string | null;
+}
+
+const SuccessPage = ({ session_id, transaction_id }: SuccessPageProps) => {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const session_id = searchParams.get("session_id");
-  const transaction_id = searchParams.get("transaction_id");
   const [verifying, setVerifying] = useState(true);
 
   useEffect(() => {
@@ -64,4 +65,16 @@ const SuccessPage = () => {
   );
 };
 
-export default SuccessPage;
+const Page = () => {
+  const searchParams = useSearchParams();
+  const session_id: string | null = searchParams.get("session_id");
+  const transaction_id: string | null = searchParams.get("transaction_id");
+
+  return (
+    <Suspense fallback={<div>Cargando...</div>}>
+      <SuccessPage session_id={session_id} transaction_id={transaction_id} />
+    </Suspense>
+  );
+};
+
+export default Page;
