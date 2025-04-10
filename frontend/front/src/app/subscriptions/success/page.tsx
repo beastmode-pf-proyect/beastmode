@@ -1,15 +1,13 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 
-interface SuccessPageProps {
-  session_id: string | null;
-  transaction_id: string | null;
-}
-
-const SuccessPage = ({ session_id, transaction_id }: SuccessPageProps) => {
+const SuccessPage = () => {
+  const searchParams = useSearchParams();
+  const session_id: string | null = searchParams.get("session_id");
+  const transaction_id: string | null = searchParams.get("transaction_id");
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   const router = useRouter();
   const [verifying, setVerifying] = useState(true);
@@ -57,24 +55,12 @@ const SuccessPage = ({ session_id, transaction_id }: SuccessPageProps) => {
   return (
     <div className="min-h-screen flex items-center justify-center">
       {verifying ? (
-        <p className="text-lg font-semibold">Verificando tu pago...</p>
+        <p className="text-lg font-semibold">Verificando tu pago.....</p>
       ) : (
-        <p className="text-lg font-semibold">Redirigiendo...</p>
+        <p className="text-lg font-semibold">Redirigiendo.....</p>
       )}
     </div>
   );
 };
 
-const Page = () => {
-  const searchParams = useSearchParams();
-  const session_id: string | null = searchParams.get("session_id");
-  const transaction_id: string | null = searchParams.get("transaction_id");
-
-  return (
-    <Suspense fallback={<div>Cargando...</div>}>
-      <SuccessPage session_id={session_id} transaction_id={transaction_id} />
-    </Suspense>
-  );
-};
-
-export default Page;
+export default SuccessPage;
