@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 
-
 const SuccessPage = () => {
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ;
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -34,7 +33,7 @@ const SuccessPage = () => {
 
         if (response.ok) {
           Swal.fire("Éxito", data.message, "success").then(() => {
-            router.push("/"); 
+            router.push("/");
           });
         } else {
           Swal.fire(
