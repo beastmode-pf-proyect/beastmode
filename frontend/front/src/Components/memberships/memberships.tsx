@@ -13,7 +13,6 @@ export type Plan = {
 };
 
 const MembershipSection = () => {
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
@@ -22,7 +21,7 @@ const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   useEffect(() => {
     const fetchPlans = async () => {
       try {
-        const response = await fetch(`${backendUrl}/memberships`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/memberships`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
