@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React from "react";
 import Image from "next/image";
 import styles from "./not-found.module.css";
 import box from "../../public/img/box.gif";
