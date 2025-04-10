@@ -4,14 +4,12 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 
-
 const SuccessPage = () => {
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL ;
-  const router = useRouter();
   const searchParams = useSearchParams();
-
-  const session_id = searchParams.get("session_id");
-  const transaction_id = searchParams.get("transaction_id");
+  const session_id: string | null = searchParams.get("session_id");
+  const transaction_id: string | null = searchParams.get("transaction_id");
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  const router = useRouter();
   const [verifying, setVerifying] = useState(true);
 
   useEffect(() => {
@@ -34,7 +32,7 @@ const SuccessPage = () => {
 
         if (response.ok) {
           Swal.fire("Éxito", data.message, "success").then(() => {
-            router.push("/"); 
+            router.push("/");
           });
         } else {
           Swal.fire(
@@ -57,9 +55,9 @@ const SuccessPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center">
       {verifying ? (
-        <p className="text-lg font-semibold">Verificando tu pago...</p>
+        <p className="text-lg font-semibold">Verificando tu pago.....</p>
       ) : (
-        <p className="text-lg font-semibold">Redirigiendo...</p>
+        <p className="text-lg font-semibold">Redirigiendo.....</p>
       )}
     </div>
   );

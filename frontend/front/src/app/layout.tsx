@@ -6,6 +6,7 @@ import Header from "@/Views/Header";
 import LoginFormProvider from "@/Components/loginouth/LoginProvider";
 import StripeProvider from "@/Components/Suscripcion/page";
 import { SessionUserProvider } from "./SessionUserContext";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "BeastMode",
@@ -18,15 +19,12 @@ export default function RootLayout({
   return (
     <AuthProvider>
       <SessionUserProvider>
-
-      <StripeProvider>
-      <html lang="en">
-        <body className="flex flex-col min-h-screen">
-          <Header />
-
-
+        <StripeProvider>
+          <html lang="en">
+            <body className="flex flex-col min-h-screen">
+              <Header />
               <LoginFormProvider />
-              {children}
+              <Suspense fallback={<div>Cargando...</div>}>{children}</Suspense>
               <Footer />
             </body>
           </html>
