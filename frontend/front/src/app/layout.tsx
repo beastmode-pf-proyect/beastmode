@@ -24,7 +24,7 @@ export default function RootLayout({
             <body className="flex flex-col min-h-screen">
               <Header />
               <LoginFormProvider />
-              <Suspense fallback={<div>Cargando...</div>}>{children}</Suspense>
+              <Suspense fallback={<div>Cargando....</div>}>{children}</Suspense>
               <Footer />
             </body>
           </html>
