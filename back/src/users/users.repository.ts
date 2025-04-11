@@ -135,7 +135,12 @@ export class UsersRepository{
           return 'Usuario no encontrada'
       }
 
+      if(findingUser.is_blocked === true){
+          return 'El usuario ya esta desactivado'
+      }
+
       findingUser.is_blocked = true
+      await this.usersRepository.save(findingUser)
 
       return `Usuario ${findingUser.name} desactivado exitosamente`
   }
@@ -150,7 +155,12 @@ export class UsersRepository{
           return 'Usuario no encontrada'
       }
 
+      if(findingUser.is_blocked === false){
+          return 'El usuario ya esta activado'
+      }
+
       findingUser.is_blocked = false
+      await this.usersRepository.save(findingUser)
 
       return `Usuario ${findingUser.name} activado exitosamente`
   }
