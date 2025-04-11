@@ -31,8 +31,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
-      'http://localhost:3001',
-      'https://beastmode-diph-9ge126aa0-beastmodes-projects-d14b9acd.vercel.app',
+    "  *"
     ], ///PUERTO DE LA APP DE FRONT///// AJUSTAR PARA DEPLOY
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
