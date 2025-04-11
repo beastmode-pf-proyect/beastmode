@@ -1,374 +1,256 @@
 "use client";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import Swal from "sweetalert2";
-import Image from "next/image";
-
-interface User {
-  id: number;
-  email: string;
-  role_id: number | null;
-  name: string | null;
-  auth0_id: string;
-  picture: string | null;
-  created_at?: string;
-  is_blocked?: boolean;
-}
+import React, { useEffect, useState } from 'react';
+import { FaUser, FaEnvelope, FaUserTag, FaCircle, FaEdit, FaTrash } from 'react-icons/fa';
 
 interface Role {
-  id: number;
+  id: string;
   name: string;
 }
 
-export default function AdminPanel() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [updating, setUpdating] = useState<number | null>(null);
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: Role;
+  isActive: boolean;
+}
 
-  const fetchData = async () => {
-    setLoading(true);
+const UsersTable: React.FC = () => {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+
+  useEffect(() => {
+    fetchUsers();
+    fetchRoles();
+  }, []);
+
+  const fetchUsers = async () => {
     try {
-      await Promise.all([fetchUsers(), fetchRoles()]);
+      setLoading(true);
+      const response = await fetch('http://localhost:3000/users');
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+      const data = await response.json();
+      setUsers(data);
     } catch (error) {
-      console.error("Error fetching data:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudieron cargar los datos",
-      });
+      setError('Error loading users');
+      console.error('Error:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  async function fetchUsers() {
-    const { data, error } = await supabase
-      .from("users2")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) throw error;
-    setUsers(data || []);
-  }
-
-  async function fetchRoles() {
-    const { data, error } = await supabase
-      .from("roles")
-      .select("id, name")
-      .order("name");
-
-    if (error) throw error;
-    setRoles(data || []);
-  }
-
-  async function updateUserRole(userId: number, newRoleId: string) {
-    if (!newRoleId) {
-      return Swal.fire("Rol inválido", "Debes seleccionar un rol", "warning");
-    }
-
-    const selectedRole = roles.find(role => role.id === parseInt(newRoleId));
-    if (!selectedRole) return;
-
-    setUpdating(userId);
+  const fetchRoles = async () => {
     try {
-      const { error } = await supabase
-        .from("users2")
-        .update({ role_id: parseInt(newRoleId) })
-        .eq("id", userId);
-
-      if (error) throw error;
-
-      setUsers(
-        users.map(user =>
-          user.id === userId ? { ...user, role_id: parseInt(newRoleId) } : user
-        )
-      );
-      Swal.fire(
-        "Éxito",
-        `Rol actualizado a \"${selectedRole.name}\"`,
-        "success"
-      );
+      const response = await fetch('http://localhost:3000/roles');
+      if (!response.ok) {
+        throw new Error('Failed to fetch roles');
+      }
+      const data = await response.json();
+      setRoles(data);
     } catch (error) {
-      console.error("Error updating role:", error);
-      Swal.fire("Error", "No se pudo actualizar el rol", "error");
-    } finally {
-      setUpdating(null);
+      console.error('Error fetching roles:', error);
     }
+  };
+
+  const toggleUserStatus = async (userId: string, isActive: boolean) => {
+    try {
+      const endpoint = isActive ? 'desactivate' : 'activate';
+      const response = await fetch(`http://localhost:3000/users/${endpoint}/${userId}`, {
+        method: 'PUT',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update user status');
+      }
+
+      await fetchUsers();
+    } catch (error) {
+      console.error('Error updating user status:', error);
+    }
+  };
+
+  const handleUpdateRole = async (userId: string, roleId: string) => {
+    try {
+      const response = await fetch(`http://localhost:3000/users/${userId}/role`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ roleId }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update role');
+      }
+
+      await fetchUsers();
+      setShowRoleModal(false);
+    } catch (error) {
+      console.error('Error updating role:', error);
+    }
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      try {
+        const response = await fetch(`http://localhost:3000/users/${userId}`, {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to delete user');
+        }
+
+        await fetchUsers();
+      } catch (error) {
+        console.error('Error deleting user:', error);
+      }
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
   }
 
-  async function deleteUser(userId: number) {
-    const result = await Swal.fire({
-      title: "¿Estás seguro?",
-      text: "Esta acción eliminará al usuario permanentemente.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#aaa",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-    });
-
-    if (!result.isConfirmed) return;
-
-    try {
-      const { error } = await supabase.from("users2").delete().eq("id", userId);
-
-      if (error) throw error;
-
-      setUsers(users.filter(user => user.id !== userId));
-      Swal.fire(
-        "Eliminado",
-        "El usuario fue eliminado exitosamente.",
-        "success"
-      );
-    } catch (error) {
-      console.error("Error al eliminar:", error);
-      Swal.fire("Error", "No se pudo eliminar el usuario", "error");
-    }
-  }
-
-  async function toggleBlockUser(userId: number, block: boolean) {
-    try {
-      const { error } = await supabase
-        .from("users2")
-        .update({ is_blocked: block })
-        .eq("id", userId);
-
-      if (error) throw error;
-
-      setUsers(
-        users.map(user =>
-          user.id === userId ? { ...user, is_blocked: block } : user
-        )
-      );
-      Swal.fire(
-        block ? "Usuario bloqueado" : "Usuario desbloqueado",
-        block
-          ? "Este usuario ya no podrá iniciar sesión."
-          : "Este usuario ahora puede iniciar sesión.",
-        "info"
-      );
-    } catch (error) {
-      console.error("Error al bloquear/desbloquear:", error);
-      Swal.fire("Error", "No se pudo cambiar el estado del usuario", "error");
-    }
+  if (error) {
+    return (
+      <div className="text-center text-red-500 p-4">
+        {error}
+      </div>
+    );
   }
 
   return (
-    <div className="p-4 md:p-6 max-w-full mx-auto">
-      <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
-        <h1 className="text-2xl font-bold text-gray-800">
-          Panel de Administración
-        </h1>
-        <button
-          onClick={fetchData}
-          disabled={loading}
-          className="px-4 py-2 bg-[#5e1914] text-white rounded hover:bg-[#7a2b24] disabled:opacity-50 text-sm">
-          {loading ? "Cargando..." : "Actualizar"}
-        </button>
+    <div className="container mx-auto p-6">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">Users Management</h2>
       </div>
 
-      <div className="overflow-x-auto shadow border rounded-xl bg-white w-full hidden md:block">
-        <table className="min-w-[800px] w-full divide-y divide-gray-200">
-          <thead className="bg-[#5e1914] text-white">
+      <div className="overflow-x-auto bg-white rounded-lg shadow">
+        <table className="min-w-full table-auto">
+          <thead className="bg-gray-50">
             <tr>
-              <th className="px-2 py-3 text-left text-xs font-medium uppercase">
-                Usuario
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <div className="flex items-center gap-2">
+                  <FaUser className="text-gray-400" />
+                  Name
+                </div>
               </th>
-              <th className="px-2 py-3 text-left text-xs font-medium uppercase">
-                Email
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <div className="flex items-center gap-2">
+                  <FaEnvelope className="text-gray-400" />
+                  Email
+                </div>
               </th>
-              <th className="px-2 py-3 text-left text-xs font-medium uppercase">
-                Rol
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <div className="flex items-center gap-2">
+                  <FaUserTag className="text-gray-400" />
+                  Role
+                </div>
               </th>
-              <th className="px-2 py-3 text-left text-xs font-medium uppercase">
-                Cambiar Rol
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Status
               </th>
-              <th className="px-2 py-3 text-left text-xs font-medium uppercase">
-                Acciones
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
-            {users.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={5}
-                  className="px-4 py-4 text-center text-gray-500 text-sm">
-                  {loading
-                    ? "Cargando usuarios..."
-                    : "No hay usuarios registrados"}
+          <tbody className="bg-white divide-y divide-gray-200">
+            {users.map((user) => (
+              <tr key={user.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-500">{user.email}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <button
+                    onClick={() => {
+                      setSelectedUser(user.id);
+                      setShowRoleModal(true);
+                    }}
+                    className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 hover:bg-blue-200"
+                  >
+                    {user.role?.name || 'No Role'}
+                  </button>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <button
+                    onClick={() => toggleUserStatus(user.id, user.isActive)}
+                    className={`flex items-center px-3 py-1 rounded-full text-sm ${
+                      user.isActive
+                        ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                        : 'bg-red-100 text-red-800 hover:bg-red-200'
+                    }`}
+                  >
+                    <FaCircle 
+                      className={`mr-2 ${user.isActive ? 'text-green-500' : 'text-red-500'}`} 
+                      size={10}
+                    />
+                    <span>
+                      {user.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                  </button>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div className="flex space-x-3">
+                    <button className="text-indigo-600 hover:text-indigo-900">
+                      <FaEdit size={18} />
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteUser(user.id)}
+                      className="text-red-600 hover:text-red-900"
+                    >
+                      <FaTrash size={18} />
+                    </button>
+                  </div>
                 </td>
               </tr>
-            ) : (
-              users.map(user => (
-                <tr key={user.id}>
-                  <td className="px-2 py-3">
-                    <div className="flex items-center gap-3">
-                    <div className="relative w-10 h-10">
-                        <Image
-                          src={user.picture || "https://www.gravatar.com/avatar/?d=mp"}
-                          alt={`Foto de ${user.name || "usuario"}`}
-                          fill
-                          className="rounded-full object-cover"
-                          sizes="40px"
-                        />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">
-                          {user.name || "Sin Nombre"}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {new Date(user.created_at || "").toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-2 py-3 text-sm text-gray-800">
-                    {user.email}
-                  </td>
-                  <td className="px-2 py-3">
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        user.role_id === 1
-                          ? "bg-green-100 text-green-800"
-                          : user.role_id === 2
-                          ? "bg-blue-100 text-blue-800"
-                          : user.role_id === 3
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}>
-                      {roles.find(r => r.id === user.role_id)?.name ||
-                        "Sin rol"}
-                    </span>
-                  </td>
-                  <td className="px-2 py-3">
-                    <select
-                      className="text-sm border rounded px-2 py-1"
-                      value={user.role_id ?? ""}
-                      onChange={e => updateUserRole(user.id, e.target.value)}
-                      disabled={updating === user.id}>
-                      <option value="">Seleccionar...</option>
-                      {roles.map(role => (
-                        <option key={role.id} value={role.id}>
-                          {role.name}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className="px-2 py-3">
-                    <div className="flex flex-wrap gap-1">
-                      <button
-                        onClick={() =>
-                          toggleBlockUser(user.id, !user.is_blocked)
-                        }
-                        className={`px-3 py-1 rounded text-xs font-semibold ${
-                          user.is_blocked
-                            ? "bg-green-100 text-green-800 hover:bg-green-200"
-                            : "bg-red-100 text-red-800 hover:bg-red-200"
-                        }`}>
-                        {user.is_blocked ? "Desbloquear" : "Bloquear"}
-                      </button>
-                      <button
-                        onClick={() => deleteUser(user.id)}
-                        className="px-3 py-1 rounded text-xs font-semibold bg-gray-200 text-gray-800 hover:bg-gray-300">
-                        Eliminar
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
+            ))}
           </tbody>
         </table>
       </div>
 
-      <div className="block md:hidden">
-        {users.length === 0 ? (
-          <p className="text-center text-gray-500 text-sm mt-4">
-            {loading ? "Cargando usuarios..." : "No hay usuarios registrados"}
-          </p>
-        ) : (
-          <div className="space-y-4">
-            {users.map(user => (
-              <div
-                key={user.id}
-                className="border rounded-lg p-4 shadow-sm bg-white">
-                <div className="flex items-center gap-3 mb-2">
-                  <Image
-                    src={
-                      user.picture || "https://www.gravatar.com/avatar/?d=mp"
-                    }
-                    alt={`Foto de ${user.name || "usuario"}`}
-                    width={40}
-                    height={40}
-                    className="rounded-full object-cover"
-                  />
-                  <div>
-                    <p className="text-sm font-medium">
-                      {user.name || "Sin nombre"}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {new Date(user.created_at || "").toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-                <p className="text-sm text-gray-800 mb-1">
-                  <strong>Email:</strong> {user.email}
-                </p>
-                <p className="text-sm mb-2">
-                  <strong>Rol:</strong>{" "}
-                  <span
-                    className={`px-2 py-1 text-xs rounded-full ${
-                      user.role_id === 1
-                        ? "bg-green-100 text-green-800"
-                        : user.role_id === 2
-                        ? "bg-blue-100 text-blue-800"
-                        : user.role_id === 3
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-gray-100 text-gray-800"
-                    }`}>
-                    {roles.find(r => r.id === user.role_id)?.name || "Sin rol"}
-                  </span>
-                </p>
-                <select
-                  className="w-full text-sm border rounded px-2 py-1 mb-2"
-                  value={user.role_id ?? ""}
-                  onChange={e => updateUserRole(user.id, e.target.value)}
-                  disabled={updating === user.id}>
-                  <option value="">Cambiar rol...</option>
-                  {roles.map(role => (
-                    <option key={role.id} value={role.id}>
-                      {role.name}
-                    </option>
-                  ))}
-                </select>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => toggleBlockUser(user.id, !user.is_blocked)}
-                    className={`flex-1 px-3 py-1 rounded text-xs font-semibold ${
-                      user.is_blocked
-                        ? "bg-green-100 text-green-800 hover:bg-green-200"
-                        : "bg-red-100 text-red-800 hover:bg-red-200"
-                    }`}>
-                    {user.is_blocked ? "Desbloquear" : "Bloquear"}
-                  </button>
-                  <button
-                    onClick={() => deleteUser(user.id)}
-                    className="flex-1 px-3 py-1 rounded text-xs font-semibold bg-gray-200 text-gray-800 hover:bg-gray-300">
-                    Eliminar
-                  </button>
-                </div>
-              </div>
-            ))}
+      {showRoleModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h3 className="text-lg font-bold mb-4">Update Role</h3>
+            <div className="space-y-4">
+              {roles.map((role) => (
+                <button
+                  key={role.id}
+                  onClick={() => selectedUser && handleUpdateRole(selectedUser, role.id)}
+                  className="w-full text-left px-4 py-2 rounded hover:bg-gray-100"
+                >
+                  {role.name}
+                </button>
+              ))}
+            </div>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setShowRoleModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default UsersTable;
