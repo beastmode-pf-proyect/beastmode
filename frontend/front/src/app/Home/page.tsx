@@ -2,6 +2,9 @@ import React from "react";
 import Link from "next/link";
 import MembershipSection from "@/Components/memberships/memberships";
 import Ctestimonios from "@/Components/Ctestimonios";
+import CreateExercise from "@/Components/FormEjercicios/exerciseForm";
+import ExerciseForm from "@/Components/FormEjercicios/exerciseForm";
+import ExerciseList from "@/Components/FormEjercicios/exerciseList";
 
 const Home: React.FC = () => {
   // Datos del usuario (simulado)
@@ -39,7 +42,8 @@ const Home: React.FC = () => {
             <p className="text-2xl font-bold">{user.lastWorkout}</p>
             <Link
               href="/workouts"
-              className="text-red-600 hover:text-red-700 mt-4 inline-block font-medium">
+              className="text-red-600 hover:text-red-700 mt-4 inline-block font-medium"
+            >
               Ver detalles →
             </Link>
           </div>
@@ -50,7 +54,8 @@ const Home: React.FC = () => {
             <p className="text-2xl font-bold">{user.nextSession}</p>
             <Link
               href="/schedule"
-              className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium">
+              className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium"
+            >
               Ver agenda →
             </Link>
           </div>
@@ -91,6 +96,9 @@ const Home: React.FC = () => {
           <Ctestimonios />
         </div>
       </section>
+
+      {/* <ExerciseForm />
+      <ExerciseList /> */}
     </div>
   );
 };
