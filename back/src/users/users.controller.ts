@@ -22,6 +22,11 @@ export class UsersController {
     return this.usersService.getUsersClient();
   }
 
+  @Get('/role/:id')
+  getRoleById(@Param('id') id: string) {
+    return this.usersService.getRoleById(id);
+  }
+
   @Get(':id')
   getUserById(@Param('id') id: string) {
     return this.usersService.getUserById(id);

@@ -23,6 +23,10 @@ export class UsersService {
         return this.usersRepository.getById(id)
     }
 
+    getRoleById(id: string){
+        return this.usersRepository.getRoleById(id)
+    }
+
     getUserByIdAndRole(id: string, role: string){
         return this.usersRepository.getUserByIdAndRole(id, role)
     }
