@@ -1,35 +1,37 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useSessionUser } from '@/app/SessionUserContext';
-import { supabase } from '@/lib/supabaseClient';
-import Image from 'next/image';
+import { useEffect, useState } from "react";
+import { useSessionUser } from "@/app/SessionUserContext";
+import { supabase } from "@/lib/supabaseClient";
+import Image from "next/image";
 
-interface Routine {
-  routine_id: number;
-  workout_routine: {
-    name: string;
-    description: string;
-    imageUrl?: string;
-  };
+interface WorkoutRoutine {
+  name: string;
+  description: string;
+  image_url?: string; // Asegúrate de que el nombre de la propiedad coincida con el de la base de datos
 }
 
 interface RoutineData {
   routine_id: number;
+  workout_routine: WorkoutRoutine; // Cambiado a objeto en lugar de array
+}
+
+interface SupabaseRoutineData {
+  routine_id: number;
   workout_routine: {
     name: string;
     description: string;
-    image_url?: string; // Asegúrate de que el nombre de la propiedad coincida con el de la base de datos
+    image_url?: string; // Asegúrate de que esto coincida con tu base de datos
   };
 }
 
 export default function UserWorkoutRoutines() {
   const { user, loading: userLoading } = useSessionUser();
 
-  const [routines, setRoutines] = useState<Routine[]>([]);
-  const [filteredRoutines, setFilteredRoutines] = useState<Routine[]>([]);
+  const [routines, setRoutines] = useState<RoutineData[]>([]);
+  const [filteredRoutines, setFilteredRoutines] = useState<RoutineData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchRoutines = async () => {
@@ -38,13 +40,13 @@ export default function UserWorkoutRoutines() {
       setLoading(true);
 
       const { data: userData, error: userError } = await supabase
-        .from('users2')
-        .select('id')
-        .eq('auth0_id', user.id)
+        .from("users2")
+        .select("id")
+        .eq("auth0_id", user.id)
         .single();
 
       if (userError || !userData) {
-        console.error('Error buscando en users2:', userError);
+        console.error("Error buscando en users2:", userError);
         setLoading(false);
         return;
       }
@@ -52,24 +54,28 @@ export default function UserWorkoutRoutines() {
       const userId = userData.id;
 
       const { data: routineData, error: routineError } = await supabase
-        .from('user_workout_routines') // Eliminado el tipo genérico aquí
-        .select('routine_id, workout_routine(*)')
-        .eq('user_id', userId);
+        .from("user_workout_routines")
+        .select("routine_id, workout_routine(*)")
+        .eq("user_id", userId);
 
       if (routineError) {
-        console.error('Error buscando rutinas:', routineError);
+        console.error("Error buscando rutinas:", routineError);
         setLoading(false);
         return;
       }
 
-      const formattedRoutines = (routineData || []).map((routine: RoutineData) => ({
+      // Cambiado el tipo de routineData a SupabaseRoutineData[]
+      const formattedRoutines = (
+        (routineData as unknown as SupabaseRoutineData[]) || []
+      ).map(routine => ({
         routine_id: routine.routine_id,
         workout_routine: {
           name: routine.workout_routine.name,
           description: routine.workout_routine.description,
-          imageUrl: routine.workout_routine.image_url, // Cambia a image_url si es necesario
+          image_url: routine.workout_routine.image_url, // Asegúrate de que esto coincida con tu base de datos
         },
       }));
+
       setRoutines(formattedRoutines);
       setFilteredRoutines(formattedRoutines);
       setLoading(false);
@@ -80,7 +86,7 @@ export default function UserWorkoutRoutines() {
 
   useEffect(() => {
     const lowerSearch = search.toLowerCase();
-    const filtered = routines.filter((item) =>
+    const filtered = routines.filter(item =>
       item.workout_routine.name.toLowerCase().includes(lowerSearch)
     );
     setFilteredRoutines(filtered);
@@ -98,33 +104,38 @@ export default function UserWorkoutRoutines() {
         type="text"
         placeholder="Buscar rutina..."
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={e => setSearch(e.target.value)}
         className="mb-6 p-3 border border-gray-300 rounded-md w-full max-w-md mx-auto block"
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredRoutines.map((item) => (
+        {filteredRoutines.map(item => (
           <div
             key={item.routine_id}
-            className="bg-white shadow-md rounded-2xl p-4 border border-gray-200 hover:shadow-lg transition-shadow"
-          >
-            {item.workout_routine.imageUrl && (
+            className="bg-white shadow-md rounded-2xl p-4 border border-gray-200 hover:shadow-lg transition-shadow">
+            {item.workout_routine.image_url && (
               <Image
-                src={item.workout_routine.imageUrl}
+                src={item.workout_routine.image_url}
                 alt={item.workout_routine.name}
-                width={400} // Ajusta el tamaño según sea necesario
-                height={160} // Ajusta el tamaño según sea necesario
+                width={400}
+                height={160}
                 className="rounded-xl mb-4 w-full h-40 object-cover"
               />
             )}
-            <h3 className="text-lg font-semibold mb-2 text-gray-800">{item.workout_routine.name}</h3>
-            <p className="text-gray-600 text-sm">{item.workout_routine.description}</p>
+            <h3 className="text-lg font-semibold mb-2 text-gray-800">
+              {item.workout_routine.name}
+            </h3>
+            <p className="text-gray-600 text-sm">
+              {item.workout_routine.description}
+            </p>
           </div>
         ))}
       </div>
 
       {filteredRoutines.length === 0 && (
-        <p className="text-gray-500 mt-6 text-center">No se encontraron rutinas con ese nombre.</p>
+        <p className="text-gray-500 mt-6 text-center">
+          No se encontraron rutinas con ese nombre.
+        </p>
       )}
     </div>
   );

@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import Swal from "sweetalert2";
+import Image from "next/image";
 
 interface User {
   id: number;
@@ -25,11 +26,8 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState<number | null>(null);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  async function fetchData() {
+  // Definición de fetchData
+  const fetchData = async () => {
     setLoading(true);
     try {
       await Promise.all([fetchUsers(), fetchRoles()]);
@@ -43,7 +41,11 @@ export default function AdminPanel() {
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+  useEffect(() => {
+    fetchData(); 
+  }, );
 
   async function fetchUsers() {
     const { data, error } = await supabase
@@ -70,9 +72,9 @@ export default function AdminPanel() {
       return Swal.fire("Rol inválido", "Debes seleccionar un rol", "warning");
     }
 
-    const selectedRole = roles.find((role) => role.id === parseInt(newRoleId));
+    const selectedRole = roles.find(role => role.id === parseInt(newRoleId));
     if (!selectedRole) return;
-    
+
     setUpdating(userId);
     try {
       const { error } = await supabase
@@ -82,25 +84,22 @@ export default function AdminPanel() {
 
       if (error) throw error;
 
-      setUsers(users.map(user => user.id === userId ? { ...user, role_id: parseInt(newRoleId) } : user));
-       Swal.fire({
-        title: "¿Estás seguro?",
-        text: "Esta acción eliminará al usuario permanentemente.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#aaa",
-        confirmButtonText: "Sí, eliminar",
-        cancelButtonText: "Cancelar",
-      });
-      Swal.fire("Éxito", `Rol actualizado a \"${selectedRole.name}\"`, "success");
+      setUsers(
+        users.map(user =>
+          user.id === userId ? { ...user, role_id: parseInt(newRoleId) } : user
+        )
+      );
+      Swal.fire(
+        "Éxito",
+        `Rol actualizado a \"${selectedRole.name}\"`,
+        "success"
+      );
     } catch (error) {
       console.error("Error updating role:", error);
       Swal.fire("Error", "No se pudo actualizar el rol", "error");
     } finally {
       setUpdating(null);
     }
-    
   }
 
   async function deleteUser(userId: number) {
@@ -114,20 +113,20 @@ export default function AdminPanel() {
       confirmButtonText: "Sí, eliminar",
       cancelButtonText: "Cancelar",
     });
-    
 
     if (!result.isConfirmed) return;
 
     try {
-      const { error } = await supabase
-        .from("users2")
-        .delete()
-        .eq("id", userId);
+      const { error } = await supabase.from("users2").delete().eq("id", userId);
 
       if (error) throw error;
 
       setUsers(users.filter(user => user.id !== userId));
-      Swal.fire("Eliminado", "El usuario fue eliminado exitosamente.", "success");
+      Swal.fire(
+        "Eliminado",
+        "El usuario fue eliminado exitosamente.",
+        "success"
+      );
     } catch (error) {
       console.error("Error al eliminar:", error);
       Swal.fire("Error", "No se pudo eliminar el usuario", "error");
@@ -143,7 +142,11 @@ export default function AdminPanel() {
 
       if (error) throw error;
 
-      setUsers(users.map(user => user.id === userId ? { ...user, is_blocked: block } : user));
+      setUsers(
+        users.map(user =>
+          user.id === userId ? { ...user, is_blocked: block } : user
+        )
+      );
       Swal.fire(
         block ? "Usuario bloqueado" : "Usuario desbloqueado",
         block
@@ -160,12 +163,13 @@ export default function AdminPanel() {
   return (
     <div className="p-4 md:p-6 max-w-full mx-auto">
       <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
-        <h1 className="text-2xl font-bold text-gray-800">Panel de Administración</h1>
+        <h1 className="text-2xl font-bold text-gray-800">
+          Panel de Administración
+        </h1>
         <button
-          onClick={fetchData}
+          onClick={fetchData} // Llama a fetchData cuando se presiona el botón
           disabled={loading}
-          className="px-4 py-2 bg-[#5e1914] text-white rounded hover:bg-[#7a2b24] disabled:opacity-50 text-sm"
-        >
+          className="px-4 py-2 bg-[#5e1914] text-white rounded hover:bg-[#7a2b24] disabled:opacity-50 text-sm">
           {loading ? "Cargando..." : "Actualizar"}
         </button>
       </div>
@@ -175,76 +179,105 @@ export default function AdminPanel() {
         <table className="min-w-[800px] w-full divide-y divide-gray-200">
           <thead className="bg-[#5e1914] text-white">
             <tr>
-              <th className="px-2 py-3 text-left text-xs font-medium uppercase">Usuario</th>
-              <th className="px-2 py-3 text-left text-xs font-medium uppercase">Email</th>
-              <th className="px-2 py-3 text-left text-xs font-medium uppercase">Rol</th>
-              <th className="px-2 py-3 text-left text-xs font-medium uppercase">Cambiar Rol</th>
-              <th className="px-2 py-3 text-left text-xs font-medium uppercase">Acciones</th>
+              <th className="px-2 py-3 text-left text-xs font-medium uppercase">
+                Usuario
+              </th>
+              <th className="px-2 py-3 text-left text-xs font-medium uppercase">
+                Email
+              </th>
+              <th className="px-2 py-3 text-left text-xs font-medium uppercase">
+                Rol
+              </th>
+              <th className="px-2 py-3 text-left text-xs font-medium uppercase">
+                Cambiar Rol
+              </th>
+              <th className="px-2 py-3 text-left text-xs font-medium uppercase">
+                Acciones
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {users.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-4 text-center text-gray-500 text-sm">
-                  {loading ? "Cargando usuarios..." : "No hay usuarios registrados"}
+                <td
+                  colSpan={5}
+                  className="px-4 py-4 text-center text-gray-500 text-sm">
+                  {loading
+                    ? "Cargando usuarios..."
+                    : "No hay usuarios registrados"}
                 </td>
               </tr>
             ) : (
-              users.map((user) => (
+              users.map(user => (
                 <tr key={user.id}>
                   <td className="px-2 py-3">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={user.picture || "https://www.gravatar.com/avatar/?d=mp"}
+                      <Image
+                        src={
+                          user.picture ||
+                          "https://www.gravatar.com/avatar/?d=mp"
+                        }
                         alt={`Foto de ${user.name || "usuario"}`}
                         className="h-10 w-10 rounded-full object-cover"
                       />
                       <div>
-                        <p className="text-sm font-medium">{user.name || "Sin Nombre"}</p>
+                        <p className="text-sm font-medium">
+                          {user.name || "Sin Nombre"}
+                        </p>
                         <p className="text-xs text-gray-500">
                           {new Date(user.created_at || "").toLocaleDateString()}
                         </p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-2 py-3 text-sm text-gray-800">{user.email}</td>
+                  <td className="px-2 py-3 text-sm text-gray-800">
+                    {user.email}
+                  </td>
                   <td className="px-2 py-3">
-                    <span className={`px-2 py-1 text-xs rounded-full ${
-                      user.role_id === 1 ? "bg-green-100 text-green-800" :
-                      user.role_id === 2 ? "bg-blue-100 text-blue-800" :
-                      user.role_id === 3 ? "bg-yellow-100 text-yellow-800" :
-                      "bg-gray-100 text-gray-800"
-                    }`}>
-                      {roles.find(r => r.id === user.role_id)?.name || "Sin rol"}
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${
+                        user.role_id === 1
+                          ? "bg-green-100 text-green-800"
+                          : user.role_id === 2
+                          ? "bg-blue-100 text-blue-800"
+                          : user.role_id === 3
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}>
+                      {roles.find(r => r.id === user.role_id)?.name ||
+                        "Sin rol"}
                     </span>
                   </td>
                   <td className="px-2 py-3">
                     <select
                       className="text-sm border rounded px-2 py-1"
                       value={user.role_id ?? ""}
-                      onChange={(e) => updateUserRole(user.id, e.target.value)}
-                      disabled={updating === user.id}
-                    >
+                      onChange={e => updateUserRole(user.id, e.target.value)}
+                      disabled={updating === user.id}>
                       <option value="">Seleccionar...</option>
                       {roles.map(role => (
-                        <option key={role.id} value={role.id}>{role.name}</option>
+                        <option key={role.id} value={role.id}>
+                          {role.name}
+                        </option>
                       ))}
                     </select>
                   </td>
                   <td className="px-2 py-3">
                     <div className="flex flex-wrap gap-1">
                       <button
-                        onClick={() => toggleBlockUser(user.id, !user.is_blocked)}
+                        onClick={() =>
+                          toggleBlockUser(user.id, !user.is_blocked)
+                        }
                         className={`px-3 py-1 rounded text-xs font-semibold ${
-                          user.is_blocked ? "bg-green-100 text-green-800 hover:bg-green-200" : "bg-red-100 text-red-800 hover:bg-red-200"
-                        }`}
-                      >
+                          user.is_blocked
+                            ? "bg-green-100 text-green-800 hover:bg-green-200"
+                            : "bg-red-100 text-red-800 hover:bg-red-200"
+                        }`}>
                         {user.is_blocked ? "Desbloquear" : "Bloquear"}
                       </button>
                       <button
                         onClick={() => deleteUser(user.id)}
-                        className="px-3 py-1 rounded text-xs font-semibold bg-gray-200 text-gray-800 hover:bg-gray-300"
-                      >
+                        className="px-3 py-1 rounded text-xs font-semibold bg-gray-200 text-gray-800 hover:bg-gray-300">
                         Eliminar
                       </button>
                     </div>
@@ -264,42 +297,55 @@ export default function AdminPanel() {
           </p>
         ) : (
           <div className="space-y-4">
-            {users.map((user) => (
-              <div key={user.id} className="border rounded-lg p-4 shadow-sm bg-white">
+            {users.map(user => (
+              <div
+                key={user.id}
+                className="border rounded-lg p-4 shadow-sm bg-white">
                 <div className="flex items-center gap-3 mb-2">
-                  <img
-                    src={user.picture || "https://www.gravatar.com/avatar/?d=mp"}
+                  <Image
+                    src={
+                      user.picture || "https://www.gravatar.com/avatar/?d=mp"
+                    }
                     alt={`Foto de ${user.name || "usuario"}`}
                     className="h-10 w-10 rounded-full object-cover"
                   />
                   <div>
-                    <p className="text-sm font-medium">{user.name || "Sin nombre"}</p>
+                    <p className="text-sm font-medium">
+                      {user.name || "Sin nombre"}
+                    </p>
                     <p className="text-xs text-gray-500">
                       {new Date(user.created_at || "").toLocaleDateString()}
                     </p>
                   </div>
                 </div>
-                <p className="text-sm text-gray-800 mb-1"><strong>Email:</strong> {user.email}</p>
+                <p className="text-sm text-gray-800 mb-1">
+                  <strong>Email:</strong> {user.email}
+                </p>
                 <p className="text-sm mb-2">
                   <strong>Rol:</strong>{" "}
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    user.role_id === 1 ? "bg-green-100 text-green-800" :
-                    user.role_id === 2 ? "bg-blue-100 text-blue-800" :
-                    user.role_id === 3 ? "bg-yellow-100 text-yellow-800" :
-                    "bg-gray-100 text-gray-800"
-                  }`}>
+                  <span
+                    className={`px-2 py-1 text-xs rounded-full ${
+                      user.role_id === 1
+                        ? "bg-green-100 text-green-800"
+                        : user.role_id === 2
+                        ? "bg-blue-100 text-blue-800"
+                        : user.role_id === 3
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-gray-100 text-gray-800"
+                    }`}>
                     {roles.find(r => r.id === user.role_id)?.name || "Sin rol"}
                   </span>
                 </p>
                 <select
                   className="w-full text-sm border rounded px-2 py-1 mb-2"
                   value={user.role_id ?? ""}
-                  onChange={(e) => updateUserRole(user.id, e.target.value)}
-                  disabled={updating === user.id}
-                >
+                  onChange={e => updateUserRole(user.id, e.target.value)}
+                  disabled={updating === user.id}>
                   <option value="">Cambiar rol...</option>
                   {roles.map(role => (
-                    <option key={role.id} value={role.id}>{role.name}</option>
+                    <option key={role.id} value={role.id}>
+                      {role.name}
+                    </option>
                   ))}
                 </select>
                 <div className="flex flex-wrap gap-2">
@@ -309,14 +355,12 @@ export default function AdminPanel() {
                       user.is_blocked
                         ? "bg-green-100 text-green-800 hover:bg-green-200"
                         : "bg-red-100 text-red-800 hover:bg-red-200"
-                    }`}
-                  >
+                    }`}>
                     {user.is_blocked ? "Desbloquear" : "Bloquear"}
                   </button>
                   <button
                     onClick={() => deleteUser(user.id)}
-                    className="flex-1 px-3 py-1 rounded text-xs font-semibold bg-gray-200 text-gray-800 hover:bg-gray-300"
-                  >
+                    className="flex-1 px-3 py-1 rounded text-xs font-semibold bg-gray-200 text-gray-800 hover:bg-gray-300">
                     Eliminar
                   </button>
                 </div>

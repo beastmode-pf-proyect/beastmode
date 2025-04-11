@@ -5,6 +5,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import Swal from "sweetalert2";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image"
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const {  isAuthenticated, isLoading } = useAuth0();
@@ -47,13 +48,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="sticky top-14 h-[calc(100vh-3.5rem)] w-64 bg-white shadow-lg p-4 flex flex-col overflow-y-auto z-20">
         <div>
           
-          <img src="/img/logon.png" alt="Logo" className="w-40 h-auto mb-6" />
+          <Image src="/Image/logon.png" alt="Logo" className="w-40 h-auto mb-6" />
           
           <h1 className="text-2xl font-bold text-[#5e1914] mb-6">BeastMode</h1>
 
           {/* Información del usuario */}
           <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-            <img src={user.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
+            <Image src={user.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
             <div>
               <h2 className="text-lg font-semibold text-[#5e1914]">{user.name}</h2>
               <p className="text-sm text-[#5e1914]">{user.email}</p>

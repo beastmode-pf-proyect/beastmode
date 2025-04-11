@@ -1,7 +1,6 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import EditUserModal from './EditUserModal';
+import React, { useEffect, useState } from "react";
+import EditUserModal from "./EditUserModal";
 
 interface User {
   id: string;
@@ -23,8 +22,12 @@ const UserTable: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`${backendUrl}/users`);
-        setUsers(response.data);
+        const response = await fetch(`${backendUrl}/users`);
+        if (!response.ok) {
+          throw new Error("Error al cargar los usuarios");
+        }
+        const data = await response.json();
+        setUsers(data);
         setLoading(false);
       } catch (err) {
         setError("Error al cargar los usuarios");
@@ -34,7 +37,7 @@ const UserTable: React.FC = () => {
     };
 
     fetchUsers();
-  }, []);
+  }, [backendUrl]); // Agregado backendUrl como dependencia
 
   const handleEdit = (user: User) => {
     setSelectedUser(user);
@@ -44,13 +47,20 @@ const UserTable: React.FC = () => {
   const handleSave = async (updatedUser: Partial<User>) => {
     try {
       if (selectedUser) {
-        const response = await axios.put(
-          `http://localhost:3000/users/${selectedUser.id}`,
-          updatedUser
-        );
+        const response = await fetch(`${backendUrl}/users/${selectedUser.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedUser),
+        });
+        if (!response.ok) {
+          throw new Error("Error al actualizar el usuario");
+        }
+        const data = await response.json();
         setUsers(
           users.map(user =>
-            user.id === selectedUser.id ? { ...user, ...response.data } : user
+            user.id === selectedUser.id ? { ...user, ...data } : user
           )
         );
       }
@@ -61,7 +71,12 @@ const UserTable: React.FC = () => {
 
   const handleUpdateTrainer = async (userId: string) => {
     try {
-      await axios.put(`${backendUrl}/users/Admin/${userId}`);
+      const response = await fetch(`${backendUrl}/users/Admin/${userId}`, {
+        method: "PUT",
+      });
+      if (!response.ok) {
+        throw new Error("Error al actualizar estado de entrenador");
+      }
       setUsers(
         users.map(user =>
           user.id === userId ? { ...user, isTrainer: !user.isTrainer } : user

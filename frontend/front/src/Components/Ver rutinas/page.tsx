@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import Image from "next/image"
 
 interface WorkoutRoutine {
   id: string;
@@ -54,7 +55,7 @@ const WorkoutRoutineList = () => {
           <div
             key={routine.id}
             className="bg-white rounded-lg shadow-lg overflow-hidden">
-            <img
+            <Image
               src={routine.imageUrl}
               alt={routine.name}
               className="w-full h-48 object-cover"

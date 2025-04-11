@@ -32,7 +32,7 @@ export const Footer: React.FC = (): ReactElement => {
           <div className="mt-6 lg:max-w-sm">
             <p className="text-sm text-gray-800">
               Transformando vidas a través de programas fitness de élite y
-              guía nutricional.
+              guía nutricional
             </p>
           </div>
         </div>
