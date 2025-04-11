@@ -7,12 +7,24 @@ import { updateUserDto } from 'src/dto/updateUserDto';
 export class UsersService {
     constructor (private readonly usersRepository : UsersRepository){}
 
-    getUsers() { 
-        return this.usersRepository.getUsers();
+    getUsersTrainerAndClient() { 
+        return this.usersRepository.getUsersTrainerAndClient();
+    }
+
+    getUsersTrainer(){
+        return this.usersRepository.getUsersTrainer();
+    }
+
+    getUsersClient(){
+        return this.usersRepository.getUsersClient();
     }
 
     getUserById(id: string){
         return this.usersRepository.getById(id)
+    }
+
+    getUserByIdAndRole(id: string, role: string){
+        return this.usersRepository.getUserByIdAndRole(id, role)
     }
 
     updateUser(id: string, user: updateUserDto) {                                  
@@ -21,6 +33,10 @@ export class UsersService {
 
     updatetrainerUser(id: string){
         return this.usersRepository.updatetrainerUser(id)
+    }
+
+    updateclientUser(id: string){
+        return this.usersRepository.updateclientUser(id)
     }
 
     async userExists(id: string): Promise<boolean> {
