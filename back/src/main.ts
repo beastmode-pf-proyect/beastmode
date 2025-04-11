@@ -30,9 +30,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document)
 
   app.enableCors({
-    origin: [
-      'https://beastmode-diph-gwnlban45-beastmodes-projects-d14b9acd.vercel.app/',
-    ], ///PUERTO DE LA APP DE FRONT///// AJUSTAR PARA DEPLOY
+    origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
