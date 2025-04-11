@@ -77,9 +77,7 @@ const Home: React.FC = () => {
           <h2 className="text-2xl md:text-3xl font-bold text-red-950 mb-6">
             Tu Entrenamiento de Hoy
           </h2>
-          <p>
-            &apos;Una rutina random o la rutina más reciente del traineer&apos;
-          </p>
+          <p>Una rutina random o la rutina más reciente del traineer</p>
         </div>
       </section>
 
