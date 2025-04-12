@@ -1,4 +1,5 @@
 // components/ExerciseList.tsx
+// components/ExerciseList.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -39,7 +40,7 @@ export default function ExerciseList() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-8 font-[Inter] ">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-8">
       {exercises.map((exercise) => (
         <div
           key={exercise.id}
@@ -50,15 +51,30 @@ export default function ExerciseList() {
               {exercise.name}
             </h3>
             <p className="text-gray-600 mb-4">{exercise.description}</p>
-            {exercise.imageLink && (
-              <div className="mb-4">
+            <div className="relative aspect-video bg-gray-200 rounded-md overflow-hidden">
+              {exercise.imageLink ? (
                 <img
                   src={exercise.imageLink}
                   alt={exercise.name}
-                  className="w-full h-auto rounded-md"
+                  className="absolute inset-0 w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = "none";
+                    const parent = (e.target as HTMLImageElement).parentElement;
+                    if (parent) {
+                      parent.innerHTML = `
+                        <div class="flex items-center justify-center h-full text-gray-500">
+                          <span>No se pudo cargar el GIF</span>
+                        </div>
+                      `;
+                    }
+                  }}
                 />
-              </div>
-            )}
+              ) : (
+                <div className="flex items-center justify-center h-full text-gray-500">
+                  <span>Sin imagen</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       ))}
