@@ -40,6 +40,7 @@ const LoginForm = () => {
             name: auth0User.name || null,
             picture: auth0User.picture || null,
             last_login: new Date().toISOString(),
+            role_id: 'a039d031-b804-4b7b-afdf-f57424f2fbd9'
           },
           { onConflict: "auth0_id" }
         )
