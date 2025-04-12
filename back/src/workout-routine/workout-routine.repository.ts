@@ -1,5 +1,4 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { updateMembershipDto } from "src/dto/updateMembershipDto";
 import { updateWorkoutRoutineDto } from "src/dto/updateWorkoutRoutineDto";
 import { WorkoutRoutine } from "src/entities/workout.routine.entity";
 import { Repository } from "typeorm";
@@ -15,7 +14,7 @@ export class WorkoutRoutineRepository{
 
         const workoutRoutines = await this.workoutRuotineRepository.find()
         return workoutRoutines;
-          
+    
     }
 
     async getWorkoutRoutineById(id: string){
@@ -38,16 +37,14 @@ export class WorkoutRoutineRepository{
 
     }
 
-    async createWorkoutRoutine(workoutRoutine: Partial<WorkoutRoutine>){
-    
+    async createWorkoutRoutine(workoutRoutine: Partial<WorkoutRoutine>): Promise<WorkoutRoutine> {
         const createdWorkoutRoutine = await this.workoutRuotineRepository.save(workoutRoutine);
     
         if (!createdWorkoutRoutine) {
             throw new Error('No se pudo crear la rutina');
         }
     
-        return `Rutina ${createdWorkoutRoutine.name} creada exitosamente`;
-
+        return createdWorkoutRoutine; // Devuelve el objeto directamente
     }
 
     async desactivateWorkoutRoutine(id:string){

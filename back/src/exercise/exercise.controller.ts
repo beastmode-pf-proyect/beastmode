@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Param, Delete, ParseUUIDPipe, UseInterceptors, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, ParseUUIDPipe, UseInterceptors, Put, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
 import { ExerciseService } from './exercise.service';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { ExerciseValidationInterceptor } from 'src/interceptors/exercise.interceptor';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('exercises')
 @Controller('exercises')
@@ -11,10 +12,23 @@ export class ExerciseController {
   constructor(private readonly exerciseService: ExerciseService) {}
 
   @UseInterceptors(ExerciseValidationInterceptor)
-  @Post('create')  
-  create(@Body() createExerciseDto: CreateExerciseDto) {
-    return this.exerciseService.create(createExerciseDto);
+  @Post('create')
+  @UseInterceptors(FileInterceptor('file')) // Añade este interceptor
+  create(
+    @Body() createExerciseDto: CreateExerciseDto,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 2000000 }),
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp)$/ }),
+        ],
+      })
+    ) file?: Express.Multer.File // Hacerlo opcional
+  ) {
+    return this.exerciseService.create(createExerciseDto, file);
   }
+
+
 
   @Get() 
   findAll() {
