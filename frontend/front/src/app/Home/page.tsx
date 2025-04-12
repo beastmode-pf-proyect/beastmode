@@ -2,9 +2,6 @@ import React from "react";
 import Link from "next/link";
 import MembershipSection from "@/Components/memberships/memberships";
 import Ctestimonios from "@/Components/Ctestimonios";
-import CreateExercise from "@/Components/FormEjercicios/exerciseForm";
-import ExerciseForm from "@/Components/FormEjercicios/exerciseForm";
-import ExerciseList from "@/Components/FormEjercicios/exerciseList";
 
 const Home: React.FC = () => {
   // Datos del usuario (simulado)
