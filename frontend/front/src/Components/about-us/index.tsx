@@ -61,7 +61,7 @@ const AboutUs = () => {
       github: "https://github.com/AndreaVPalacios",
       hoverColor: "hover:bg-purple-900",
       roleColor: "bg-purple-100 text-purple-800",
-      role: "Front-End Developer",
+      role: "Front-End Developer ",
     },
   ];
 
