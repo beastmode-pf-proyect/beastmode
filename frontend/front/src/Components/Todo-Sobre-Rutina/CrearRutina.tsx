@@ -29,7 +29,7 @@ const CrearRutina: React.FC = () => {
     { setSubmitting, resetForm }: FormikHelpers<WorkoutRoutineForm>
   ) => {
     try {
-      const response = await fetch('http://localhost:3000/workout-routine/create', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/workout-routine/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,16 +40,16 @@ const CrearRutina: React.FC = () => {
           imageUrl: values.imageUrl || null,
         }),
       });
-
+  
       if (!response.ok) throw new Error('Error al crear la rutina');
-
+  
       Swal.fire({
         title: '¡Éxito!',
         text: 'Rutina creada exitosamente',
         icon: 'success',
         confirmButtonText: 'Ok',
       });
-
+  
       resetForm();
     } catch (error) {
       Swal.fire({
@@ -62,6 +62,7 @@ const CrearRutina: React.FC = () => {
       setSubmitting(false);
     }
   };
+  
 
   return (
     <div className="max-w-2xl mx-auto mt-14 px-10 py-12 bg-red-950/95 backdrop-blur-md rounded-3xl shadow-xl border border-red-800">

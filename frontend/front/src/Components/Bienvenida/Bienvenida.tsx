@@ -19,7 +19,7 @@ const WelcomeCard: React.FC = () => {
       if (!user?.sub) return;
 
       try {
-        const res = await fetch(`http://localhost:3000/users/${user.sub}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user.sub}`);
         const data = await res.json();
         setUserData(data);
       } catch (error) {

@@ -17,7 +17,7 @@ const AdminPanel: React.FC = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3000/users', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

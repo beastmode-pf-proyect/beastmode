@@ -28,18 +28,23 @@ const ListadeRutinas: React.FC = () => {
     setLoading(true);
     setSearch('');
     try {
-      const response = await fetch('http://localhost:3000/workout-routine');
-      if (!response.ok) throw new Error('Error al obtener las rutinas');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/workout-routine`);
+      
+      if (!response.ok) {
+        throw new Error(`Error al obtener las rutinas: ${response.status} ${response.statusText}`);
+      }
+  
       const data = await response.json();
       setRoutines(data);
       setFilteredRoutines(data);
     } catch (error) {
-      console.error(error);
-      toast.error('Error al obtener las rutinas');
+      console.error('Error al obtener las rutinas:', error);
+      toast.error(error instanceof Error ? error.message : 'Error desconocido al obtener las rutinas');
     } finally {
       setLoading(false);
     }
   };
+  
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
@@ -53,8 +58,8 @@ const ListadeRutinas: React.FC = () => {
   const handleToggle = async (id: string, currentState: boolean) => {
     try {
       const endpoint = currentState
-        ? `http://localhost:3000/workout-routine/desactivate/${id}`
-        : `http://localhost:3000/workout-routine/activate/${id}`;
+        ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/workout-routine/desactivate/${id}`
+        : `${process.env.NEXT_PUBLIC_BACKEND_URL}/workout-routine/activate/${id}`;
 
       const response = await fetch(endpoint, { method: 'PUT' });
       if (!response.ok) throw new Error('Error al cambiar estado');

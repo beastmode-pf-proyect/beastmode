@@ -27,10 +27,10 @@ const UserRoleStatsWithModal: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch("http://localhost:3000/users");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`);
         const data: User[] = await res.json();
         setUsers(data);
-
+  
         setClientList(data.filter(user => user.role?.name?.toLowerCase() === "client"));
         setTrainerList(data.filter(user => user.role?.name?.toLowerCase() === "trainer"));
       } catch (err) {
@@ -39,9 +39,10 @@ const UserRoleStatsWithModal: React.FC = () => {
         setLoading(false);
       }
     };
-
+  
     fetchUsers();
   }, []);
+  
 
   const openModal = (role: "client" | "trainer") => {
     setActiveRole(role);

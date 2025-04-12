@@ -21,7 +21,7 @@ const Admin: React.FC = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3000/users', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -56,7 +56,7 @@ const Admin: React.FC = () => {
   const handleToggleStatus = async (userId: string, isBlocked: boolean) => {
     try {
       const action = isBlocked ? 'activate' : 'desactivate';
-      const response = await fetch(`http://localhost:3000/users/${action}/${userId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${action}/${userId}`, {
         method: 'PUT'
       });
 
@@ -79,7 +79,7 @@ const Admin: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/users/${userId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
