@@ -55,6 +55,19 @@ export class UsersRepository{
           return user;
     }
 
+    async getRoleById(id : string) {
+      const user = await this.usersRepository.findOne({
+        where:{ auth0_id : id },
+        relations: ['role']
+      });
+    
+      if(!user){
+        throw new NotFoundException('Usuario no encontrado')
+      }
+
+          return user.role.name;
+    }
+
     async getUserByIdAndRole(id : string, rol: string) {
       const user = await this.usersRepository.findOne({
         where:{ auth0_id : id, role: { name: rol } }

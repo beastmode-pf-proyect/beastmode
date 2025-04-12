@@ -39,6 +39,13 @@ export class User {
       })
       roleId: string;
 
+    @Column({ 
+        name: 'role_id', 
+        type: 'uuid', 
+        nullable: true,
+        default: 'a039d031-b804-4b7b-afdf-f57424f2fbd9' // ID del rol "client" según tu imagen
+      })
+      roleId: string;
     @ManyToOne(() => Role, role => role.users)
     @JoinColumn({ name: 'role_id' }) // Esto crea la columna role_id en la tabla users2
     role: Role;

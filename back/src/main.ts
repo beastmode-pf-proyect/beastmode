@@ -44,7 +44,7 @@ async function bootstrap() {
       ) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        callback(new Error('Not allowed by CORS.'));
       }
     },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
