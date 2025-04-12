@@ -3,13 +3,26 @@ import { ExerciseRepository } from './exercise.repository';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
 import { Exercise } from '../entities/exercise.entity';
+import { FileUploadService } from 'src/file-upload/file-upload.service';
 
 @Injectable()
 export class ExerciseService {
-  constructor(private readonly exerciseRepository: ExerciseRepository) {}
+  constructor(private readonly exerciseRepository: ExerciseRepository,
+              private readonly fileUploadService: FileUploadService, 
+  ) {}
 
-  async create(createExerciseDto: CreateExerciseDto): Promise<Exercise> {
-    return this.exerciseRepository.createExercise(createExerciseDto);
+  async create(createExerciseDto: CreateExerciseDto, file?: Express.Multer.File): Promise<Exercise> {
+    let imageUrl = createExerciseDto.imageUrl;
+    
+    if (file) {
+      const uploadedImage = await this.fileUploadService.uploadImage(file);
+      imageUrl = uploadedImage.secure_url;
+    }
+
+    return this.exerciseRepository.createExercise({
+      ...createExerciseDto,
+      imageUrl
+    });
   }
 
   async findAll(): Promise<Exercise[]> {

@@ -13,7 +13,7 @@ import { WorkoutRoutine } from 'src/entities/workout.routine.entity';
 
   controllers: [FileUploadController],
   providers: [FileUploadService,FileUploadRepository,CloudinaryConfig],
-  exports: [CloudinaryConfig]
+  exports: [CloudinaryConfig,FileUploadService]
 })
 
 export class FileUploadModule {}

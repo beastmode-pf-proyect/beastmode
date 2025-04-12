@@ -2,10 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { WorkoutRoutineRepository } from './workout-routine.repository';
 import { WorkoutRoutine } from 'src/entities/workout.routine.entity';
 import { updateWorkoutRoutineDto } from 'src/dto/updateWorkoutRoutineDto';
+import { FileUploadService } from 'src/file-upload/file-upload.service';
 
 @Injectable()
 export class WorkoutRoutineService {
-constructor(private workoutRuotineRepository: WorkoutRoutineRepository){}
+constructor(private workoutRuotineRepository: WorkoutRoutineRepository,
+            private fileUploadService: FileUploadService,
+){}
 
 getWorkoutRoutines(){
     return this.workoutRuotineRepository.getWorkoutRoutines()
@@ -19,8 +22,19 @@ updateWorkoutRoutine(id: string, updateWorkoutRoutine: updateWorkoutRoutineDto){
     return this.workoutRuotineRepository.updateWorkoutRoutine(id, updateWorkoutRoutine)
 }
 
-createWorkoutRoutine(WorkoutRoutine: Partial<WorkoutRoutine>){
-    return this.workoutRuotineRepository.createWorkoutRoutine(WorkoutRoutine)
+async createWorkoutRoutine(workoutRoutine: Partial<WorkoutRoutine>, file?: Express.Multer.File) {
+    if (file) {
+        const uploadedImage = await this.fileUploadService.uploadImage(file);
+        workoutRoutine.imageUrl = uploadedImage.secure_url;
+    }
+    
+    const createdWorkoutRoutine = await this.workoutRuotineRepository.createWorkoutRoutine(workoutRoutine);
+
+    if (!createdWorkoutRoutine) {
+        throw new Error('No se pudo crear la rutina');
+    }
+
+    return `Rutina ${createdWorkoutRoutine.name} creada exitosamente`;
 }
 
 desactivateWorkoutRoutine(id: string){
