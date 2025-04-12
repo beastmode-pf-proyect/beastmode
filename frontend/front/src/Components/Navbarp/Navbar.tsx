@@ -41,7 +41,7 @@ export const Navbarp = () => {
           Array.isArray(data.roles) &&
           data.roles.length > 0
         ) {
-          setUserRole(data.roles[0].name.toUpperCase()); // Acceder al primer elemento del array
+          setUserRole(data.roles[0].name.toUpperCase()); 
         }
       }
     };

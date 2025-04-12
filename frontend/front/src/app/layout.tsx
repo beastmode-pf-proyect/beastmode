@@ -7,6 +7,7 @@ import LoginFormProvider from "@/Components/loginouth/LoginProvider";
 import StripeProvider from "@/Components/Suscripcion/page";
 import { SessionUserProvider } from "./SessionUserContext";
 import { Suspense } from "react";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "BeastMode",
@@ -20,7 +21,9 @@ export default function RootLayout({
     <AuthProvider>
       <SessionUserProvider>
         <StripeProvider>
+        <Toaster position="top-center" />
           <html lang="en">
+          
             <body className="flex flex-col min-h-screen">
               <Header />
               <LoginFormProvider />

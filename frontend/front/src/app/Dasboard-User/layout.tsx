@@ -9,14 +9,13 @@ import {
   HiChartBar,
   HiMenu,
   HiX,
-  HiUser
+  HiUser,
 } from "react-icons/hi";
 import Link from "next/link";
 import { useAuth0 } from "@auth0/auth0-react";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
 import Trainer from "@/Components/Roles/Trainer";
 import Image from "next/image";
 
@@ -29,7 +28,6 @@ interface UserData {
     name: string;
   };
 }
-
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user: auth0User, isAuthenticated, isLoading, logout } = useAuth0();
@@ -57,24 +55,24 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [auth0User]);
 
   async function fetchUserData(auth0_id: string) {
-      const { data, error } = await supabase
-        .from("users2")
-        .select("name, email, picture, role_id, roles(name)")
-        .eq("auth0_id", auth0_id)
-        .single<UserData>();
-    
-      if (error) {
-        console.error("❌ Error obteniendo datos del usuario:", error.message);
-        return;
+    try {
+      const response = await fetch(`http://localhost:3000/users/${auth0_id}`);
+      if (!response.ok) {
+        throw new Error("Error al obtener datos del usuario desde el backend");
       }
-    
+
+      const data: UserData = await response.json();
+
       setUserData({
-        name: data?.name ?? "Usuario",
-        email: data?.email ?? "Sin correo",
-        avatar: data?.picture ?? "https://via.placeholder.com/100",
-        role: data?.roles?.name ? data.roles.name.toUpperCase() : "SIN ROL",
+        name: data.name ?? "Usuario",
+        email: data.email ?? "Sin correo",
+        avatar: data.picture ?? "https://via.placeholder.com/100",
+        role: data.roles?.name ? data.roles.name.toUpperCase() : "SIN ROL",
       });
+    } catch (error) {
+      console.error("❌ Error obteniendo datos del usuario desde el backend:", error);
     }
+  }
 
   if (isLoading) {
     return <div className="text-center text-xl text-gray-600">Cargando...</div>;
@@ -84,14 +82,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return null;
   }
 
-
-
-  //------Menú estándar para usuarios ------//
   const standardMenuUsers = [
     { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/Dasboard-User" },
     { name: "Rutina", icon: <HiBookOpen className="w-5 h-5" />, href: "/Dasboard-User/Rutina" },
     { name: "Membesias Activas", icon: <HiOutlineStar className="w-5 h-5" />, href: "/Dasboard-User/Mi-membresia" },
-    { name: "Historial", icon: <HiShoppingCart className="w-5 h-5" />, href: "/Dasboard-User/Historial-Pagos" }
+    { name: "Historial", icon: <HiShoppingCart className="w-5 h-5" />, href: "/Dasboard-User/Historial-Pagos" },
   ];
 
   const currentMenu = standardMenuUsers;
@@ -121,7 +116,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8] text-[#333]">
       {/* Navbar móvil */}
-      <div className="md:hidden fixed top-4  mt-16 left-0 right-0 bg-white shadow-md z-30 p-2 flex justify-between items-center">
+      <div className="md:hidden fixed top-4 mt-16 left-0 right-0 bg-white shadow-md z-30 p-2 flex justify-between items-center">
         <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 rounded-md text-[#5e1914]">
           {mobileMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
         </button>
@@ -132,7 +127,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {roleIcon}
         <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode</h1>
         <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-          <Image src={userData.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
+          <img src={userData.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
           <div>
             <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
             <p className="text-sm text-[#5e1914]">{userData.email}</p>
@@ -171,7 +166,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {roleIcon}
             <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode</h1>
             <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-              <Image src={userData.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
+              <Image src={userData.avatar} alt="Usuario" width={40} height={40} className="rounded-full" />
               <div>
                 <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
                 <p className="text-sm text-[#5e1914]">{userData.email}</p>
