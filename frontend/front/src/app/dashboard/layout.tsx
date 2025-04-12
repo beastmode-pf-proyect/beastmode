@@ -9,76 +9,112 @@ import {
   HiChartBar,
   HiMenu,
   HiX,
-  HiUser
+  HiUser,
 } from "react-icons/hi";
 import Link from "next/link";
 import { useAuth0 } from "@auth0/auth0-react";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
 import Trainer from "@/Components/Roles/Trainer";
-import Image from "next/image"
+import Image from "next/image";
 
 interface UserData {
   name: string;
   email: string;
   picture: string;
-  role_id: number;
-  roles: {
-    name: string;
-  };
+  role: string;
 }
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { user: auth0User, isAuthenticated, isLoading, logout } = useAuth0();
-  const [userData, setUserData] = useState<{ name: string; email: string; avatar: string; role: string } | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const router = useRouter();
+  const [loadingUserData, setLoadingUserData] = useState(true);
+ 
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      Swal.fire({
-        icon: "error",
-        title: "Acceso denegado",
-        text: "Debes iniciar sesión para acceder a esta página.",
-        confirmButtonText: "Aceptar",
-      }).then(() => {
-        router.push("/");
-      });
-    }
-  }, [isLoading, isAuthenticated, router]);
-
-  useEffect(() => {
-    if (auth0User && auth0User.sub) {
+      if (typeof window !== "undefined") {
+        Swal.fire({
+          icon: "error",
+          title: "Acceso denegado",
+          text: "Debes iniciar sesión para acceder a esta página.",
+          confirmButtonText: "Aceptar",
+        }).then(() => {
+          window.location.href = "/";
+        });
+      }
+    } else if (auth0User && auth0User.sub) {
       fetchUserData(auth0User.sub);
     }
-  }, [auth0User]);
+  }, [auth0User, isLoading, isAuthenticated]);
 
   async function fetchUserData(auth0_id: string) {
-    const { data, error } = await supabase
-      .from("users2")
-      .select("name, email, picture, role_id, roles(name)")
-      .eq("auth0_id", auth0_id)
-      .single<UserData>();
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/role/${auth0_id}`);
+      if (!res.ok) throw new Error("Error al obtener los datos del usuario");
   
-    if (error) {
-      console.error("❌ Error obteniendo datos del usuario:", error.message);
-      return;
+      const roleText = await res.text();
+  
+      const parsedData: UserData = {
+        name: auth0User?.name ?? "Usuario",
+        email: auth0User?.email ?? "Sin correo",
+        picture: auth0User?.picture ?? "https://via.placeholder.com/100",
+        role: roleText.toUpperCase() as UserData["role"],
+      };
+  
+      setUserData(parsedData);
+  
+      // Guardar cookies accesibles por el middleware
+      document.cookie = `userRole=${parsedData.role}; path=/`;
+      document.cookie = `isAuthenticated=true; path=/`;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("❌ Error:", error.message);
+      } else {
+        console.error("❌ An unknown error occurred:", error);
+      }
+    } finally {
+      setLoadingUserData(false);
     }
-  
-    setUserData({
-      name: data?.name ?? "Usuario",
-      email: data?.email ?? "Sin correo",
-      avatar: data?.picture ?? "https://via.placeholder.com/100",
-      role: data?.roles?.name ? data.roles.name.toUpperCase() : "SIN ROL",
-    });
+  }
+  // ⏳ Skeleton de carga personalizado
+  if (isLoading || loadingUserData) {
+    return (
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-br from-[#e0e0e0] via-[#f0f0f0] to-[#ffffff] px-4">
+        <div className="text-[#5e1914] text-xl font-semibold mb-6 animate-pulse">
+          Cargando tu panel personalizado...
+        </div>
+        <div className="animate-pulse w-[360px] bg-white rounded-2xl shadow-2xl p-8 flex flex-col items-center space-y-6 border border-[#ddd]">
+          <div className="w-24 h-24 rounded-full bg-[#ccc]" />
+          <div className="h-4 bg-[#ddd] rounded w-3/4" />
+          <div className="h-3 bg-[#e0e0e0] rounded w-1/2" />
+          <div className="h-3 bg-[#e0e0e0] rounded w-1/3" />
+          <div className="w-full flex flex-col space-y-2 mt-6">
+            <div className="h-4 bg-[#ddd] rounded w-full" />
+            <div className="h-4 bg-[#ddd] rounded w-[90%]" />
+            <div className="h-4 bg-[#ddd] rounded w-[80%]" />
+            <div className="h-4 bg-[#ddd] rounded w-[60%]" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (userData && userData.role !== "ADMIN") {
+    if (typeof window !== "undefined") {
+      Swal.fire({
+        icon: "error",
+        title: "Acceso restringido",
+        text: "Solo los administradores pueden acceder a esta sección.",
+        confirmButtonText: "Ir al inicio",
+      }).then(() => {
+        window.location.href = "/";
+      });
+    }
+    return null;
   }
 
-  if (isLoading) {
-    return <div className="text-center text-xl text-gray-600">Cargando...</div>;
-  }
-
-  if (!isAuthenticated || !userData) {
+  if (!userData) {
     return null;
   }
 
@@ -88,10 +124,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { name: "Rutinas", icon: <HiBookOpen className="w-5 h-5" />, href: "/dashboard/rutina" },
     { name: "Estadísticas", icon: <HiChartBar className="w-5 h-5" />, href: "/dashboard/estadisticas" },
     { name: "Membresías", icon: <HiOutlineStar className="w-5 h-5" />, href: "/dashboard/membresias" },
-    { name: "Configuración", icon: <HiCog className="w-5 h-5" />, href: "/dashboard/configuracion" }
+    { name: "Configuración", icon: <HiCog className="w-5 h-5" />, href: "/dashboard/configuracion" },
   ];
 
-  const currentMenu = userData.role === "TRAINER" ? adminMenu : adminMenu; ;
+  const currentMenu = adminMenu;
 
   const roleIcon = (
     <div
@@ -117,19 +153,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8] text-[#333]">
-      {/* Navbar móvil */}
-      <div className="md:hidden fixed top-4  mt-16 left-0 right-0 bg-white shadow-md z-30 p-2 flex justify-between items-center">
+      {/* Mobile top bar */}
+      <div className="md:hidden fixed top-4 mt-16 left-0 right-0 bg-white shadow-md z-30 p-2 flex justify-between items-center">
         <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 rounded-md text-[#5e1914]">
           {mobileMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
         </button>
       </div>
 
-      {/* Sidebar desktop */}
+      {/* Sidebar */}
       <div className="hidden md:block w-64 bg-white shadow-lg p-4">
         {roleIcon}
         <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode</h1>
         <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-          <Image src={userData.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
+          <Image src={userData.picture} alt="Usuario" width={40} height={40} className="rounded-full object-cover" />
           <div>
             <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
             <p className="text-sm text-[#5e1914]">{userData.email}</p>
@@ -161,14 +197,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </div>
 
-      {/* Sidebar móvil */}
+      {/* Mobile menu */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 mt-34 flex md:hidden">
           <div className="w-64 bg-white shadow-lg p-4">
             {roleIcon}
             <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode</h1>
             <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-              <Image src={userData.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
+              <Image src={userData.picture} alt="Usuario" width={40} height={40} className="rounded-full object-cover" />
               <div>
                 <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
                 <p className="text-sm text-[#5e1914]">{userData.email}</p>

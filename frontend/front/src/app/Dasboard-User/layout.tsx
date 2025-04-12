@@ -1,39 +1,28 @@
 "use client";
 import {
   HiHome,
-  HiBookOpen,
-  HiShoppingCart,
-  HiOutlineStar,
   HiOutlineLogout,
-  HiCog,
-  HiChartBar,
   HiMenu,
   HiX,
-  HiUser
+  HiUser,
 } from "react-icons/hi";
 import Link from "next/link";
 import { useAuth0 } from "@auth0/auth0-react";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
-import Trainer from "@/Components/Roles/Trainer";
 import Image from "next/image";
 
 interface UserData {
   name: string;
   email: string;
   picture: string;
-  role_id: number;
-  roles: {
-    name: string;
-  };
+  role: string;
 }
 
-
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const { user: auth0User, isAuthenticated, isLoading, logout } = useAuth0();
-  const [userData, setUserData] = useState<{ name: string; email: string; avatar: string; role: string } | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
 
@@ -57,95 +46,99 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [auth0User]);
 
   async function fetchUserData(auth0_id: string) {
-      const { data, error } = await supabase
-        .from("users2")
-        .select("name, email, picture, role_id, roles(name)")
-        .eq("auth0_id", auth0_id)
-        .single<UserData>();
-    
-      if (error) {
-        console.error("❌ Error obteniendo datos del usuario:", error.message);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/role/${auth0_id}`);
+      if (!res.ok) throw new Error("Error al obtener los datos del usuario");
+
+      const roleText = await res.text();
+
+      const parsedData: UserData = {
+        name: auth0User?.name ?? "Usuario",
+        email: auth0User?.email ?? "Sin correo",
+        picture: auth0User?.picture ?? "https://via.placeholder.com/100",
+        role: roleText.toUpperCase(),
+      };
+
+      if (parsedData.role !== "CLIENT") {
+        Swal.fire({
+          icon: "error",
+          title: "Acceso denegado",
+          text: "No tienes permisos para acceder como cliente.",
+          confirmButtonText: "Volver",
+        }).then(() => {
+          router.push("/");
+        });
         return;
       }
-    
-      setUserData({
-        name: data?.name ?? "Usuario",
-        email: data?.email ?? "Sin correo",
-        avatar: data?.picture ?? "https://via.placeholder.com/100",
-        role: data?.roles?.name ? data.roles.name.toUpperCase() : "SIN ROL",
-      });
+
+      setUserData(parsedData);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("❌ Error:", error.message);
+      } else {
+        console.error("❌ An unknown error occurred:", error);
+      }
     }
-
-  if (isLoading) {
-    return <div className="text-center text-xl text-gray-600">Cargando...</div>;
   }
 
-  if (!isAuthenticated || !userData) {
-    return null;
+  if (isLoading || (!userData && isAuthenticated)) {
+    return (
+      <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8] text-[#333] animate-pulse">
+        <div className="hidden md:block w-64 bg-white shadow-lg p-4">
+          <div className="w-20 h-20 bg-[#ccc] rounded-full mx-auto mb-6"></div>
+          <div className="bg-[#eee] h-6 w-3/4 mx-auto mb-4 rounded"></div>
+          <div className="bg-[#eee] h-4 w-5/6 mx-auto mb-2 rounded"></div>
+          <div className="bg-[#eee] h-4 w-2/3 mx-auto mb-6 rounded"></div>
+          <div className="space-y-2">
+            <div className="bg-[#eee] h-8 rounded"></div>
+            <div className="bg-[#eee] h-8 rounded"></div>
+          </div>
+        </div>
+        <main className="flex-1 p-4 md:p-8 min-h-screen bg-[#ffffff] mt-20 md:mt-0">
+          <div className="bg-[#eee] h-12 w-1/2 mb-6 rounded"></div>
+          <div className="bg-[#eee] h-64 rounded-xl"></div>
+        </main>
+      </div>
+    );
   }
 
+  if (!isAuthenticated || !userData) return null;
 
-
-  //------Menú estándar para usuarios ------//
-  const standardMenuUsers = [
+  const clientMenu = [
     { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/Dasboard-User" },
-    { name: "Rutina", icon: <HiBookOpen className="w-5 h-5" />, href: "/Dasboard-User/Rutina" },
-    { name: "Membesias Activas", icon: <HiOutlineStar className="w-5 h-5" />, href: "/Dasboard-User/Mi-membresia" },
-    { name: "Historial", icon: <HiShoppingCart className="w-5 h-5" />, href: "/Dasboard-User/Historial-Pagos" }
+    { name: "Ruttinas", icon: <HiHome className="w-5 h-5" />, href: "Dasboard-User/Rutina" },
+    { name: "Membresia", icon: <HiUser className="w-5 h-5" />, href: "Dasboard-User/Mi-membresia" },
+    { name: "Historial de Pagos", icon: <HiUser className="w-5 h-5" />, href: "Dasboard-User/Historial-Pagos" },
   ];
-
-  const currentMenu = standardMenuUsers;
-
-  const roleIcon = (
-    <div
-      className="flex items-center justify-center w-20 h-20 mb-6 rounded-full shadow-md mx-auto"
-      style={{
-        backgroundColor:
-          userData.role === "ADMIN"
-            ? "#5e1914"
-            : userData.role === "TRAINER"
-            ? "#3B3B66"
-            : "#178a7a",
-      }}
-    >
-      {userData.role === "ADMIN" ? (
-        <HiCog className="text-white w-16 h-16" />
-      ) : userData.role === "TRAINER" ? (
-        <HiChartBar className="text-white w-10 h-16" />
-      ) : (
-        <HiUser className="text-white w-16 h-16" />
-      )}
-    </div>
-  );
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8] text-[#333]">
       {/* Navbar móvil */}
-      <div className="md:hidden fixed top-4  mt-16 left-0 right-0 bg-white shadow-md z-30 p-2 flex justify-between items-center">
+      <div className="md:hidden fixed top-4 mt-16 left-0 right-0 bg-white shadow-md z-30 p-2 flex justify-between items-center">
         <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 rounded-md text-[#5e1914]">
           {mobileMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
         </button>
       </div>
 
-      {/* Sidebar desktop */}
+      {/* Sidebar */}
       <div className="hidden md:block w-64 bg-white shadow-lg p-4">
-        {roleIcon}
-        <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode</h1>
+        <div className="flex items-center justify-center w-20 h-20 mb-6 rounded-full shadow-md mx-auto bg-[#5e1914]">
+          <HiUser className="text-white w-10 h-10" />
+        </div>
+        <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode Client</h1>
         <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-          <Image src={userData.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
+          <Image src={userData.picture} alt="Usuario" width={40} height={40} className="rounded-full object-cover" />
           <div>
             <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
             <p className="text-sm text-[#5e1914]">{userData.email}</p>
-            <p className="text-sm text-[#5e1914] font-bold">
-              ROL: {userData.role === "ADMIN" ? "Administrador" : userData.role === "TRAINER" ? "Entrenador" : "Usuario"}
-            </p>
+            <p className="text-sm text-[#5e1914] font-bold">ROL: Cliente</p>
           </div>
         </div>
 
         <ul className="space-y-2">
-          {currentMenu.map((item) => (
+          {clientMenu.map((item) => (
             <li key={item.name}>
-              <Link href={item.href} className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#5e1914]">
+              <Link href={item.href} className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#5e1914] hover:scale-105 text-[#5e1914] hover:text-white">
                 {item.icon}
                 <span>{item.name}</span>
               </Link>
@@ -164,30 +157,30 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </div>
 
-      {/* Sidebar móvil */}
+      {/* Mobile sidebar */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 mt-34 flex md:hidden">
           <div className="w-64 bg-white shadow-lg p-4">
-            {roleIcon}
-            <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode</h1>
+            <div className="flex items-center justify-center w-20 h-20 mb-6 rounded-full shadow-md mx-auto bg-[#5e1914]">
+              <HiUser className="text-white w-10 h-10" />
+            </div>
+            <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode Client</h1>
             <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-              <Image src={userData.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
+              <Image src={userData.picture} alt="Usuario" width={40} height={40} className="rounded-full object-cover" />
               <div>
                 <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
                 <p className="text-sm text-[#5e1914]">{userData.email}</p>
-                <p className="text-sm text-[#5e1914] font-bold">
-                  ROL: {userData.role === "ADMIN" ? "Administrador" : userData.role === "TRAINER" ? "Entrenador" : "Usuario"}
-                </p>
+                <p className="text-sm text-[#5e1914] font-bold">ROL: Cliente</p>
               </div>
             </div>
 
             <ul className="space-y-2">
-              {currentMenu.map((item) => (
+              {clientMenu.map((item) => (
                 <li key={item.name}>
                   <Link
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#5e1914]"
+                    className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#5e1914] hover:scale-105 text-[#5e1914] hover:text-white"
                   >
                     {item.icon}
                     <span>{item.name}</span>
@@ -213,26 +206,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       <main className="flex-1 p-4 md:p-8 min-h-screen bg-[#ffffff] mt-20 md:mt-0">
         <div className="mb-6">
-          {userData.role === "ADMIN" ? (
-            <div className="bg-gradient-to-r from-[#fefefe] to-[#f8f8f8] p-6 rounded-xl shadow-xl">
-              <h3 className="text-2xl font-bold text-[#5e1914] mb-4">Panel de Administrador</h3>
-              <p className="text-[#5e1914] text-lg">Administra usuarios, clases, membresías y más.</p>
-            </div>
-          ) : userData.role === "TRAINER" ? (
-            <div className="bg-gradient-to-r from-[#fefefe] to-[#f8f8f8] p-6 rounded-xl shadow-xl">
-              <h3 className="text-2xl font-bold text-[#5e1914] mb-4">Panel de Entrenador</h3>
-              <div className="text-[#5e1914]">
-                <Trainer />
-              </div>
-            </div>
-          ) : (
-            <div className="bg-gradient-to-r from-[#fefefe] to-[#f8f8f8] p-6 rounded-xl shadow-xl">
-              <h3 className="text-2xl font-bold text-[#5e1914]">Panel de Usuario</h3>
-              <p className="text-[#5e1914] text-lg">Bienvenido a tu espacio personalizado.</p>
-            </div>
-          )}
+          <div className="bg-gradient-to-r from-[#fefefe] to-[#f8f8f8] p-6 rounded-xl shadow-xl">
+            <h3 className="text-2xl font-bold text-[#5e1914] mb-4">Panel del Cliente</h3>
+            <p className="text-[#5e1914] text-lg">Bienvenido a tu espacio personalizado de entrenamiento.</p>
+          </div>
         </div>
-
         {children}
       </main>
     </div>
