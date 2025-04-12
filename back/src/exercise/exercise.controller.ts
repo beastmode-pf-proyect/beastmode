@@ -28,8 +28,6 @@ export class ExerciseController {
     return this.exerciseService.create(createExerciseDto, file);
   }
 
-
-
   @Get() 
   findAll() {
     return this.exerciseService.findAll();
@@ -48,7 +46,6 @@ export class ExerciseController {
   ) {
     return this.exerciseService.update(id, updateExerciseDto);
   }
-
 
   @Delete(':id')
   delete(@Param('id', ParseUUIDPipe) id: string) {
