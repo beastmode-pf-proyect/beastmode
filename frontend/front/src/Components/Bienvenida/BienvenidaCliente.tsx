@@ -24,7 +24,7 @@ export default function Bienvenida() {
     const fetchUserData = async () => {
       if (!auth0User?.sub) return;
       try {
-        const res = await fetch(`http://localhost:3000/users/${auth0User.sub}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${auth0User.sub}`);
         if (!res.ok) throw new Error("Error al obtener usuario");
 
         const data = await res.json();
