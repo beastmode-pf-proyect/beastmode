@@ -68,7 +68,7 @@ export const Navbarp = () => {
 
   return (
     <nav
-      className={`fixed w-full z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 bg-[#5e1914] p-4 z-60 transition-all duration-500 ${
         scrolled
           ? "bg-red-950/95 shadow-lg backdrop-blur-sm py-2"
           : "bg-red-950/90 py-4"

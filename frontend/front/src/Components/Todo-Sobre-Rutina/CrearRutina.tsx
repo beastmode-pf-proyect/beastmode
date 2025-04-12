@@ -4,6 +4,7 @@ import React from 'react';
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
 import Swal from 'sweetalert2';
+import { FaDumbbell, FaSignature, FaAlignLeft, FaImage } from 'react-icons/fa';
 
 interface WorkoutRoutineForm {
   name: string;
@@ -40,16 +41,16 @@ const CrearRutina: React.FC = () => {
           imageUrl: values.imageUrl || null,
         }),
       });
-  
+
       if (!response.ok) throw new Error('Error al crear la rutina');
-  
+
       Swal.fire({
         title: '¡Éxito!',
         text: 'Rutina creada exitosamente',
         icon: 'success',
         confirmButtonText: 'Ok',
       });
-  
+
       resetForm();
     } catch (error) {
       Swal.fire({
@@ -62,53 +63,60 @@ const CrearRutina: React.FC = () => {
       setSubmitting(false);
     }
   };
-  
 
   return (
-    <div className="max-w-2xl mx-auto mt-14 px-10 py-12 bg-red-950/95 backdrop-blur-md rounded-3xl shadow-xl border border-red-800">
-      <h2 className="text-4xl font-extrabold text-white text-center mb-10 tracking-tight drop-shadow-xl">
-        🏋️‍♂️ Crear Nueva Rutina
-      </h2>
+    <div className="max-w-3xl mx-auto mt-16 px-10 py-12 bg-gradient-to-br from-[#d41616] via-[#5e1914] to-[#5e1914] rounded-3xl shadow-2xl border border-[#5e1914]/70">
+      <div className="text-center mb-10">
+        <h2 className="text-4xl font-extrabold text-white tracking-wide flex justify-center items-center gap-2">
+          <FaDumbbell className="text-white drop-shadow-lg" />
+          Crear Nueva Rutina
+        </h2>
+        <p className="text-red-100 mt-2 text-sm tracking-wide">Llena los campos para agregar una rutina personalizada.</p>
+      </div>
+
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
-          <Form className="space-y-7 text-white">
+          <Form className="space-y-8 text-white">
             <div>
-              <label htmlFor="name" className="block text-sm font-semibold text-white">
+              <label htmlFor="name" className="flex items-center gap-2 text-sm font-semibold text-white">
+                <FaSignature className="text-white" />
                 Nombre de la rutina
               </label>
               <Field
                 type="text"
                 name="name"
-                className="mt-1 block w-full rounded-xl border border-red-700 bg-white/90 text-red-900 shadow-sm px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-300"
+                className="mt-2 block w-full rounded-lg border border-[#842b2b] bg-white/90 text-red-950 shadow-sm px-4 py-3 focus:border-red-500 focus:ring-2 focus:ring-red-300 transition"
               />
               <ErrorMessage name="name" component="div" className="text-red-200 text-sm mt-1" />
             </div>
 
             <div>
-              <label htmlFor="description" className="block text-sm font-semibold text-white">
+              <label htmlFor="description" className="flex items-center gap-2 text-sm font-semibold text-white">
+                <FaAlignLeft className="text-white" />
                 Descripción
               </label>
               <Field
                 as="textarea"
                 name="description"
                 rows={4}
-                className="mt-1 block w-full rounded-xl border border-red-700 bg-white/90 text-red-900 shadow-sm px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-300"
+                className="mt-2 block w-full rounded-lg border border-[#842b2b] bg-white/90 text-red-950 shadow-sm px-4 py-3 focus:border-red-500 focus:ring-2 focus:ring-red-300 transition"
               />
               <ErrorMessage name="description" component="div" className="text-red-200 text-sm mt-1" />
             </div>
 
             <div>
-              <label htmlFor="imageUrl" className="block text-sm font-semibold text-white">
+              <label htmlFor="imageUrl" className="flex items-center gap-2 text-sm font-semibold text-white">
+                <FaImage className="text-white" />
                 Imagen (URL opcional)
               </label>
               <Field
                 type="text"
                 name="imageUrl"
-                className="mt-1 block w-full rounded-xl border border-red-700 bg-white/90 text-red-900 shadow-sm px-4 py-2 focus:border-red-500 focus:ring-2 focus:ring-red-300"
+                className="mt-2 block w-full rounded-lg border border-[#842b2b] bg-white/90 text-red-950 shadow-sm px-4 py-3 focus:border-red-500 focus:ring-2 focus:ring-red-300 transition"
               />
               <ErrorMessage name="imageUrl" component="div" className="text-red-200 text-sm mt-1" />
             </div>
@@ -116,7 +124,7 @@ const CrearRutina: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3 px-6 rounded-xl bg-white text-red-950 font-bold text-lg tracking-wide hover:bg-red-100 transition-all duration-200 ease-in-out disabled:opacity-50"
+              className="w-full py-3 px-6 rounded-xl bg-[#ffffff] text-[#5e1914] font-extrabold text-lg tracking-wide shadow-lg hover:bg-red-100 hover:scale-[1.02] transition-all duration-200 ease-in-out disabled:opacity-50"
             >
               {isSubmitting ? 'Creando...' : 'Crear Rutina'}
             </button>
