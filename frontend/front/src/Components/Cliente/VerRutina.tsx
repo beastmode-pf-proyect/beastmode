@@ -40,7 +40,7 @@ export default function RutinaUsuario() {
 
   const fetchRutina = async (auth0_id: string) => {
     try {
-      const res = await fetch(`http://localhost:3000/user-workout/${auth0_id}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user-workout/${auth0_id}`);
       if (!res.ok) throw new Error("No se pudo obtener la rutina");
 
       const data = await res.json();

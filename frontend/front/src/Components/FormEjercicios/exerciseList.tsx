@@ -13,7 +13,7 @@ export default function ExerciseList() {
   useEffect(() => {
     const fetchExercises = async () => {
       try {
-        const response = await fetch("http://localhost:3000/exercises");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/exercises`);
         if (!response.ok) {
           throw new Error("Error al cargar los ejercicios");
         }

@@ -32,7 +32,7 @@ export default function ExerciseForm() {
     setSuccess(false);
 
     try {
-      const response = await fetch("http://localhost:3000/exercises/create", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/exercises/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
