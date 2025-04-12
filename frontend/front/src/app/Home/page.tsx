@@ -95,8 +95,8 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      <ExerciseForm />
-      <ExerciseList />
+      {/* <ExerciseForm />
+      <ExerciseList /> */}
     </div>
   );
 };
