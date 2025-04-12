@@ -20,7 +20,7 @@ export class FileUploadController {
                 }),
                 // Valida que el archivo sea una imagen.
                 new FileTypeValidator({
-                    fileType: /(jpg|jpeg|png|webp)$/,
+                    fileType: /(jpg|jpeg|png|webp|gif|mp4)$/,
                 }),
             ],
         })
@@ -44,7 +44,7 @@ export class FileUploadController {
                 }),
                 // Valida que el archivo sea una imagen.
                 new FileTypeValidator({
-                    fileType: /(jpg|jpeg|png|webp)$/,
+                    fileType: /(jpg|jpeg|png|webp|gif|mp4)$/,
                 }),
             ],
         })
@@ -69,7 +69,7 @@ export class FileUploadController {
                   }),
                   // Valida que el archivo sea una imagen.
                   new FileTypeValidator({
-                    fileType: /(jpg|jpeg|png|webp|mp4|mov|avi|mkv)$/,
+                    fileType: /(jpg|jpeg|png|webp|mp4|mov|avi|mkv|gif)$/,
                   }),
               ],
           })

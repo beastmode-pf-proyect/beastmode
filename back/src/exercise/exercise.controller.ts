@@ -20,7 +20,7 @@ export class ExerciseController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 2000000 }),
-          new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp)$/ }),
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp|gif|mp4)$/ }),
         ],
       })
     ) file?: Express.Multer.File // Hacerlo opcional
