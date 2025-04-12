@@ -4,9 +4,11 @@ import { ExerciseService } from './exercise.service';
 import { ExerciseController } from './exercise.controller';
 import { ExerciseRepository } from './exercise.repository';
 import { Exercise } from '../entities/exercise.entity';
+import { FileUploadModule } from 'src/file-upload/file-upload.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Exercise])],
+  imports: [TypeOrmModule.forFeature([Exercise]),
+FileUploadModule], // Asegúrate de importar el módulo de carga de archivos si lo necesitas
   controllers: [ExerciseController],
   providers: [
     ExerciseService,
