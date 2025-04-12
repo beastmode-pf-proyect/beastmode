@@ -3,7 +3,6 @@ import {
   HiHome,
   HiBookOpen,
   HiOutlineLogout,
-  HiChartBar,
   HiMenu,
   HiX,
   HiUser,
@@ -14,6 +13,43 @@ import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+
+// Simulación de Skeleton Loader
+function SkeletonLoader() {
+  return (
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8]">
+      <div className="hidden md:block w-64 bg-white p-4 animate-pulse">
+        <div className="flex flex-col items-center">
+          <div className="w-20 h-20 bg-gray-300 rounded-full mb-4" />
+          <div className="h-6 bg-gray-300 w-3/4 rounded mb-6" />
+        </div>
+
+        <div className="bg-[#ffffff] p-3 rounded-md mb-6 text-center">
+          <div className="h-5 bg-gray-300 rounded w-full mb-2" />
+          <div className="h-4 bg-gray-300 rounded w-3/4 mx-auto mb-2" />
+          <div className="h-4 bg-gray-300 rounded w-1/2 mx-auto" />
+        </div>
+
+        <ul className="space-y-2">
+          {[...Array(3)].map((_, i) => (
+            <li key={i}>
+              <div className="flex items-center space-x-3 p-2 rounded bg-gray-200" />
+            </li>
+          ))}
+        </ul>
+
+        <div className="mt-4">
+          <div className="h-10 bg-gray-300 rounded w-full" />
+        </div>
+      </div>
+
+      <main className="flex-1 p-4 md:p-8 min-h-screen bg-white">
+        <div className="h-10 w-1/3 bg-gray-300 rounded mb-4 animate-pulse" />
+        <div className="h-48 w-full bg-gray-200 rounded animate-pulse" />
+      </main>
+    </div>
+  );
+}
 
 interface UserData {
   name: string;
@@ -83,47 +119,50 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
     }
   }
 
-  if (isLoading) return <div className="text-center text-xl text-gray-600">Cargando...</div>;
+  if (isLoading || (isAuthenticated && !userData)) return <SkeletonLoader />;
   if (!isAuthenticated || !userData) return null;
 
   const trainerMenu = [
-    { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/trainer" },
-    { name: "Clases", icon: <HiBookOpen className="w-5 h-5" />, href: "/trainer/clases" },
-    { name: "Alumnos", icon: <HiUser className="w-5 h-5" />, href: "/trainer/alumnos" },
+    { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/DasboardTrainer" },
+    { name: "Rutinas", icon: <HiBookOpen className="w-5 h-5" />, href: "DasboardTrainer/Rutinas" },
+    { name: "Alumnos", icon: <HiUser className="w-5 h-5" />, href: "DasboardTrainer/Usuarios" },
+    { name: "Alumnos", icon: <HiUser className="w-5 h-5" />, href: "DasboardTrainer/Ejercicios" },
   ];
-
-  const roleIcon = (
-    <div className="flex items-center justify-center w-20 h-20 mb-6 rounded-full shadow-md mx-auto bg-[#3B3B66]">
-      <HiChartBar className="text-white w-10 h-16" />
-    </div>
-  );
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8] text-[#333]">
       {/* Navbar móvil */}
-      <div className="md:hidden fixed top-4 mt-16 left-0 right-0 bg-white shadow-md z-30 p-2 flex justify-between items-center">
-        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 rounded-md text-[#3B3B66]">
+      <div className="md:hidden fixed top-4 mt-16 left-0 right-0 bg-white z-30 p-2 flex justify-between items-center">
+        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 rounded-md text-[#5e1914]">
           {mobileMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
         </button>
       </div>
 
-      {/* Sidebar */}
-      <div className="hidden md:block w-64 bg-white shadow-lg p-4">
-        {roleIcon}
-        <h1 className="text-2xl font-bold text-[#3B3B66] mb-6 text-center">BeastMode Trainer</h1>
-        <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-          <Image src={userData.picture} alt="Usuario" width={40} height={40} className="rounded-full object-cover" />
-          <div>
-            <h2 className="text-lg font-semibold text-[#3B3B66]">{userData.name}</h2>
-            <p className="text-sm text-[#3B3B66]">{userData.email}</p>
-            <p className="text-sm text-[#3B3B66] font-bold">ROL: Entrenador</p>
-          </div>
+      {/* Sidebar Desktop */}
+      <div className="hidden md:block w-64 bg-white p-4">
+        <div className="flex flex-col items-center">
+          <Image
+            src={userData.picture}
+            alt="Usuario"
+            width={80}
+            height={80}
+            className="rounded-full object-cover mb-4"
+          />
+          <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">
+            BeastMode Trainer
+          </h1>
+        </div>
+
+        <div className="bg-[#ffffff] p-3 rounded-md mb-6 text-center">
+          <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
+          <p className="text-sm text-[#5e1914]">{userData.email}</p>
+          <p className="text-sm text-[#5e1914] font-bold">ROL: Entrenador</p>
         </div>
 
         <ul className="space-y-2">
           {trainerMenu.map((item) => (
             <li key={item.name}>
-              <Link href={item.href} className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#3B3B66]">
+              <Link href={item.href} className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#5e1914] hover:scale-105 text-[#5e1914]">
                 {item.icon}
                 <span>{item.name}</span>
               </Link>
@@ -134,7 +173,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
         <div className="mt-4">
           <button
             onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-            className="w-full flex items-center justify-center gap-2 bg-[#3B3B66] hover:bg-[#2a2a52] text-white p-2 rounded-md transition-all duration-300 transform hover:scale-105"
+            className="w-full flex items-center justify-center gap-2 bg-[#5e1914] hover:bg-[#400e0a] text-white p-2 rounded-md transition-all duration-300 transform hover:scale-105"
           >
             <HiOutlineLogout className="w-5 h-5" />
             <span>Cerrar sesión</span>
@@ -145,16 +184,24 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
       {/* Mobile sidebar */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 mt-34 flex md:hidden">
-          <div className="w-64 bg-white shadow-lg p-4">
-            {roleIcon}
-            <h1 className="text-2xl font-bold text-[#3B3B66] mb-6 text-center">BeastMode Trainer</h1>
-            <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-              <Image src={userData.picture} alt="Usuario" width={40} height={40} className="rounded-full object-cover" />
-              <div>
-                <h2 className="text-lg font-semibold text-[#3B3B66]">{userData.name}</h2>
-                <p className="text-sm text-[#3B3B66]">{userData.email}</p>
-                <p className="text-sm text-[#3B3B66] font-bold">ROL: Entrenador</p>
-              </div>
+          <div className="w-64 bg-white p-4">
+            <div className="flex flex-col items-center">
+              <Image
+                src={userData.picture}
+                alt="Usuario"
+                width={80}
+                height={80}
+                className="rounded-full object-cover mb-4"
+              />
+              <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">
+                BeastMode Trainer
+              </h1>
+            </div>
+
+            <div className="bg-[#ffffff] p-3 rounded-md mb-6 text-center">
+              <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
+              <p className="text-sm text-[#5e1914]">{userData.email}</p>
+              <p className="text-sm text-[#5e1914] font-bold">ROL: Entrenador</p>
             </div>
 
             <ul className="space-y-2">
@@ -163,7 +210,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
                   <Link
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#3B3B66]"
+                    className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#5e1914] hover:scale-105 text-[#5e1914]"
                   >
                     {item.icon}
                     <span>{item.name}</span>
@@ -175,7 +222,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
             <div className="mt-4">
               <button
                 onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-                className="w-full flex items-center justify-center gap-2 bg-[#3B3B66] hover:bg-[#2a2a52] text-white p-2 rounded-md transition-all duration-300 transform hover:scale-105"
+                className="w-full flex items-center justify-center gap-2 bg-[#5e1914] hover:bg-[#400e0a] text-white p-2 rounded-md transition-all duration-300 transform hover:scale-105"
               >
                 <HiOutlineLogout className="w-5 h-5" />
                 <span>Cerrar sesión</span>
@@ -183,19 +230,11 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
             </div>
           </div>
 
-          <div className="flex-1 bg-[#5e191444]" onClick={() => setMobileMenuOpen(false)} />
+          <div className="flex-1 bg-black/30" onClick={() => setMobileMenuOpen(false)} />
         </div>
       )}
 
       <main className="flex-1 p-4 md:p-8 min-h-screen bg-[#ffffff] mt-20 md:mt-0">
-        <div className="mb-6">
-          <div className="bg-gradient-to-r from-[#fefefe] to-[#f8f8f8] p-6 rounded-xl shadow-xl">
-            <h3 className="text-2xl font-bold text-[#3B3B66] mb-4">Panel de Entrenador</h3>
-            <div className="text-[#3B3B66]">
-           
-            </div>
-          </div>
-        </div>
         {children}
       </main>
     </div>

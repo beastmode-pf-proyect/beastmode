@@ -15,7 +15,6 @@ import Link from "next/link";
 import { useAuth0 } from "@auth0/auth0-react";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
-import Trainer from "@/Components/Roles/Trainer";
 import Image from "next/image";
 
 interface UserData {
@@ -122,8 +121,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/dashboard" },
     { name: "Usuarios", icon: <HiUsers className="w-5 h-5" />, href: "/dashboard/usuarios" },
     { name: "Rutinas", icon: <HiBookOpen className="w-5 h-5" />, href: "/dashboard/rutina" },
-    { name: "Estadísticas", icon: <HiChartBar className="w-5 h-5" />, href: "/dashboard/estadisticas" },
-    { name: "Membresías", icon: <HiOutlineStar className="w-5 h-5" />, href: "/dashboard/membresias" },
+    { name: "Estadísticas", icon: <HiChartBar className="w-5 h-5" />, href: "/dashboard/Estadisticas" },
+    { name: "Membresías", icon: <HiOutlineStar className="w-5 h-5" />, href: "/dashboard/Membresia" },
     { name: "Configuración", icon: <HiCog className="w-5 h-5" />, href: "/dashboard/configuracion" },
   ];
 
@@ -245,26 +244,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       )}
 
       <main className="flex-1 p-4 md:p-8 min-h-screen bg-[#ffffff] mt-20 md:mt-0">
-        <div className="mb-6">
-          {userData.role === "ADMIN" ? (
-            <div className="bg-gradient-to-r from-[#fefefe] to-[#f8f8f8] p-6 rounded-xl shadow-xl">
-              <h3 className="text-2xl font-bold text-[#5e1914] mb-4">Panel de Administrador</h3>
-              <p className="text-[#5e1914] text-lg">Administra usuarios, clases, membresías y más.</p>
-            </div>
-          ) : userData.role === "TRAINER" ? (
-            <div className="bg-gradient-to-r from-[#fefefe] to-[#f8f8f8] p-6 rounded-xl shadow-xl">
-              <h3 className="text-2xl font-bold text-[#5e1914] mb-4">Panel de Entrenador</h3>
-              <div className="text-[#5e1914]">
-                <Trainer />
-              </div>
-            </div>
-          ) : (
-            <div className="bg-gradient-to-r from-[#fefefe] to-[#f8f8f8] p-6 rounded-xl shadow-xl">
-              <h3 className="text-2xl font-bold text-[#5e1914]">Panel de Usuario</h3>
-              <p className="text-[#5e1914] text-lg">Bienvenido a tu espacio personalizado.</p>
-            </div>
-          )}
-        </div>
+        
 
         {children}
       </main>

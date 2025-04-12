@@ -24,6 +24,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const { user: auth0User, isAuthenticated, isLoading, logout } = useAuth0();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -55,7 +56,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       const parsedData: UserData = {
         name: auth0User?.name ?? "Usuario",
         email: auth0User?.email ?? "Sin correo",
-        picture: auth0User?.picture ?? "https://via.placeholder.com/100",
+        picture: auth0User?.picture ?? "",
         role: roleText.toUpperCase(),
       };
 
@@ -84,7 +85,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   if (isLoading || (!userData && isAuthenticated)) {
     return (
       <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8] text-[#333] animate-pulse">
-        <div className="hidden md:block w-64 bg-white shadow-lg p-4">
+        <div className="hidden md:block w-64 bg-white p-4">
           <div className="w-20 h-20 bg-[#ccc] rounded-full mx-auto mb-6"></div>
           <div className="bg-[#eee] h-6 w-3/4 mx-auto mb-4 rounded"></div>
           <div className="bg-[#eee] h-4 w-5/6 mx-auto mb-2 rounded"></div>
@@ -111,30 +112,47 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     { name: "Historial de Pagos", icon: <HiUser className="w-5 h-5" />, href: "Dasboard-User/Historial-Pagos" },
   ];
 
+  const UserInfo = () => (
+    <>
+      <div className="flex justify-center mb-4">
+        {imageError || !userData.picture ? (
+          <div className="w-[70px] h-[70px] flex items-center justify-center rounded-full bg-[#e0e0e0] border-4 border-[#5e1914]">
+            <HiUser className="w-10 h-10 text-[#5e1914]" />
+          </div>
+        ) : (
+          <Image
+            src={userData.picture}
+            alt="Usuario"
+            width={70}
+            height={70}
+            className="rounded-full object-cover border-4"
+            onError={() => setImageError(true)}
+          />
+        )}
+      </div>
+      <h1 className="text-2xl font-bold text-[#5e1914] mb-4 text-center">BeastMode Client</h1>
+      <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
+        <div>
+          <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
+          <p className="text-sm text-[#5e1914]">{userData.email}</p>
+          <p className="text-sm text-[#5e1914] font-bold">ROL: Cliente</p>
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8] text-[#333]">
       {/* Navbar móvil */}
-      <div className="md:hidden fixed top-4 mt-16 left-0 right-0 bg-white shadow-md z-30 p-2 flex justify-between items-center">
+      <div className="md:hidden fixed top-4 mt-16 left-0 right-0 bg-white z-30 p-2 flex justify-between items-center">
         <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 rounded-md text-[#5e1914]">
           {mobileMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
         </button>
       </div>
 
       {/* Sidebar */}
-      <div className="hidden md:block w-64 bg-white shadow-lg p-4">
-        <div className="flex items-center justify-center w-20 h-20 mb-6 rounded-full shadow-md mx-auto bg-[#5e1914]">
-          <HiUser className="text-white w-10 h-10" />
-        </div>
-        <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode Client</h1>
-        <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-          <Image src={userData.picture} alt="Usuario" width={40} height={40} className="rounded-full object-cover" />
-          <div>
-            <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
-            <p className="text-sm text-[#5e1914]">{userData.email}</p>
-            <p className="text-sm text-[#5e1914] font-bold">ROL: Cliente</p>
-          </div>
-        </div>
-
+      <div className="hidden md:block w-64 bg-white p-4">
+        <UserInfo />
         <ul className="space-y-2">
           {clientMenu.map((item) => (
             <li key={item.name}>
@@ -145,7 +163,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             </li>
           ))}
         </ul>
-
         <div className="mt-4">
           <button
             onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
@@ -160,20 +177,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       {/* Mobile sidebar */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 mt-34 flex md:hidden">
-          <div className="w-64 bg-white shadow-lg p-4">
-            <div className="flex items-center justify-center w-20 h-20 mb-6 rounded-full shadow-md mx-auto bg-[#5e1914]">
-              <HiUser className="text-white w-10 h-10" />
-            </div>
-            <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode Client</h1>
-            <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-              <Image src={userData.picture} alt="Usuario" width={40} height={40} className="rounded-full object-cover" />
-              <div>
-                <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
-                <p className="text-sm text-[#5e1914]">{userData.email}</p>
-                <p className="text-sm text-[#5e1914] font-bold">ROL: Cliente</p>
-              </div>
-            </div>
-
+          <div className="w-64 bg-white p-4">
+            <UserInfo />
             <ul className="space-y-2">
               {clientMenu.map((item) => (
                 <li key={item.name}>
@@ -199,18 +204,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
               </button>
             </div>
           </div>
-
           <div className="flex-1 bg-[#5e191444]" onClick={() => setMobileMenuOpen(false)} />
         </div>
       )}
 
       <main className="flex-1 p-4 md:p-8 min-h-screen bg-[#ffffff] mt-20 md:mt-0">
-        <div className="mb-6">
-          <div className="bg-gradient-to-r from-[#fefefe] to-[#f8f8f8] p-6 rounded-xl shadow-xl">
-            <h3 className="text-2xl font-bold text-[#5e1914] mb-4">Panel del Cliente</h3>
-            <p className="text-[#5e1914] text-lg">Bienvenido a tu espacio personalizado de entrenamiento.</p>
-          </div>
-        </div>
         {children}
       </main>
     </div>

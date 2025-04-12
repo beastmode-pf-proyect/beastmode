@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Footer from "@/Components/Footer/Footer";
 import AuthProvider from "./AuthProvider";
-import Header from "@/Views/Header";
 import LoginFormProvider from "@/Components/loginouth/LoginProvider";
 import StripeProvider from "@/Components/Suscripcion/page";
 import { SessionUserProvider } from "./SessionUserContext";
 import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
+import Navbarp from "@/Components/Navbarp/Navbar";
 
 export const metadata: Metadata = {
   title: "BeastMode",
@@ -21,11 +21,12 @@ export default function RootLayout({
     <AuthProvider>
       <SessionUserProvider>
         <StripeProvider>
+        <Navbarp/>
         <Toaster position="top-center" />
           <html lang="en">
           
-            <body className="flex flex-col min-h-screen">
-              <Header />
+            <body className="flex flex-col min-h-screen pt-24">
+            
               <LoginFormProvider />
               <Suspense fallback={<div>Cargando....</div>}>{children}</Suspense>
               <Footer />
