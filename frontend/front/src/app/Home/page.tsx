@@ -47,7 +47,7 @@ const Home: React.FC = () => {
 
           {/* Tarjeta de próxima sesión */}
           <div className="bg-white p-6 rounded-xl shadow-md border-l-4 border-blue-600">
-            <h3 className="font-bold text-gray-700 mb-2">Próxima Clase</h3>
+            <h3 className="font-bold text-gray-700 mb-2">Próxima Clase.</h3>
             <p className="text-2xl font-bold">{user.nextSession}</p>
             <Link
               href="/schedule"
