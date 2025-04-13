@@ -8,7 +8,7 @@ export default function ExerciseForm() {
   const [exercise, setExercise] = useState<Exercise>({
     name: "",
     description: "",
-    imageLink: "",
+    imageUrl: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,7 +48,7 @@ export default function ExerciseForm() {
       setExercise({
         name: "",
         description: "",
-        imageLink: "",
+        imageUrl: "",
       });
 
       // Puedes recargar los ejercicios aquí si es necesario
@@ -127,7 +127,7 @@ export default function ExerciseForm() {
             type="url"
             id="imageLink"
             name="imageLink"
-            value={exercise.imageLink}
+            value={exercise.imageUrl}
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="https://ejemplo.com/ejercicio.jpg.png.gif"

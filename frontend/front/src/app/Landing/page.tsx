@@ -1,4 +1,3 @@
-
 import Carrusel from "@/Components/Carrusel inicio/carrusel";
 import GymCarousel from "@/Components/carrusel-gym/carruselpics";
 import Ctestimonios from "@/Components/Ctestimonios";
@@ -40,5 +39,3 @@ const Landing = () => {
 };
 
 export default Landing;
-
-

@@ -1,5 +1,6 @@
 // components/ExerciseList.tsx
 // components/ExerciseList.tsx
+// components/ExerciseList.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -44,37 +45,26 @@ export default function ExerciseList() {
       {exercises.map((exercise) => (
         <div
           key={exercise.id}
-          className="bg-white rounded-lg shadow-md overflow-hidden"
+          className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
         >
           <div className="p-4">
             <h3 className="text-xl font-bold text-gray-800 mb-2">
               {exercise.name}
             </h3>
-            <p className="text-gray-600 mb-4">{exercise.description}</p>
-            <div className="relative aspect-video bg-gray-200 rounded-md overflow-hidden">
-              {exercise.imageLink ? (
-                <img
-                  src={exercise.imageLink}
-                  alt={exercise.name}
-                  className="absolute inset-0 w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = "none";
-                    const parent = (e.target as HTMLImageElement).parentElement;
-                    if (parent) {
-                      parent.innerHTML = `
-                        <div class="flex items-center justify-center h-full text-gray-500">
-                          <span>No se pudo cargar el GIF</span>
-                        </div>
-                      `;
-                    }
-                  }}
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full text-gray-500">
-                  <span>Sin imagen</span>
-                </div>
-              )}
+            <div className="relative group">
+              <p className="text-gray-600 mb-4 line-clamp-3 transition-all duration-200 group-hover:line-clamp-none group-hover:absolute group-hover:bg-white group-hover:p-4 group-hover:rounded-lg group-hover:shadow-md group-hover:z-10">
+                {exercise.description}
+              </p>
             </div>
+            {exercise.imageUrl && (
+              <div className="mb-4">
+                <img
+                  src={exercise.imageUrl}
+                  alt={exercise.name}
+                  className="w-full h-auto rounded-md object-cover"
+                />
+              </div>
+            )}
           </div>
         </div>
       ))}
