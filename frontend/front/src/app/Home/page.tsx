@@ -1,8 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import MembershipSection from "@/Components/memberships/memberships";
-import Ctestimonios from "@/Components/Ctestimonios";
-import ExerciseList from "@/Components/FormEjercicios/exerciseList";
+import Ctestimonios from "@/Components/Ctestimonios/Ctestimonios";
 
 const Home: React.FC = () => {
   // Datos del usuario (simulado)
