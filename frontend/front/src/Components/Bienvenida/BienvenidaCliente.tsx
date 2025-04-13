@@ -24,7 +24,9 @@ export default function Bienvenida() {
     const fetchUserData = async () => {
       if (!auth0User?.sub) return;
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${auth0User.sub}`);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${auth0User.sub}`
+        );
         if (!res.ok) throw new Error("Error al obtener usuario");
 
         const data = await res.json();
@@ -52,7 +54,8 @@ export default function Bienvenida() {
             {saludo}, <span className="text-yellow-300">{userData.name}</span>!
           </h1>
           <p className="text-sm sm:text-base text-slate-200 mt-1">
-            ¡Listo para activar el <strong className="text-yellow-300">modo bestia</strong> hoy! 🏋️
+            ¡Listo para activar el{" "}
+            <strong className="text-yellow-300">modo bestia</strong> hoy! 🏋️
           </p>
         </div>
       </div>
