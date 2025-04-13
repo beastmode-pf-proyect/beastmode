@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { User } from 'src/entities/users.entity';
 import { Exercise } from 'src/entities/exercise.entity';
 import { WorkoutRoutine } from 'src/entities/workout.routine.entity';
+import { UploadApiResponse } from 'cloudinary';
 
 
 @Injectable()
@@ -69,6 +70,10 @@ export class FileUploadService {
         
         // Retorna el WorkoutRoutine actualizado
         return await this.WorkoutRoutineRepository.findOneBy({ id: workoutId });
+    }
+
+    async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
+        return this.fileUploadRepository.uploadImage(file);
     }
 
 }
