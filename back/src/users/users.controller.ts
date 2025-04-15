@@ -27,6 +27,11 @@ export class UsersController {
     return this.usersService.getRoleById(id);
   }
 
+  @Get('subOfClient/:id')   
+  async getSubscriptions(@Param('id') id: string) {
+      return this.usersService.getSubscriptionsByUserId(id);
+  }
+
   @Get(':id')
   getUserById(@Param('id') id: string) {
     return this.usersService.getUserById(id);

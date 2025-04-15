@@ -3,13 +3,11 @@ import { SubscriptionsService } from "./suscriptions.service";
 import { CreateSubscriptionDto } from "src/dto/createSubscriptionDto";
 import { UpdateSubscriptionDto } from "src/dto/UpdateSubscriptionDto";
 import { SubscriptionValidationInterceptor } from "src/interceptors/subscription.interceptor";
-import { StripeService } from "src/stripe/stripe.service";
 
 
 @Controller("subscriptions")
 export class SubscriptionsController {
-    constructor(private readonly service: SubscriptionsService,
-                private readonly stripeService: StripeService
+    constructor(private readonly service: SubscriptionsService
     ) {}
 
 

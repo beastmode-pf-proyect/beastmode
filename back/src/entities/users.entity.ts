@@ -33,8 +33,7 @@ export class User {
     
     @Column({ 
         name: 'role_id', 
-        type: 'uuid', 
-        nullable: true,
+        type: 'uuid',
         default: 'a039d031-b804-4b7b-afdf-f57424f2fbd9' // ID del rol "client" según tu imagen
       })
       roleId: string;

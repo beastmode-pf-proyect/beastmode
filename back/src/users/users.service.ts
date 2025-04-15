@@ -27,6 +27,10 @@ export class UsersService {
         return this.usersRepository.getRoleById(id)
     }
 
+    async getSubscriptionsByUserId(id: string) {
+        return this.usersRepository.getSubscriptions(id);
+    }
+
     getUserByIdAndRole(id: string, role: string){
         return this.usersRepository.getUserByIdAndRole(id, role)
     }
