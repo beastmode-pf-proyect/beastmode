@@ -12,12 +12,12 @@ export class SubscriptionsRepository {
     constructor(
         @InjectRepository(Subscription)
         private readonly repository: Repository<Subscription>,
-        private userService: UsersService,
-        private membershipService: MembershipsService,
+        private readonly usersService: UsersService,
+        private readonly membershipService: MembershipsService,
     ) {}
 
     async create(data: CreateSubscriptionDto): Promise<Subscription> {
-        const user = await this.userService.getUserById(data.userId);
+        const user = await this.usersService.getUserById(data.userId);
         const membershipPlan = await this.membershipService.getMembershipById(data.membershipPlanId);
 
         if (!user || !membershipPlan) {
@@ -46,7 +46,7 @@ export class SubscriptionsRepository {
             ...options
         });
     }
-
+    
     async update(id: string, data: UpdateSubscriptionDto): Promise<void> {
         await this.repository.update(id, data);
     }
