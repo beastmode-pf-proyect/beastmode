@@ -1,15 +1,15 @@
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { updateUserDto } from "src/dto/updateUserDto";
-import { Subscription } from "src/entities/subscription.entity";
 import { User } from "src/entities/users.entity";
-import { SubscriptionsRepository } from "src/suscriptions/suscriptions.repository";
+import { RolesService } from "src/roles/roles.service";
 import { Repository } from "typeorm";
 
 
 export class UsersRepository{
     constructor(
         @InjectRepository(User) private usersRepository: Repository<User>,
+        private readonly roleService: RolesService,
     ){}
 
     async getUsersTrainerAndClient() : Promise <Partial<User>[]> {
@@ -57,7 +57,7 @@ export class UsersRepository{
           return user;
     }
 
-    async getRoleById(id : string) {
+    async getRoleByUserId(id : string) {
       const user = await this.usersRepository.findOne({
         where:{ auth0_id : id },
         relations: ['role']
@@ -113,38 +113,25 @@ export class UsersRepository{
       return 'Usuario Actualizado'
     }
 
-    async updatetrainerUser(id:string){
-      const serchUser = await this.usersRepository.findOneBy({
-       auth0_id : id
+    async updateRoleUser(id:string, role: string){
+      const serchUser = await this.usersRepository.findOne({
+      where: { auth0_id : id },  
+      relations: ['role']
       })
   
       if(!serchUser){
-          throw new BadRequestException ("Usuario Inexistente")
-      }else if (serchUser.role.name === 'trainer'){
-          throw new BadRequestException ("El usuario ya es un trainer")
+          throw new NotFoundException ("Usuario Inexistente")
       }
-  
-      serchUser.role.name = 'trainer';
+
+      const rolId = await this.roleService.getRoleByName(role)
+
+      serchUser.role.id = rolId.id
   
        await this.usersRepository.save(serchUser);
+
+       return 'Rol del usuario actualizado con exito'
     }
 
-    async updateclientUser(id:string){
-      const serchUser = await this.usersRepository.findOneBy({
-       auth0_id : id
-      })
-  
-      if(!serchUser){
-          throw new BadRequestException ("Usuario Inexistente")
-      }else if (serchUser.role.name === 'client'){
-          throw new BadRequestException ("El usuario ya es un client")
-      }
-  
-      serchUser.role.name = 'client';
-  
-       await this.usersRepository.save(serchUser);
-       return 'Usuario actualizado con exito a rol cliente'
-    }
 
     async deleteUser (id: string){
       const user = await this.usersRepository.findOneBy({
