@@ -24,7 +24,7 @@ export class UsersController {
 
   @Get('/role/:id')
   getRoleById(@Param('id') id: string) {
-    return this.usersService.getRoleById(id);
+    return this.usersService.getRoleByUserId(id);
   }
 
   @Get('subOfClient/:id')   
@@ -47,14 +47,9 @@ export class UsersController {
     return this.usersService.updateUser(id, updateUser);
   }
 
-  @Put('/Admin_t/:id')
-  updatetrainerUser(@Param('id') id: string){
-    return this.usersService.updatetrainerUser(id);
-  }
-
-  @Put('/Admin_c/:id')
-  updateclientUser(@Param('id') id: string){
-    return this.usersService.updateclientUser(id);
+  @Put('/upRole/:id')
+  updateRoleUser(@Param('id') id: string, @Body('role') role: string){
+    return this.usersService.updateRoleUser(id, role);
   }
 
   @Delete(':id')
