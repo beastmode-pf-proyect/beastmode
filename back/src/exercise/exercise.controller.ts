@@ -1,4 +1,18 @@
-import { Controller, Get, Post, Body, Param, Delete, ParseUUIDPipe, UseInterceptors, Put, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+  UseInterceptors,
+  Put,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
+} from '@nestjs/common';
 import { ExerciseService } from './exercise.service';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
@@ -20,26 +34,27 @@ export class ExerciseController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 2000000 }),
-          new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp)$/ }),
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp|gif|mp4)$/ }),
         ],
-      })
-    ) file?: Express.Multer.File // Hacerlo opcional
+      }),
+    )
+    file?: Express.Multer.File, // Hacerlo opcional
   ) {
     return this.exerciseService.create(createExerciseDto, file);
   }
 
-  @Get() 
+  @Get()
   findAll() {
     return this.exerciseService.findAll();
   }
 
-  @Get(':id')  
+  @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.exerciseService.findOne(id);
   }
 
   @UseInterceptors(ExerciseValidationInterceptor)
-  @Put(':id')  
+  @Put(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateExerciseDto: UpdateExerciseDto,

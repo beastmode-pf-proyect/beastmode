@@ -1,7 +1,9 @@
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { updateUserDto } from "src/dto/updateUserDto";
+import { Subscription } from "src/entities/subscription.entity";
 import { User } from "src/entities/users.entity";
+import { SubscriptionsRepository } from "src/suscriptions/suscriptions.repository";
 import { Repository } from "typeorm";
 
 
@@ -66,6 +68,26 @@ export class UsersRepository{
       }
 
           return user.role.name;
+    }
+
+    async getSubscriptions ( id: string ) {
+      const user = await this.usersRepository.findOne({
+        where: { auth0_id : id},
+        relations: ['subscription.membershipPlan']
+      })
+
+      if(!user){
+        throw new NotFoundException('Usuario no encontrado')
+      }
+
+      if (user.subscription.length === 0) {
+         throw new BadRequestException ('El usuario no posee suscripciones')
+        }
+
+      const membershipNames = user.subscription.map(sub => sub.membershipPlan ? sub.membershipPlan.name : 'Nombre no encontrado')
+
+      return membershipNames
+    
     }
 
     async getUserByIdAndRole(id : string, rol: string) {

@@ -36,7 +36,7 @@ export class WorkoutRoutineController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 50000000 }),
-          new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp)$/ }),
+          new FileTypeValidator({ fileType: /(jpg|jpeg|png|webp|gif|mp4)$/ }),
         ],
         fileIsRequired: false, // Hacer el archivo opcional
       })

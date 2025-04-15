@@ -3,5 +3,5 @@ export interface Exercise {
   id?: string;
   name: string;
   description: string;
-  imageLink: string;
+  imageUrl: string;
 }
