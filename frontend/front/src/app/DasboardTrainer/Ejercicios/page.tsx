@@ -1,13 +1,11 @@
 
 
-import AssignRoutine from '@/Components/AsignarRuina/AsignarRutina'
-
 import React from 'react'
 
 function page() {
   return (
     <div>
-     <AssignRoutine />
+    Ejercicios
      
    
     </div>

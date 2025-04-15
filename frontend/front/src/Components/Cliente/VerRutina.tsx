@@ -1,81 +1,82 @@
 "use client";
 
-import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
+import { useAuth0 } from "@auth0/auth0-react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-interface Rutina {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  dias: string[];
-  ejercicios: {
-    nombre: string;
-    repeticiones: string;
-    series: number;
-  }[];
+interface Workout {
+  id: string;
+  name: string;
+  description: string;
+  // Add other fields based on your actual API response
 }
 
-export default function RutinaUsuario() {
-  const { user: auth0User, isAuthenticated, isLoading } = useAuth0();
-  const [rutina, setRutina] = useState<Rutina | null>(null);
-  const [error, setError] = useState<string | null>(null);
+export const SimpleUserWorkouts = () => {
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      Swal.fire({
-        icon: "error",
-        title: "Acceso denegado",
-        text: "Debes iniciar sesión para ver tu rutina.",
-        confirmButtonText: "Aceptar",
-      });
-    }
-  }, [isLoading, isAuthenticated]);
+    const fetchWorkouts = async () => {
+      if (!isAuthenticated || !user?.sub) return;
+      
+      try {
+        setLoading(true);
+        const token = await getAccessTokenSilently();
+        
+        // Important fixes:
+        // 1. Encode user ID
+        const userId = encodeURIComponent(user.sub);
+        
+        // 2. Use proper endpoint from your image (adjust as needed)
+        const endpoint = `http://localhost:3000/basiccard/user/${userId}`;
+        
+        const response = await fetch(endpoint, {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        });
 
-  useEffect(() => {
-    if (auth0User?.sub) {
-      fetchRutina(auth0User.sub);
-    }
-  }, [auth0User]);
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
 
-  const fetchRutina = async (auth0_id: string) => {
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user-workout/${auth0_id}`);
-      if (!res.ok) throw new Error("No se pudo obtener la rutina");
-
-      const data = await res.json();
-      setRutina(data);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error("Error al obtener la rutina:", err.message);
-        setError("No se pudo cargar la rutina del usuario.");
-      } else {
-        console.error("Error desconocido al obtener la rutina:", err);
-        setError("Ocurrió un error desconocido.");
+        const data = await response.json();
+        
+        // Handle both array and object responses
+        const workoutsData = Array.isArray(data) ? data : [data];
+        setWorkouts(workoutsData);
+        
+      } catch (error) {
+        console.error("Fetch error:", error);
+        toast.error(error instanceof Error ? error.message : "Failed to load workouts");
+        setWorkouts([]);
+      } finally {
+        setLoading(false);
       }
-    }
-  };
+    };
 
-  if (isLoading) return <p className="text-center">Cargando...</p>;
-  if (error) return <p className="text-center text-red-500">{error}</p>;
-  if (!rutina) return <p className="text-center">No hay rutina disponible.</p>;
+    fetchWorkouts();
+  }, [isAuthenticated, user, getAccessTokenSilently]);
+
+  if (!isAuthenticated) return <p>Please login to view workouts</p>;
+  if (loading) return <p>Loading workouts...</p>;
 
   return (
-    <div className="max-w-4xl mx-auto bg-white shadow-md p-6 rounded-md">
-      <h1 className="text-2xl font-bold text-[#5e1914] mb-4">Rutina: {rutina.nombre}</h1>
-      <p className="mb-4 text-gray-700">{rutina.descripcion}</p>
-      <p className="mb-2 text-gray-800 font-semibold">Días: {rutina.dias.join(", ")}</p>
-
-      <div className="mt-4">
-        <h2 className="text-xl font-bold text-[#5e1914] mb-2">Ejercicios</h2>
-        {rutina.ejercicios.map((ejercicio, index) => (
-          <div key={index} className="border p-3 mb-2 rounded-md">
-            <p><strong>Nombre:</strong> {ejercicio.nombre}</p>
-            <p><strong>Series:</strong> {ejercicio.series}</p>
-            <p><strong>Repeticiones:</strong> {ejercicio.repeticiones}</p>
+    <div className="workout-container">
+      {workouts.length > 0 ? (
+        workouts.map(workout => (
+          <div key={workout.id} className="workout-card">
+            <h3>{workout.name}</h3>
+            <p>{workout.description}</p>
           </div>
-        ))}
-      </div>
+        ))
+      ) : (
+        <p>No workouts found</p>
+      )}
     </div>
   );
-}
+};

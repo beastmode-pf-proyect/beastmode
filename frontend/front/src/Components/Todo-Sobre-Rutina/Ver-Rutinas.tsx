@@ -29,11 +29,10 @@ const ListadeRutinas: React.FC = () => {
     setSearch('');
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/workout-routine`);
-      
       if (!response.ok) {
         throw new Error(`Error al obtener las rutinas: ${response.status} ${response.statusText}`);
       }
-  
+
       const data = await response.json();
       setRoutines(data);
       setFilteredRoutines(data);
@@ -44,7 +43,6 @@ const ListadeRutinas: React.FC = () => {
       setLoading(false);
     }
   };
-  
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
@@ -98,8 +96,8 @@ const ListadeRutinas: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h2 className="text-3xl font-bold text-white mb-8">Rutinas disponibles</h2>
+    <div className="max-w-6xl mx-auto p-6 mt-12">
+      <h2 className="text-3xl font-bold text-red-800 mb-8">Rutinas disponibles</h2>
 
       <div className="relative mb-8 flex items-center">
         <FiSearch className="absolute left-4 text-gray-400 text-xl" />
@@ -134,21 +132,31 @@ const ListadeRutinas: React.FC = () => {
               key={routine.id}
               className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300"
             >
-              {routine.imageUrl ? (
-                <div className="relative w-full h-48">
+              <div className="relative w-full h-48 bg-gray-100 flex items-center justify-center">
+                {routine.imageUrl ? (
                   <Image
                     src={routine.imageUrl}
                     alt={routine.name}
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 33vw"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const fallback = target.nextElementSibling as HTMLElement;
+                      fallback.style.display = 'flex';
+                    }}
                   />
+                ) : null}
+                <div
+                  className={`absolute inset-0 items-center justify-center text-gray-400 ${
+                    routine.imageUrl ? 'hidden' : 'flex'
+                  }`}
+                >
+                  <FaDumbbell className="text-5xl animate-pulse drop-shadow-md text-red-500" />
                 </div>
-              ) : (
-                <div className="h-48 bg-gray-100 flex items-center justify-center text-gray-400">
-                  <FaDumbbell className="text-5xl" />
-                </div>
-              )}
+              </div>
+
               <div className="p-5">
                 <h3 className="text-xl font-semibold text-gray-800 mb-1">{routine.name}</h3>
                 <p className="text-gray-600 text-sm mb-4">{routine.description}</p>
