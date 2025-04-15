@@ -1,30 +1,49 @@
-import React from "react";
-import Image from "next/image";
-import styles from "./not-found.module.css";
-import box from "../../public/img/box.gif";
+import React from 'react';
+import { Dumbbell, ArrowLeft, Flame } from 'lucide-react';
+import Link from 'next/link';
 
-import Link from "next/link";
+function App() {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-[#5e1914] to-black flex items-center justify-center p-4">
+      <div className="max-w-2xl w-full bg-white/10 backdrop-blur-lg rounded-2xl p-8 text-white shadow-2xl border border-white/20">
+        <div className="flex flex-col items-center text-center space-y-6">
+         
+          <div className="relative">
+            <Dumbbell className="w-24 h-24 animate-bounce" />
+            <Flame className="w-8 h-8 absolute -top-2 -right-2 text-orange-500 animate-pulse" />
+          </div>
 
-export default function PageNotFound() {
-    return (
-        <div className="flex justify-center h-full items-center m-10">
-            <div className="flex flex-col md:flex-row items-center justify-center text-center w-full">
-                <div className="m-5">
-                    <Image src={box} alt="box" className={`${styles.imagen} rounded-3xl`} />
-                </div>
+          <h1 className="text-8xl font-bold tracking-tighter">
+            4<span className="text-[#5e1914]">0</span>4
+          </h1>
 
-                <div className="flex justify-center flex-col items-center">
-                <div className={styles.glitch} data-text="404">404</div>
-                <p>Oops! Estas Perdido</p>
-                <p>Pagnina no encontrada</p>
-                <p className="mt-5">👇</p>
-                    <Link href={"/"} className="relative  text-black text-3xl hover:text-red-600 transition-colors duration-300 group">
-                        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 group-hover:w-full transition-all duration-300" />
-                        Home
-                    </Link>
-                    
-                </div>
-            </div>
+          
+          <div className="space-y-3">
+            <h2 className="text-2xl font-semibold">Entrenamiento no encontrado!</h2>
+            <p className="text-gray-300 max-w-md">
+            Parece que esta rutina de ejercicios se perdió en el vestuario.
+            No te preocupes, ¡nuestros entrenadores tienen muchos más entrenamientos para ti!
+            </p>
+          </div>
+
+          <Link 
+            href="/"
+            className="group flex items-center gap-2 bg-[#5e1914] hover:bg-[#4a1410] px-6 py-3 rounded-full transition-all duration-300 mt-4"
+          >
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-2 transition-transform" />
+            Volver al entrenamiento
+          </Link>
+          
+          <div className="absolute top-10 left-10 opacity-20">
+            <Dumbbell className="w-16 h-16 rotate-45" />
+          </div>
+          <div className="absolute bottom-10 right-10 opacity-20">
+            <Dumbbell className="w-16 h-16 -rotate-45" />
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
+
+export default App;

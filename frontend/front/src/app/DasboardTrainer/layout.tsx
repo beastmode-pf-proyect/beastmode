@@ -5,7 +5,8 @@ import {
   HiOutlineLogout,
   HiMenu,
   HiX,
-  HiUser,
+  HiUserGroup,
+  HiOutlineClipboardList,
 } from "react-icons/hi";
 import Link from "next/link";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -14,7 +15,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-// Simulación de Skeleton Loader
 function SkeletonLoader() {
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8]">
@@ -124,9 +124,10 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
 
   const trainerMenu = [
     { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/DasboardTrainer" },
-    { name: "Rutinas", icon: <HiBookOpen className="w-5 h-5" />, href: "DasboardTrainer/Rutinas" },
-    { name: "Alumnos", icon: <HiUser className="w-5 h-5" />, href: "DasboardTrainer/Usuarios" },
-    { name: "Alumnos", icon: <HiUser className="w-5 h-5" />, href: "DasboardTrainer/Ejercicios" },
+    { name: "Rutinas", icon: <HiBookOpen className="w-5 h-5" />, href: "/DasboardTrainer/Rutinas" },
+    { name: "Usuarios", icon: <HiUserGroup className="w-5 h-5" />, href: "/DasboardTrainer/Usuarios" },
+    { name: "Asignar Rutina", icon: <HiOutlineClipboardList className="w-5 h-5" />, href: "/DasboardTrainer/Asignar-Rutina" },
+    { name: "Ejercicios", icon: <HiOutlineClipboardList className="w-5 h-5" />, href: "/DasboardTrainer/Ejercicios" },
   ];
 
   return (
