@@ -1,6 +1,6 @@
 const itemNavbar = [
-    {href:"/", label: ""},
-    {href:"/Home", label: "Inicio"},
+    // {href:"/"},
+    // {href:"/Home"},
     {href:"/About", label: "Sobre Nosotros"},
     
     {href:"/Goals", label: "Misión y Visión"},
