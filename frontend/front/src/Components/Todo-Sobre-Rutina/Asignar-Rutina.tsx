@@ -20,7 +20,7 @@ export default function AsignarRutina() {
   const [selectedRoutine, setSelectedRoutine] = useState<string>("");
 
   useEffect(() => {
-    fetch("http://localhost:3000/users")
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`)
       .then((res) => res.json())
       .then((data) => setUsuarios(data))
       .catch((err) => {
@@ -30,7 +30,7 @@ export default function AsignarRutina() {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/workout-routine")
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/workout-routine`)
       .then((res) => res.json())
       .then((data) => setRutinas(data))
       .catch((err) => {
@@ -46,7 +46,7 @@ export default function AsignarRutina() {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/user-workout/create", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user-workout/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -59,7 +59,7 @@ export default function AsignarRutina() {
 
       if (res.ok) {
         toast.success("Rutina asignada correctamente.");
-        // Restablecer valores seleccionados
+        
         setSelectedUser("");
         setSelectedRoutine("");
       } else {

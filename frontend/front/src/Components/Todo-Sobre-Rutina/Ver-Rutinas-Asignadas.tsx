@@ -32,7 +32,7 @@ export default function VerRutinasAsignadas() {
   const [openAccordions, setOpenAccordions] = useState<Record<string, boolean>>({});
 
   const fetchAsignaciones = () => {
-    fetch("http://localhost:3000/user-workout")
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user-workout`)
       .then((res) => res.json())
       .then((data) => {
         setAsignaciones(data);
@@ -64,7 +64,7 @@ export default function VerRutinasAsignadas() {
     if (!result.isConfirmed) return;
 
     try {
-      const res = await fetch(`http://localhost:3000/user-workout/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user-workout/${id}`, {
         method: "DELETE",
       });
 
