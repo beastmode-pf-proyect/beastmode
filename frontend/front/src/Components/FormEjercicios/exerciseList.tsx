@@ -34,7 +34,7 @@ export default function ExerciseList() {
   }, []);
 
   if (loading) {
-    return <div className="text-center py-8">Cargando ejercicios...</div>;
+    return <div className="text-center py-8">Cargando ejercicios....</div>;
   }
 
   if (error) {
