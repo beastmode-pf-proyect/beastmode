@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { Exercise } from "./types";
+import Image from "next/image";
 
 export default function ExerciseList() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -58,9 +59,10 @@ export default function ExerciseList() {
             </div>
             {exercise.imageUrl && (
               <div className="mb-4">
-                <img
+                <Image
                   src={exercise.imageUrl}
                   alt={exercise.name}
+                  fill
                   className="w-full h-auto rounded-md object-cover"
                 />
               </div>
