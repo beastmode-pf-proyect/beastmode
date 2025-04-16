@@ -23,8 +23,8 @@ export class UsersService {
         return this.usersRepository.getById(id)
     }
 
-    getRoleById(id: string){
-        return this.usersRepository.getRoleById(id)
+    getRoleByUserId(id: string){
+        return this.usersRepository.getRoleByUserId(id)
     }
 
     async getSubscriptionsByUserId(id: string) {
@@ -39,12 +39,8 @@ export class UsersService {
         return this.usersRepository.updateUser(id, user);
     }
 
-    updatetrainerUser(id: string){
-        return this.usersRepository.updatetrainerUser(id)
-    }
-
-    updateclientUser(id: string){
-        return this.usersRepository.updateclientUser(id)
+    updateRoleUser(id: string, role: string){
+        return this.usersRepository.updateRoleUser(id, role)
     }
 
     async userExists(id: string): Promise<boolean> {
