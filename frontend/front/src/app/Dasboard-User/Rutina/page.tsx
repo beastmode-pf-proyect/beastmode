@@ -1,11 +1,11 @@
 
-import MyRoutine from '@/Components/Mis rutinas/Misrutinas'
 
+import { SimpleUserWorkouts } from '@/Components/Cliente/VerRutina'
 import React from 'react'
 
 function page() {
   return (
-    <MyRoutine/>
+    <SimpleUserWorkouts/>  
     
   )
 }

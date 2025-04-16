@@ -1,7 +1,6 @@
-
 import Carrusel from "@/Components/Carrusel inicio/carrusel";
 import GymCarousel from "@/Components/carrusel-gym/carruselpics";
-import Ctestimonios from "@/Components/Ctestimonios";
+import Ctestimonios from "@/Components/Ctestimonios/Ctestimonios";
 import AboutUs from "@/Components/intro-about_us/aboutus";
 import MembershipSection from "@/Components/memberships/memberships";
 import Phrase from "@/Components/phrase/phrase";
@@ -32,7 +31,7 @@ const Landing = () => {
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-8 text-center text-red-950">
             Lo que dicen nuestros miembros
           </h2>
-          <Ctestimonios />
+          <Ctestimonios  />
         </div>
       </section>
     </div>
@@ -40,5 +39,3 @@ const Landing = () => {
 };
 
 export default Landing;
-
-

@@ -4,6 +4,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import Swal from "sweetalert2";
+import { FaSignInAlt } from "react-icons/fa";
 
 const LoginForm = () => {
   const { loginWithRedirect, user, isAuthenticated, isLoading } = useAuth0();
@@ -40,6 +41,7 @@ const LoginForm = () => {
             name: auth0User.name || null,
             picture: auth0User.picture || null,
             last_login: new Date().toISOString(),
+            role_id: 'a039d031-b804-4b7b-afdf-f57424f2fbd9'
           },
           { onConflict: "auth0_id" }
         )
@@ -135,14 +137,18 @@ const LoginForm = () => {
   }
 
   return (
-    <div>
-      <button
-        onClick={handleAuth0Login}
-        className="w-full flex items-center justify-center px-4 py-2 rounded-md shadow-sm text-sm font-medium text-white hover:bg-[#5e1914] transition duration-300 bg-[#a82717]"
-      >
-        Inicia Sesión - Regístrate
-      </button>
-    </div>
+    <div className="w-full">
+  <button
+    onClick={handleAuth0Login}
+    className="relative w-full flex items-center justify-center gap-3 px-6 py-3 rounded-xl text-white font-semibold bg-[#a82717] shadow-[0_4px_20px_rgba(0,0,0,0.4)] 
+               hover:bg-[#5e1914] hover:shadow-[0_0_15px_3px_rgba(168,39,23,0.7)] 
+               transition-all duration-300 border border-transparent hover:border-red-700"
+  >
+    <span className="absolute -inset-px rounded-xl bg-gradient-to-r from-[#5e1914] to-[#a82717] opacity-0 hover:opacity-100 transition-opacity duration-300 blur-sm" />
+    <FaSignInAlt className="text-xl z-10" />
+    <span className="z-10">Inicia Sesión / Regístrate</span>
+  </button>
+</div>
   );
 };
 

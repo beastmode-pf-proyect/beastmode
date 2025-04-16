@@ -1,374 +1,286 @@
 "use client";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import Swal from "sweetalert2";
-import Image from "next/image";
+import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 interface User {
-  id: number;
-  email: string;
-  role_id: number | null;
-  name: string | null;
   auth0_id: string;
-  picture: string | null;
-  created_at?: string;
-  is_blocked?: boolean;
-}
-
-interface Role {
-  id: number;
   name: string;
+  email: string;
+  role?: {
+    name: string;
+  };
+  is_blocked: boolean;
 }
 
-export default function AdminPanel() {
+const Admin: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [updating, setUpdating] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [searchName, setSearchName] = useState('');
+  const [roleFilter, setRoleFilter] = useState<'all' | 'trainer' | 'client' | 'admin'>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage, setUsersPerPage] = useState(7);
 
-  // Definición de fetchData
-  const fetchData = async () => {
-    setLoading(true);
+  useEffect(() => {
+    const savedPage = localStorage.getItem('currentPage');
+    const savedUsersPerPage = localStorage.getItem('usersPerPage');
+    const savedRoleFilter = localStorage.getItem('roleFilter');
+
+    if (savedPage) setCurrentPage(Number(savedPage));
+    if (savedUsersPerPage) setUsersPerPage(Number(savedUsersPerPage));
+    if (savedRoleFilter) setRoleFilter(savedRoleFilter as 'all' | 'trainer' | 'client' | 'admin');
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('currentPage', currentPage.toString());
+    localStorage.setItem('usersPerPage', usersPerPage.toString());
+    localStorage.setItem('roleFilter', roleFilter);
+  }, [currentPage, usersPerPage, roleFilter]);
+
+  const fetchUsers = async () => {
     try {
-      await Promise.all([fetchUsers(), fetchRoles()]);
+      setLoading(true);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        toast.warning(errorData.message || 'No hay usuarios');
+        setUsers([]);
+        return;
+      }
+      const data = await response.json();
+      setUsers(data);
+      if (data.length === 0) toast.info('No hay usuarios');
     } catch (error) {
-      console.error("Error fetching data:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudieron cargar los datos",
-      });
+      toast.error('Error cargando usuarios');
+      console.error('Error:', error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData(); 
-  }, );
+    fetchUsers();
+  }, []);
 
-  async function fetchUsers() {
-    const { data, error } = await supabase
-      .from("users2")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) throw error;
-    setUsers(data || []);
-  }
-
-  async function fetchRoles() {
-    const { data, error } = await supabase
-      .from("roles")
-      .select("id, name")
-      .order("name");
-
-    if (error) throw error;
-    setRoles(data || []);
-  }
-
-  async function updateUserRole(userId: number, newRoleId: string) {
-    if (!newRoleId) {
-      return Swal.fire("Rol inválido", "Debes seleccionar un rol", "warning");
-    }
-
-    const selectedRole = roles.find(role => role.id === parseInt(newRoleId));
-    if (!selectedRole) return;
-
-    setUpdating(userId);
+  const handleToggleStatus = async (userId: string, isBlocked: boolean) => {
     try {
-      const { error } = await supabase
-        .from("users2")
-        .update({ role_id: parseInt(newRoleId) })
-        .eq("id", userId);
-
-      if (error) throw error;
-
-      setUsers(
-        users.map(user =>
-          user.id === userId ? { ...user, role_id: parseInt(newRoleId) } : user
-        )
-      );
-      Swal.fire(
-        "Éxito",
-        `Rol actualizado a \"${selectedRole.name}\"`,
-        "success"
-      );
+      const action = isBlocked ? 'activate' : 'desactivate';
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${action}/${userId}`, {
+        method: 'PUT'
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Error al ${action} usuario`);
+      }
+      toast.success(`Usuario ${isBlocked ? 'activado' : 'bloqueado'} exitosamente`);
+      fetchUsers();
     } catch (error) {
-      console.error("Error updating role:", error);
-      Swal.fire("Error", "No se pudo actualizar el rol", "error");
-    } finally {
-      setUpdating(null);
+      toast.error(`Error al ${isBlocked ? 'activar' : 'bloquear'} usuario`);
+      console.error('Error:', error);
     }
-  }
+  };
 
-  async function deleteUser(userId: number) {
-    const result = await Swal.fire({
-      title: "¿Estás seguro?",
-      text: "Esta acción eliminará al usuario permanentemente.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#aaa",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-    });
-
-    if (!result.isConfirmed) return;
-
+  const handleDeleteUser = async (userId: string) => {
+    if (!window.confirm('¿Estás seguro de que quieres eliminar este usuario?')) return;
     try {
-      const { error } = await supabase.from("users2").delete().eq("id", userId);
-
-      if (error) throw error;
-
-      setUsers(users.filter(user => user.id !== userId));
-      Swal.fire(
-        "Eliminado",
-        "El usuario fue eliminado exitosamente.",
-        "success"
-      );
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al eliminar usuario');
+      }
+      toast.success('Usuario eliminado exitosamente');
+      fetchUsers();
     } catch (error) {
-      console.error("Error al eliminar:", error);
-      Swal.fire("Error", "No se pudo eliminar el usuario", "error");
+      toast.error('Error al eliminar usuario');
+      console.error('Error deleting user:', error);
     }
-  }
+  };
 
-  async function toggleBlockUser(userId: number, block: boolean) {
-    try {
-      const { error } = await supabase
-        .from("users2")
-        .update({ is_blocked: block })
-        .eq("id", userId);
+  const filteredUsers = users.filter(user => {
+    const nameMatch = user.name?.toLowerCase().includes(searchName.toLowerCase()) ?? false;
+    const roleMatch = roleFilter === 'all' || user.role?.name === roleFilter;
+    return nameMatch && roleMatch;
+  });
 
-      if (error) throw error;
-
-      setUsers(
-        users.map(user =>
-          user.id === userId ? { ...user, is_blocked: block } : user
-        )
-      );
-      Swal.fire(
-        block ? "Usuario bloqueado" : "Usuario desbloqueado",
-        block
-          ? "Este usuario ya no podrá iniciar sesión."
-          : "Este usuario ahora puede iniciar sesión.",
-        "info"
-      );
-    } catch (error) {
-      console.error("Error al bloquear/desbloquear:", error);
-      Swal.fire("Error", "No se pudo cambiar el estado del usuario", "error");
-    }
-  }
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  const paginatedUsers = filteredUsers.slice(
+    (currentPage - 1) * usersPerPage,
+    currentPage * usersPerPage
+  );
 
   return (
-    <div className="p-4 md:p-6 max-w-full mx-auto">
-      <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
-        <h1 className="text-2xl font-bold text-gray-800">
-          Panel de Administración
-        </h1>
-        <button
-          onClick={fetchData} // Llama a fetchData cuando se presiona el botón
-          disabled={loading}
-          className="px-4 py-2 bg-[#5e1914] text-white rounded hover:bg-[#7a2b24] disabled:opacity-50 text-sm">
-          {loading ? "Cargando..." : "Actualizar"}
-        </button>
+    <div className="max-w-7xl mx-auto px-4 py-10">
+      <h1 className="text-3xl font-bold text-center mb-10 text-[#5e1914]">Gestión de Usuarios</h1>
+
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mb-6">
+        <input
+          type="text"
+          placeholder="Buscar por nombre"
+          value={searchName}
+          onChange={(e) => {
+            setSearchName(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="w-full px-4 py-2 rounded-lg border border-gray-300"
+        />
+        <select
+          value={roleFilter}
+          onChange={(e) => {
+            setRoleFilter(e.target.value as 'all' | 'trainer' | 'client' | 'admin');
+            setCurrentPage(1);
+          }}
+          className="w-full px-4 py-2 rounded-lg border border-gray-300"
+        >
+          <option value="all">Todos los roles</option>
+          <option value="trainer">Entrenador</option>
+          <option value="client">Cliente</option>
+          <option value="admin">Admin</option>
+        </select>
+        <select
+          value={usersPerPage}
+          onChange={(e) => {
+            setUsersPerPage(parseInt(e.target.value));
+            setCurrentPage(1);
+          }}
+          className="w-full px-4 py-2 rounded-lg border border-gray-300"
+        >
+          <option value={7}>7 por página</option>
+          <option value={10}>10 por página</option>
+          <option value={20}>20 por página</option>
+        </select>
       </div>
 
-      {/* Tabla en escritorio */}
-      <div className="overflow-x-auto shadow border rounded-xl bg-white w-full hidden md:block">
-        <table className="min-w-[800px] w-full divide-y divide-gray-200">
-          <thead className="bg-[#5e1914] text-white">
-            <tr>
-              <th className="px-2 py-3 text-left text-xs font-medium uppercase">
-                Usuario
-              </th>
-              <th className="px-2 py-3 text-left text-xs font-medium uppercase">
-                Email
-              </th>
-              <th className="px-2 py-3 text-left text-xs font-medium uppercase">
-                Rol
-              </th>
-              <th className="px-2 py-3 text-left text-xs font-medium uppercase">
-                Cambiar Rol
-              </th>
-              <th className="px-2 py-3 text-left text-xs font-medium uppercase">
-                Acciones
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {users.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={5}
-                  className="px-4 py-4 text-center text-gray-500 text-sm">
-                  {loading
-                    ? "Cargando usuarios..."
-                    : "No hay usuarios registrados"}
-                </td>
-              </tr>
-            ) : (
-              users.map(user => (
-                <tr key={user.id}>
-                  <td className="px-2 py-3">
-                    <div className="flex items-center gap-3">
-                      <Image
-                        src={
-                          user.picture ||
-                          "https://www.gravatar.com/avatar/?d=mp"
-                        }
-                        alt={`Foto de ${user.name || "usuario"}`}
-                        className="h-10 w-10 rounded-full object-cover"
-                      />
-                      <div>
-                        <p className="text-sm font-medium">
-                          {user.name || "Sin Nombre"}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {new Date(user.created_at || "").toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-2 py-3 text-sm text-gray-800">
-                    {user.email}
-                  </td>
-                  <td className="px-2 py-3">
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${
-                        user.role_id === 1
-                          ? "bg-green-100 text-green-800"
-                          : user.role_id === 2
-                          ? "bg-blue-100 text-blue-800"
-                          : user.role_id === 3
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}>
-                      {roles.find(r => r.id === user.role_id)?.name ||
-                        "Sin rol"}
-                    </span>
-                  </td>
-                  <td className="px-2 py-3">
-                    <select
-                      className="text-sm border rounded px-2 py-1"
-                      value={user.role_id ?? ""}
-                      onChange={e => updateUserRole(user.id, e.target.value)}
-                      disabled={updating === user.id}>
-                      <option value="">Seleccionar...</option>
-                      {roles.map(role => (
-                        <option key={role.id} value={role.id}>
-                          {role.name}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className="px-2 py-3">
-                    <div className="flex flex-wrap gap-1">
-                      <button
-                        onClick={() =>
-                          toggleBlockUser(user.id, !user.is_blocked)
-                        }
-                        className={`px-3 py-1 rounded text-xs font-semibold ${
-                          user.is_blocked
-                            ? "bg-green-100 text-green-800 hover:bg-green-200"
-                            : "bg-red-100 text-red-800 hover:bg-red-200"
-                        }`}>
-                        {user.is_blocked ? "Desbloquear" : "Bloquear"}
-                      </button>
-                      <button
-                        onClick={() => deleteUser(user.id)}
-                        className="px-3 py-1 rounded text-xs font-semibold bg-gray-200 text-gray-800 hover:bg-gray-300">
-                        Eliminar
-                      </button>
-                    </div>
-                  </td>
+      {loading ? (
+        <div className="flex justify-center items-center h-32">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#5e1914]"></div>
+        </div>
+      ) : (
+        <>
+          <div className="hidden md:block overflow-x-auto rounded-lg shadow-md border border-[#5e1914]/20">
+            <table className="min-w-full divide-y divide-[#5e1914]/60 text-sm">
+              <thead className="bg-[#5e1914] text-white">
+                <tr>
+                  <th className="px-6 py-3 text-left uppercase">Nombre</th>
+                  <th className="px-6 py-3 text-left uppercase">Correo</th>
+                  <th className="px-6 py-3 text-left uppercase">Rol</th>
+                  <th className="px-6 py-3 text-left uppercase">Estatus</th>
+                  <th className="px-6 py-3 text-left uppercase">Acciones</th>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {paginatedUsers.length > 0 ? (
+                  paginatedUsers.map((user) => (
+                    <tr key={user.auth0_id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4">{user.name}</td>
+                      <td className="px-6 py-4">{user.email}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                          user.role?.name === 'trainer'
+                            ? 'bg-blue-100 text-blue-800'
+                            : user.role?.name === 'client'
+                            ? 'bg-purple-100 text-purple-800'
+                            : user.role?.name === 'admin'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {user.role?.name ? user.role.name.charAt(0).toUpperCase() + user.role.name.slice(1) : 'Sin Rol'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                          user.is_blocked ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
+                        }`}>
+                          {user.is_blocked ? 'Inactivo' : 'Activo'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 flex flex-wrap gap-2">
+                        <button
+                          onClick={() => handleToggleStatus(user.auth0_id, user.is_blocked)}
+                          className={`px-3 py-1 rounded-md text-white ${
+                            user.is_blocked ? 'bg-green-600' : 'bg-yellow-600'
+                          } hover:opacity-90`}
+                        >
+                          {user.is_blocked ? 'Desbloquear' : 'Bloquear'}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteUser(user.auth0_id)}
+                          className="px-3 py-1 rounded-md bg-red-600 text-white hover:opacity-90"
+                        >
+                          Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                      No se encontraron usuarios
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
 
-      {/* Cards en móvil */}
-      <div className="block md:hidden">
-        {users.length === 0 ? (
-          <p className="text-center text-gray-500 text-sm mt-4">
-            {loading ? "Cargando usuarios..." : "No hay usuarios registrados"}
-          </p>
-        ) : (
-          <div className="space-y-4">
-            {users.map(user => (
-              <div
-                key={user.id}
-                className="border rounded-lg p-4 shadow-sm bg-white">
-                <div className="flex items-center gap-3 mb-2">
-                  <Image
-                    src={
-                      user.picture || "https://www.gravatar.com/avatar/?d=mp"
-                    }
-                    alt={`Foto de ${user.name || "usuario"}`}
-                    className="h-10 w-10 rounded-full object-cover"
-                  />
-                  <div>
-                    <p className="text-sm font-medium">
-                      {user.name || "Sin nombre"}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {new Date(user.created_at || "").toLocaleDateString()}
-                    </p>
+          <div className="md:hidden grid grid-cols-1 gap-6">
+            {paginatedUsers.length > 0 ? (
+              paginatedUsers.map((user) => (
+                <div key={user.auth0_id} className="bg-white shadow-lg rounded-lg p-4">
+                  <h3 className="font-semibold text-lg">{user.name}</h3>
+                  <p className="text-gray-600">{user.email}</p>
+                  <p className={`px-2 py-1 text-xs font-semibold rounded-full mt-2 ${user.role?.name === 'trainer' ? 'bg-blue-100 text-blue-800' : user.role?.name === 'client' ? 'bg-purple-100 text-purple-800' : user.role?.name === 'admin' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                    {user.role?.name ? user.role.name.charAt(0).toUpperCase() + user.role.name.slice(1) : 'Sin Rol'}
+                  </p>
+                  <p className={`px-2 py-1 text-xs font-semibold rounded-full mt-2 ${user.is_blocked ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+                    {user.is_blocked ? 'Inactivo' : 'Activo'}
+                  </p>
+                  <div className="mt-4 flex gap-2">
+                    <button
+                      onClick={() => handleToggleStatus(user.auth0_id, user.is_blocked)}
+                      className={`px-3 py-1 rounded-md text-white ${user.is_blocked ? 'bg-green-600' : 'bg-yellow-600'} hover:opacity-90`}
+                    >
+                      {user.is_blocked ? 'Desbloquear' : 'Bloquear'}
+                    </button>
+                    <button
+                      onClick={() => handleDeleteUser(user.auth0_id)}
+                      className="px-3 py-1 rounded-md bg-red-600 text-white hover:opacity-90"
+                    >
+                      Eliminar
+                    </button>
                   </div>
                 </div>
-                <p className="text-sm text-gray-800 mb-1">
-                  <strong>Email:</strong> {user.email}
-                </p>
-                <p className="text-sm mb-2">
-                  <strong>Rol:</strong>{" "}
-                  <span
-                    className={`px-2 py-1 text-xs rounded-full ${
-                      user.role_id === 1
-                        ? "bg-green-100 text-green-800"
-                        : user.role_id === 2
-                        ? "bg-blue-100 text-blue-800"
-                        : user.role_id === 3
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-gray-100 text-gray-800"
-                    }`}>
-                    {roles.find(r => r.id === user.role_id)?.name || "Sin rol"}
-                  </span>
-                </p>
-                <select
-                  className="w-full text-sm border rounded px-2 py-1 mb-2"
-                  value={user.role_id ?? ""}
-                  onChange={e => updateUserRole(user.id, e.target.value)}
-                  disabled={updating === user.id}>
-                  <option value="">Cambiar rol...</option>
-                  {roles.map(role => (
-                    <option key={role.id} value={role.id}>
-                      {role.name}
-                    </option>
-                  ))}
-                </select>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => toggleBlockUser(user.id, !user.is_blocked)}
-                    className={`flex-1 px-3 py-1 rounded text-xs font-semibold ${
-                      user.is_blocked
-                        ? "bg-green-100 text-green-800 hover:bg-green-200"
-                        : "bg-red-100 text-red-800 hover:bg-red-200"
-                    }`}>
-                    {user.is_blocked ? "Desbloquear" : "Bloquear"}
-                  </button>
-                  <button
-                    onClick={() => deleteUser(user.id)}
-                    className="flex-1 px-3 py-1 rounded text-xs font-semibold bg-gray-200 text-gray-800 hover:bg-gray-300">
-                    Eliminar
-                  </button>
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <div className="text-center text-gray-500">No se encontraron usuarios</div>
+            )}
           </div>
-        )}
-      </div>
+
+          {filteredUsers.length > usersPerPage && (
+            <div className="mt-6 flex justify-center items-center gap-4 flex-wrap">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => prev - 1)}
+                className="px-4 py-2 bg-[#5e1914] text-white rounded-lg disabled:opacity-50"
+              >
+                Anterior
+              </button>
+              <span className="text-sm font-semibold text-[#5e1914]">
+                Página {currentPage} de {totalPages}
+              </span>
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(prev => prev + 1)}
+                className="px-4 py-2 bg-[#5e1914] text-white rounded-lg disabled:opacity-50"
+              >
+                Siguiente
+              </button>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
-}
+};
+
+export default Admin;

@@ -15,6 +15,8 @@ import { RoutineExerciseModule } from './routine_exercise/routine_exercise.modul
 import { UserWorkoutRoutineModule } from './user_workout_routine/user_workout_routine.module';
 import { StripeModule } from './stripe/stripe.module';
 import { JwtModule } from '@nestjs/jwt';
+import { RolesController } from './roles/roles.controller';
+import { RolesModule } from './roles/roles.module';
 
 
 
@@ -45,9 +47,9 @@ import { JwtModule } from '@nestjs/jwt';
   UsersModule, SubscriptionsModule, 
   MembershipsModule, WorkoutRoutineModule, 
   TestimonialsModule, FileUploadModule, 
-  ExerciseModule, RoutineExerciseModule, RoutineExerciseModule, UserWorkoutRoutineModule, StripeModule
+  ExerciseModule, RoutineExerciseModule, RoutineExerciseModule, UserWorkoutRoutineModule, StripeModule, RolesModule
   ],
-  controllers: [AppController],
+  controllers: [AppController, RolesController],
   providers: [AppService],
 })
 export class AppModule {};

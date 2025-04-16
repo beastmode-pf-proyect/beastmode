@@ -45,8 +45,8 @@ export class StripeService {
             quantity: 1,
           },
         ],
-        success_url: `http://localhost:3001/subscriptions/success?session_id={CHECKOUT_SESSION_ID}&transaction_id=${transactionId}`,
-        cancel_url: 'http://localhost:3001/subscriptions/cancel',
+        success_url: `https://beastmode-diph-flzhx826k-beastmodes-projects-d14b9acd.vercel.app/subscriptions/success?session_id={CHECKOUT_SESSION_ID}&transaction_id=${transactionId}`,
+        cancel_url: 'https://beastmode-diph-flzhx826k-beastmodes-projects-d14b9acd.vercel.app/subscriptions/cancel',
         mode: 'payment',
       });
 

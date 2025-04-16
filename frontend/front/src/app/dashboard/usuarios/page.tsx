@@ -1,10 +1,12 @@
-import AdminPanel from '@/Components/Roles/Admin'
+import  UserManagement from '@/Components/Roles/Admin'
+
 import React from 'react'
 
 function page() {
   return (
     <div>
-      <AdminPanel />
+      <UserManagement />
+      
     </div>
   )
 }
