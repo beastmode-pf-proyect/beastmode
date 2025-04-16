@@ -13,7 +13,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  getUserById(@Param('id', ParseUUIDPipe) id: string) {
+  getUserById(@Param('id') id: string) {
     return this.usersService.getUserById(id);
   }
 

@@ -23,13 +23,11 @@ export class UsersRepository{
       const user = await this.usersRepository.findOne({
         where:{ auth0_id : id }
       });
-    
+
       if(!user){
         throw new NotFoundException('Usuario no encontrado')
       }
-      
-          const { role, ...userWithoutPassword} = user
-          return userWithoutPassword;
+          return user;
     }
 
     async updateUser(id : string, user: updateUserDto) {
