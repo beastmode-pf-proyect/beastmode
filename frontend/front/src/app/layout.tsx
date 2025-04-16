@@ -1,5 +1,3 @@
-"use client";
-
 import type { Metadata } from "next";
 import "./globals.css";
 import Footer from "@/Components/Footer/Footer";
@@ -7,9 +5,10 @@ import AuthProvider from "./AuthProvider";
 import LoginFormProvider from "@/Components/loginouth/LoginProvider";
 import StripeProvider from "@/Components/Suscripcion/page";
 import { SessionUserProvider } from "./SessionUserContext";
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import Navbarp from "@/Components/Navbarp/Navbar";
+import DomainUpdater from "@/utils/domainUpdater"; 
 
 export const metadata: Metadata = {
   title: "BeastMode",
@@ -19,62 +18,22 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  useEffect(() => {
-    const updateAuth0 = async () => {
-      try {
-        const currentOrigin = window.location.origin;
-        const currentHost = window.location.host;
-
-        // Leemos la variable de entorno con dominios permitidos
-        const rawAllowed = process.env.NEXT_PUBLIC_ALLOWED_DOMAINS || "";
-        const allowedPatterns = rawAllowed.split(",").map(d => d.trim());
-
-        // Validamos si el dominio es exactamente permitido o termina con un sufijo válido
-        const isAllowed = allowedPatterns.some(pattern =>
-          pattern.startsWith(".")
-            ? currentHost.endsWith(pattern)
-            : currentHost === pattern
-        );
-
-        if (!isAllowed) {
-          console.warn(
-            "⛔ Dominio no permitido para actualizar Auth0:",
-            currentHost
-          );
-          return;
-        }
-
-        const res = await fetch("/api/update-auth0", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ newUrl: currentOrigin }),
-        });
-
-        const data = await res.json();
-        console.log("✅ URLs actualizadas en Auth0:", data);
-      } catch (err) {
-        console.error("❌ Error actualizando Auth0:", err);
-      }
-    };
-
-    updateAuth0();
-  }, []);
-
   return (
-    <AuthProvider>
-      <SessionUserProvider>
-        <StripeProvider>
-          <Navbarp />
-          <Toaster position="top-center" />
-          <html lang="en">
-            <body className="flex flex-col min-h-screen pt-24">
+    <html lang="en">
+      <body className="flex flex-col min-h-screen pt-24">
+        <AuthProvider>
+          <SessionUserProvider>
+            <StripeProvider>
+              <Navbarp />
+              <Toaster position="top-center" />
               <LoginFormProvider />
+              <DomainUpdater /> 
               <Suspense fallback={<div>Cargando....</div>}>{children}</Suspense>
               <Footer />
-            </body>
-          </html>
-        </StripeProvider>
-      </SessionUserProvider>
-    </AuthProvider>
+            </StripeProvider>
+          </SessionUserProvider>
+        </AuthProvider>
+      </body>
+    </html>
   );
 }
