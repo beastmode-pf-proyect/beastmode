@@ -30,7 +30,7 @@ export const SimpleUserWorkouts = () => {
         const userId = encodeURIComponent(user.sub);
         
         // 2. Use proper endpoint from your image (adjust as needed)
-        const endpoint = `http://localhost:3000/basiccard/user/${userId}`;
+        const endpoint = `${process.env.NEXT_PUBLIC_BACKEND_URL}/basiccard/user/${userId}`;
         
         const response = await fetch(endpoint, {
           headers: { 

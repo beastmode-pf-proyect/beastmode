@@ -107,9 +107,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   const clientMenu = [
     { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/Dasboard-User" },
-    { name: "Ruttinas", icon: <HiHome className="w-5 h-5" />, href: "Dasboard-User/Rutina" },
-    { name: "Membresia", icon: <HiUser className="w-5 h-5" />, href: "Dasboard-User/Mi-membresia" },
-    { name: "Historial de Pagos", icon: <HiUser className="w-5 h-5" />, href: "Dasboard-User/Historial-Pagos" },
+    { name: "Ruttinas", icon: <HiHome className="w-5 h-5" />, href: "/Dasboard-User/Rutina" },
+    { name: "Membresia", icon: <HiUser className="w-5 h-5" />, href: "/Dasboard-User/Mi-membresia" },
+    { name: "Historial de Pagos", icon: <HiUser className="w-5 h-5" />, href: "/Dasboard-User/Historial-Pagos" },
   ];
 
   const UserInfo = () => (
