@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import Swal from "sweetalert2";
-import { FaUser, FaEnvelope, FaCalendarAlt, FaClock } from "react-icons/fa";
+import { FaUser, FaEnvelope, FaCalendarAlt, FaClock, FaChevronDown } from "react-icons/fa";
 import Image from "next/image";
 
 interface AssignedRoutine {
@@ -32,7 +32,7 @@ export default function VerRutinasAsignadas() {
   const [openAccordions, setOpenAccordions] = useState<Record<string, boolean>>({});
 
   const fetchAsignaciones = () => {
-    fetch("http://localhost:3000/user-workout")
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user-workout`)
       .then((res) => res.json())
       .then((data) => {
         setAsignaciones(data);
@@ -40,7 +40,7 @@ export default function VerRutinasAsignadas() {
       })
       .catch((err) => {
         console.error("Error al cargar las rutinas asignadas:", err);
-        toast.error("❌ Error al cargar rutinas asignadas.");
+        toast.error("Error al cargar rutinas asignadas");
         setLoading(false);
       });
   };
@@ -56,7 +56,7 @@ export default function VerRutinasAsignadas() {
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
+      cancelButtonColor: "#5e1914",
       confirmButtonText: "Sí, eliminar",
       cancelButtonText: "Cancelar",
     });
@@ -64,20 +64,20 @@ export default function VerRutinasAsignadas() {
     if (!result.isConfirmed) return;
 
     try {
-      const res = await fetch(`http://localhost:3000/user-workout/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user-workout/${id}`, {
         method: "DELETE",
       });
 
       if (res.ok) {
-        toast.success("✅ Asignación eliminada.");
+        toast.success("Asignación eliminada correctamente");
         fetchAsignaciones();
       } else {
         const data = await res.json();
-        toast.error(`❌ Error: ${data.message || "No se pudo eliminar."}`);
+        toast.error(data.message || "No se pudo eliminar la asignación");
       }
     } catch (err) {
       console.error("Error eliminando asignación:", err);
-      toast.error("❌ Error al eliminar.");
+      toast.error("Error al eliminar la asignación");
     }
   };
 
@@ -115,58 +115,87 @@ export default function VerRutinasAsignadas() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-md border" style={{ borderColor: "#5e1914" }}>
-      <h2 className="text-2xl font-bold mb-4 text-center" style={{ color: "#5e1914" }}>
-        Rutinas Asignadas
-      </h2>
+    <div className="max-w-6xl mx-auto mt-10 p-6">
+      <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+        <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-[#5e1914]/10 to-[#5e1914]/5">
+          <h2 className="text-2xl font-bold text-[#5e1914]">
+            Rutinas Asignadas
+          </h2>
+          <p className="text-gray-600 mt-1">Administra las rutinas asignadas a los usuarios</p>
+        </div>
 
-      {loading ? (
-        <p className="text-center text-gray-500">Cargando rutinas asignadas...</p>
-      ) : Object.keys(groupedByUser).length === 0 ? (
-        <p className="text-center text-gray-500">No hay rutinas asignadas.</p>
-      ) : (
-        <table className="w-full border text-sm">
-          <thead>
-            <tr className="bg-[#5e1914] text-white">
-              <th className="p-2 text-left">Usuario</th>
-              <th className="p-2 text-left">Cantidad de Rutinas</th>
-              <th className="p-2 text-left">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.entries(groupedByUser).map(([userName, rutinas]) => (
-              <tr key={userName} className="border-b">
-                <td className="p-2 flex items-center gap-3">
-                  {rutinas[0].user.picture ? (
-                    <Image
-                      src={rutinas[0].user.picture}
-                      alt={userName}
-                      width={32}
-                      height={32}
-                      className="rounded-full object-cover border"
-                    />
-                  ) : (
-                    <FaUser className="w-8 h-8 text-gray-500" />
-                  )}
-                  <span>{userName}</span>
-                </td>
-                <td className="p-2">{rutinas.length}</td>
-                <td className="p-2">
-                  <button
-                    onClick={() => openDetail(userName)}
-                    className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition"
-                  >
-                    Ver Detalle
-                  </button>
-                </td>
-              </tr>
+        {loading ? (
+          <div className="space-y-4 p-6 animate-pulse">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="flex items-center justify-between py-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gray-200" />
+                  <div className="w-40 h-4 bg-gray-200 rounded" />
+                </div>
+                <div className="w-16 h-4 bg-gray-200 rounded" />
+                <div className="w-24 h-9 bg-gray-200 rounded" />
+              </div>
             ))}
-          </tbody>
-        </table>
-      )}
+          </div>
+        ) : Object.keys(groupedByUser).length === 0 ? (
+          <div className="p-6 text-center">
+            <div className="text-gray-500 py-10">No hay rutinas asignadas</div>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-[#5e1914] text-white">
+                <tr>
+                  <th className="p-4 text-left rounded-tl-lg">Usuario</th>
+                  <th className="p-4 text-left">Rutinas</th>
+                  <th className="p-4 text-left rounded-tr-lg">Acciones</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {Object.entries(groupedByUser).map(([userName, rutinas]) => (
+                  <tr key={userName} className="hover:bg-gray-50 transition-colors">
+                    <td className="p-4">
+                      <div className="flex items-center gap-3">
+                        {rutinas[0].user.picture ? (
+                          <Image
+                            src={rutinas[0].user.picture}
+                            alt={userName}
+                            width={40}
+                            height={40}
+                            className="rounded-full object-cover border-2 border-white shadow"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
+                            <FaUser />
+                          </div>
+                        )}
+                        <span className="font-medium">{userName}</span>
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full bg-[#5e1914]/10 text-[#5e1914]">
+                        {rutinas.length}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      <button
+                        onClick={() => openDetail(userName)}
+                        className="px-4 py-2 bg-[#5e1914] text-white rounded-lg hover:bg-[#5e1914]/90 transition flex items-center gap-2"
+                      >
+                        <span>Ver detalle</span>
+                        <FaChevronDown size={12} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
       {selectedUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
             className="absolute inset-0 bg-[#5e19146f] bg-opacity-30 backdrop-blur-sm transition-opacity duration-300"
             onClick={closeDetail}
@@ -193,12 +222,12 @@ export default function VerRutinasAsignadas() {
               ) : (
                 <FaUser className="w-20 h-20 text-gray-500 mt-2" />
               )}
-              
+
               <div className="flex-1">
                 <h2 className="text-2xl font-semibold text-[#5e1914] mb-2">
                   Rutinas Asignadas a {selectedUser}
                 </h2>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
                   <div className="flex items-center gap-2 text-gray-700">
                     <FaEnvelope className="text-[#5e1914]" />
@@ -206,25 +235,25 @@ export default function VerRutinasAsignadas() {
                       <strong>Email:</strong> {groupedByUser[selectedUser]?.[0]?.user.email || "No disponible"}
                     </span>
                   </div>
-                  
+
                   <div className="flex items-center gap-2 text-gray-700">
                     <FaClock className="text-[#5e1914]" />
                     <span>
                       <strong>Último inicio:</strong> {formatDate(groupedByUser[selectedUser]?.[0]?.user.last_login)}
                     </span>
                   </div>
-                  
+
                   <div className="flex items-center gap-2 text-gray-700">
                     <FaCalendarAlt className="text-[#5e1914]" />
                     <span>
                       <strong>Cuenta creada:</strong> {formatDate(groupedByUser[selectedUser]?.[0]?.user.created_at)}
                     </span>
                   </div>
-                  
+
                   <div className="flex items-center gap-2 text-gray-700">
                     <FaUser className="text-[#5e1914]" />
                     <span>
-                      <strong>Estado:</strong> 
+                      <strong>Estado:</strong>
                       <span className={`ml-1 ${groupedByUser[selectedUser]?.[0]?.user.is_blocked ? 'text-red-600' : 'text-green-600'}`}>
                         {groupedByUser[selectedUser]?.[0]?.user.is_blocked ? "Bloqueado" : "Activo"}
                       </span>
@@ -236,7 +265,7 @@ export default function VerRutinasAsignadas() {
 
             <div className="mt-6 border-t pt-4">
               <h3 className="text-lg font-semibold text-[#5e1914] mb-3">Rutinas asignadas:</h3>
-              
+
               {groupedByUser[selectedUser]?.map((asignacion) => {
                 const isOpen = openAccordions[asignacion.id] || false;
 
@@ -247,9 +276,15 @@ export default function VerRutinasAsignadas() {
                       className="w-full text-left px-4 py-3 bg-gray-100 font-medium hover:bg-gray-200 transition flex justify-between items-center"
                     >
                       <span>{asignacion.routine.name}</span>
-                      <span className="text-sm text-gray-500">
-                        
-                      </span>
+                      {isOpen ? (
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                        </svg>
+                      ) : (
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      )}
                     </button>
 
                     <div
