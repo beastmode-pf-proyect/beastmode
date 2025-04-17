@@ -57,10 +57,10 @@ export const Navbarp = () => {
     }
   };
 
-  const filteredNavItems = itemNavbar.filter((item) => {
-    if (item.label === "Inicio") return isAuthenticated;
-    return true;
-  });
+  // const filteredNavItems = itemNavbar.filter((item) => {
+  //   if (item.label === "Inicio") return isAuthenticated;
+  //   return true;
+  // });
 
   return (
     <nav
