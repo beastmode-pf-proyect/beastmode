@@ -34,6 +34,8 @@ export class MembershipsRepository{
 
         const updatedMembership = await this.membershipRepository.findOneBy({ id })
 
+        await this.membershipRepository.save(updatedMembership)
+
         return `Membresia actualizada: ${updatedMembership.name}`
 
     }
@@ -59,6 +61,8 @@ export class MembershipsRepository{
 
         findingMembership.isActive = false
 
+        await this.membershipRepository.save(findingMembership)
+
         return `Membresia ${findingMembership.name} desactivada exitosamente`
     }
 
@@ -71,6 +75,8 @@ export class MembershipsRepository{
         }
 
         findingMembership.isActive = true
+
+        await this.membershipRepository.save(findingMembership)
 
         return `Membresia ${findingMembership.name} activada exitosamente`
     }
