@@ -1,82 +1,131 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import React, { useEffect, useState } from 'react'
+import { useAuth0 } from '@auth0/auth0-react'
 
-interface Workout {
-  id: string;
-  name: string;
-  description: string;
-  // Add other fields based on your actual API response
+interface Exercise {
+  id: string
+  name: string
+  description: string
 }
 
-export const SimpleUserWorkouts = () => {
-  const [workouts, setWorkouts] = useState<Workout[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { user, isAuthenticated, getAccessTokenSilently } = useAuth0();
+interface Routine {
+  id: string
+  name: string
+  description: string
+  imageUrl: string
+  isActive: boolean
+  exercises?: Exercise[]
+}
+
+interface User {
+  auth0_id: string
+}
+
+interface UserWorkout {
+  id: string
+  user: User
+  routine: Partial<Routine> // Puede venir incompleta al principio
+  isActive: boolean
+}
+
+const UserWorkoutRoutines = () => {
+  const { user } = useAuth0()
+  const [data, setData] = useState<UserWorkout[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
-    const fetchWorkouts = async () => {
-      if (!isAuthenticated || !user?.sub) return;
-      
+    if (!user) return
+
+    const fetchData = async () => {
       try {
-        setLoading(true);
-        const token = await getAccessTokenSilently();
-        
-        // Important fixes:
-        // 1. Encode user ID
-        const userId = encodeURIComponent(user.sub);
-        
-        // 2. Use proper endpoint from your image (adjust as needed)
-        const endpoint = `${process.env.NEXT_PUBLIC_BACKEND_URL}/basiccard/user/${userId}`;
-        
-        const response = await fetch(endpoint, {
-          headers: { 
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
-        });
+        const [userRes, routineRes] = await Promise.all([
+          fetch('http://localhost:3000/user-workout'),
+          fetch('http://localhost:3000/workout-routine')
+        ])
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-        }
+        const userWorkouts: UserWorkout[] = await userRes.json()
+        const allRoutines: Routine[] = await routineRes.json()
 
-        const data = await response.json();
-        
-        // Handle both array and object responses
-        const workoutsData = Array.isArray(data) ? data : [data];
-        setWorkouts(workoutsData);
-        
-      } catch (error) {
-        console.error("Fetch error:", error);
-        toast.error(error instanceof Error ? error.message : "Failed to load workouts");
-        setWorkouts([]);
+        const filtered = userWorkouts
+          .filter(w => w.user.auth0_id === user.sub)
+          .map(w => ({
+            ...w,
+            routine: {
+              ...w.routine,
+              ...allRoutines.find(r => r.id === w.routine.id)
+            }
+          }))
+
+        setData(filtered)
+      } catch (err) {
+        console.error('Error loading routines', err)
+        setError(true)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchWorkouts();
-  }, [isAuthenticated, user, getAccessTokenSilently]);
+    fetchData()
+  }, [user])
 
-  if (!isAuthenticated) return <p>Please login to view workouts</p>;
-  if (loading) return <p>Loading workouts...</p>;
+  if (loading) {
+    return (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, idx) => (
+          <div key={idx} className="h-40 bg-gray-200 rounded-xl animate-pulse" />
+        ))}
+      </div>
+    )
+  }
+
+  if (error) {
+    return <p className="text-red-500">Hubo un error al cargar tus rutinas. Inténtalo más tarde.</p>
+  }
 
   return (
-    <div className="workout-container">
-      {workouts.length > 0 ? (
-        workouts.map(workout => (
-          <div key={workout.id} className="workout-card">
-            <h3>{workout.name}</h3>
-            <p>{workout.description}</p>
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {data.map((workout) => (
+        <div key={workout.id} className="bg-white rounded-xl shadow-md p-4 flex flex-col gap-4">
+          <h2 className="text-xl font-bold text-center">{workout.routine.name}</h2>
+
+          {workout.routine.imageUrl ? (
+            workout.routine.imageUrl.endsWith('.mp4') ? (
+              <video className="w-full rounded-lg" controls src={workout.routine.imageUrl} />
+            ) : (
+              <img className="w-full rounded-lg object-cover" src={workout.routine.imageUrl} alt={workout.routine.name} />
+            )
+          ) : (
+            <div className="w-full h-40 bg-gray-200 rounded-lg" />
+          )}
+
+          {/* Lista de ejercicios */}
+          <div className="mt-4">
+            <h3 className="text-lg font-semibold mb-2">Ejercicios</h3>
+            {workout.routine.exercises && workout.routine.exercises.length > 0 ? (
+              <ul className="list-disc list-inside space-y-1">
+                {workout.routine.exercises.map((exercise) => (
+                  <li key={exercise.id}>
+                    <span className="font-medium">{exercise.name}</span>: {exercise.description}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-gray-500">No hay ejercicios asignados.</p>
+            )}
           </div>
-        ))
-      ) : (
-        <p>No workouts found</p>
-      )}
+
+          <button
+            className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"
+            onClick={() => alert(`Ver ejercicios de ${workout.routine.name}`)}
+          >
+            Ver ejercicios
+          </button>
+        </div>
+      ))}
     </div>
-  );
-};
+  )
+}
+
+export default UserWorkoutRoutines
