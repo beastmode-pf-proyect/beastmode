@@ -11,7 +11,7 @@ import { FaUserCog, FaSignOutAlt } from "react-icons/fa";
 
 export const Navbarp = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, ] = useState(false);
   const [userRole, setUserRole] = useState<
     "ADMIN" | "TRAINER" | "CLIENT" | null
   >(null);
@@ -19,29 +19,33 @@ export const Navbarp = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
     const fetchRole = async () => {
-      if (user?.sub) {
-        try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/role/${user.sub}`
-          );
-          if (!response.ok) throw new Error("Error al obtener el rol");
-          const roleText = await response.text();
-          setUserRole(roleText.toUpperCase() as "ADMIN" | "TRAINER" | "CLIENT");
-        } catch (error) {
-          console.error("Error al obtener el rol del usuario:", error);
+      try {
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/role/${user?.sub}`;
+        if (!user?.sub) return; 
+  
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Error al obtener el rol - status ${response.status}`);
+  
+        const roleText = await response.text();
+        const normalizedRole = roleText.toUpperCase();
+  
+        if (["ADMIN", "TRAINER", "CLIENT"].includes(normalizedRole)) {
+          setUserRole(normalizedRole as "ADMIN" | "TRAINER" | "CLIENT");
+        } else {
+          setUserRole("CLIENT");
         }
+      } catch (error) {
+        console.error("Error al obtener el rol del usuario:", error);
+        setUserRole("CLIENT"); 
       }
     };
-
-    if (isAuthenticated) fetchRole();
-  }, [isAuthenticated, user]);
+  
+    if (isAuthenticated && user?.sub) {
+      fetchRole();
+    }
+  }, [isAuthenticated, user?.sub]); 
+  
 
   const handleDashboardRedirect = () => {
     switch (userRole) {
