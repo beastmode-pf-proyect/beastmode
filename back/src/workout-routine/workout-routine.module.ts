@@ -11,5 +11,6 @@ import { FileUploadModule } from 'src/file-upload/file-upload.module';
 FileUploadModule],
   controllers: [WorkoutRoutineController],
   providers: [WorkoutRoutineService, WorkoutRoutineRepository],
+  exports: [WorkoutRoutineService],
 })
 export class WorkoutRoutineModule {}
