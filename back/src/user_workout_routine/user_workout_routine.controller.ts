@@ -18,13 +18,13 @@ export class UserWorkoutRoutineController {
     return this.service.findById(id);
   }
 
-  @Post('create')
-  create(@Body() dto: CreateUserWorkoutDto) {
-    return this.service.create(dto);
+  @Post('create/:id')
+  create(@Param('id') id: string, @Body() dto: CreateUserWorkoutDto) {
+    return this.service.create(id, dto);
   }
 
 
-  @Put(':id')
+  @Put(':id')                                      ///SI NO SE LE PASA NADA POR BODY DEVUELVE LA RUTINA SIN MODIFICACIONES
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateUserWorkoutDto

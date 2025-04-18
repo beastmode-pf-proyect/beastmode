@@ -1,14 +1,15 @@
+import { NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Testimony } from "src/entities/testimonies.entity";
 import { Repository } from "typeorm";
 
 export class testimoniesRepository{
     constructor(
-        @InjectRepository(Testimony) private testimoniesRepository: Repository<Testimony>
+        @InjectRepository(Testimony) 
+        private testimoniesRepository: Repository<Testimony>,
     ){}
 
-async createTestimonie(testimonie: Partial<Testimony>){
-    
+    async createTestimonie(testimonie: Partial<Testimony>){
         const createdTestimonie = await this.testimoniesRepository.save(testimonie);
     
         if (!testimonie) {
@@ -16,5 +17,22 @@ async createTestimonie(testimonie: Partial<Testimony>){
         }
     
         return `Testimonio de ${testimonie.fullName} creada exitosamente`;
+    }
+
+
+    async getTestimonials() : Promise <Testimony[]> {
+        const testimonials = await this.testimoniesRepository.find()
+        return testimonials;
+    }
+
+    async updateTestimonie(id: string, updateTestimonial: Partial<Testimony>){
+        const testimony = await this.testimoniesRepository.findOneBy({ id })
+        if(!testimony){
+            throw new NotFoundException('Testimonio no encontrado')
+        }
+
+        await this.testimoniesRepository.update(id, updateTestimonial)
+
+        return `Testimonio actualizado de: ${testimony.fullName}`
     }
 }

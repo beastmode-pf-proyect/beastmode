@@ -11,8 +11,8 @@ export class UserWorkoutRoutineService {
     private readonly repository: UserWorkoutRoutineRepository,
   ) {}
 
-  async create(data: CreateUserWorkoutDto): Promise<UserWorkoutRoutine> {
-    return this.repository.createRelation(data);
+  async create(id: string, data: CreateUserWorkoutDto): Promise<UserWorkoutRoutine> {
+    return this.repository.createRelation(id, data);
   }
 
   async findAll(): Promise<UserWorkoutRoutine[]> {
@@ -39,7 +39,7 @@ export class UserWorkoutRoutineService {
     }
   }
   
-  async delete(id: string): Promise<void> {
+  async delete(id: string): Promise<string> {
     if (!isUUID(id)) {
       throw new BadRequestException(`El ID "${id}" no tiene un formato UUID válido`);
     }
@@ -51,6 +51,8 @@ export class UserWorkoutRoutineService {
     }
   
     await this.repository.deleteRelation(id);
+
+    return `Rutina desactivada con éxito`;
   }
   
 }

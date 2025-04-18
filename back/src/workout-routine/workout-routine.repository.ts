@@ -21,7 +21,7 @@ export class WorkoutRoutineRepository{
 
         const membership = await this.workoutRuotineRepository.findOneBy({ id })
         if(!membership){
-            return 'Membresia Inexistente'
+            return 'Rutina no encontrada'
         }
 
         return membership
@@ -70,6 +70,7 @@ export class WorkoutRoutineRepository{
         }
 
         findingWorkoutRoutine.isActive = true
+        await this.workoutRuotineRepository.save(findingWorkoutRoutine)
 
         return `Rutina ${findingWorkoutRoutine.name} activada exitosamente`
     }
