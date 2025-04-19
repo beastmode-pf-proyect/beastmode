@@ -1,11 +1,12 @@
 
 
-import { SimpleUserWorkouts } from '@/Components/Cliente/VerRutina'
+
+import VerRutina from '@/Components/Cliente/VerRutina'
 import React from 'react'
 
 function page() {
   return (
-    <SimpleUserWorkouts/>  
+    <VerRutina/>  
     
   )
 }

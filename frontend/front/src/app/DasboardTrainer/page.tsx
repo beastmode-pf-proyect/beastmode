@@ -1,12 +1,13 @@
 
-import Trainer from '@/Components/Roles/Trainer'
+import TrainerWelcome from '@/Components/Roles/Trainer'
+
 
 import React from 'react'
 
 function page() {
   return (
     <div>
-   <Trainer/>
+   <TrainerWelcome/>
      
     </div>
   )
