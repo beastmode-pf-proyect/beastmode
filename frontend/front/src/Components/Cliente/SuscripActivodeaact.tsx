@@ -40,7 +40,7 @@ const ActiveSubscriptions = () => {
           return;
         }
 
-        const response = await fetch('http://localhost:3000/subscriptions');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/subscriptions`);
         if (!response.ok) {
           throw new Error('No se pudo obtener las suscripciones');
         }

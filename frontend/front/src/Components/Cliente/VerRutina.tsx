@@ -42,8 +42,8 @@ const UserWorkoutRoutines = () => {
     const fetchData = async () => {
       try {
         const [userRes, routineRes] = await Promise.all([
-          fetch('http://localhost:3000/user-workout'),
-          fetch('http://localhost:3000/workout-routine')
+          fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user-workout`),
+          fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/workout-routine`)
         ])
 
         const userWorkouts: UserWorkout[] = await userRes.json()

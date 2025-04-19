@@ -137,7 +137,7 @@ const Admin: React.FC = () => {
     if (!selectedUser || !newRole) return;
 
     try {
-      const response = await fetch(`http://localhost:3000/users/upRole/${selectedUser.auth0_id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/upRole/${selectedUser.auth0_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
