@@ -25,6 +25,9 @@ const Admin: React.FC = () => {
   const [usersPerPage, setUsersPerPage] = useState(7);
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   const [isMobile, setIsMobile] = useState(false);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [newRole, setNewRole] = useState<string>('');
 
   // Paleta de colores personalizadas
   const colors = {
@@ -130,21 +133,29 @@ const Admin: React.FC = () => {
     }
   };
 
-  const handleDeleteUser = async (userId: string) => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar este usuario?')) return;
+  const handleUpdateRole = async () => {
+    if (!selectedUser || !newRole) return;
+
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`, {
-        method: 'DELETE'
+      const response = await fetch(`http://localhost:3000/users/upRole/${selectedUser.auth0_id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ role: newRole })
       });
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Error al eliminar usuario');
+        throw new Error(errorData.message || 'Error al actualizar el rol');
       }
-      toast.success('Usuario eliminado exitosamente');
+
+      toast.success('Rol actualizado exitosamente');
       fetchUsers();
+      setShowRoleModal(false);
     } catch (error) {
-      toast.error('Error al eliminar usuario');
-      console.error('Error deleting user:', error);
+      toast.error('Error al actualizar el rol');
+      console.error('Error:', error);
     }
   };
 
@@ -283,7 +294,7 @@ const Admin: React.FC = () => {
             <select
               value={roleFilter}
               onChange={(e) => {
-                setRoleFilter(e.target.value as 'all' | 'trainer' | 'client' | 'admin');
+                setRoleFilter(e.target.value as 'all' | 'trainer' | 'client');
                 setCurrentPage(1);
               }}
               className={`w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg border ${colors.border} focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all text-sm sm:text-base`}
@@ -291,7 +302,7 @@ const Admin: React.FC = () => {
               <option value="all">Todos los roles</option>
               <option value="trainer">Entrenadores</option>
               <option value="client">Clientes</option>
-              <option value="admin">Administradores</option>
+              
             </select>
           </motion.div>
 
@@ -414,9 +425,7 @@ const Admin: React.FC = () => {
                                     user.role?.name === 'trainer'
                                       ? 'bg-blue-100 text-blue-800'
                                       : user.role?.name === 'client'
-                                      ? 'bg-purple-100 text-purple-800'
-                                      : user.role?.name === 'admin'
-                                      ? 'bg-emerald-100 text-emerald-800'
+                                      ? 'bg-purple-100 text-purple-800'               
                                       : 'bg-slate-100 text-slate-800'
                                   }`}
                                 >
@@ -458,10 +467,14 @@ const Admin: React.FC = () => {
                                 <motion.button
                                   whileHover={{ scale: 1.05 }}
                                   whileTap={{ scale: 0.95 }}
-                                  onClick={() => handleDeleteUser(user.auth0_id)}
-                                  className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-600 text-white text-xs sm:text-sm font-medium hover:from-red-600 hover:to-red-700 transition-all hover:shadow-md"
+                                  onClick={() => {
+                                    setSelectedUser(user);
+                                    setNewRole(user.role?.name || '');
+                                    setShowRoleModal(true);
+                                  }}
+                                  className="px-3 py-1 sm:px-4 sm:py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs sm:text-sm font-medium hover:from-blue-600 hover:to-blue-700 transition-all hover:shadow-md"
                                 >
-                                  Eliminar
+                                  Cambiar Rol
                                 </motion.button>
                               </td>
                             </motion.tr>
@@ -550,8 +563,6 @@ const Admin: React.FC = () => {
                                       ? 'bg-blue-100 text-blue-800'
                                       : user.role?.name === 'client'
                                       ? 'bg-purple-100 text-purple-800'
-                                      : user.role?.name === 'admin'
-                                      ? 'bg-emerald-100 text-emerald-800'
                                       : 'bg-slate-100 text-slate-800'
                                   }`}
                                 >
@@ -591,10 +602,14 @@ const Admin: React.FC = () => {
                             <motion.button
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
-                              onClick={() => handleDeleteUser(user.auth0_id)}
-                              className="flex-1 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-600 text-white text-xs sm:text-sm font-medium hover:from-red-600 hover:to-red-700 transition-all hover:shadow-md"
+                              onClick={() => {
+                                setSelectedUser(user);
+                                setNewRole(user.role?.name || '');
+                                setShowRoleModal(true);
+                              }}
+                              className="flex-1 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs sm:text-sm font-medium hover:from-blue-600 hover:to-blue-700 transition-all hover:shadow-md"
                             >
-                              Eliminar
+                              Cambiar Rol
                             </motion.button>
                           </div>
                         </motion.div>
@@ -671,6 +686,64 @@ const Admin: React.FC = () => {
           </>
         )}
       </div>
+
+      {/* Modal para cambiar rol */}
+      <AnimatePresence>
+        {showRoleModal && selectedUser && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#5e191497]  p-4"
+            onClick={() => setShowRoleModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className={`relative w-full max-w-md p-6 rounded-2xl ${colors.card} ${colors.shadow}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-lg font-bold mb-4">Cambiar rol de {selectedUser.name}</h3>
+              
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-slate-500 mb-2">Seleccionar nuevo rol</label>
+                <select
+                  value={newRole}
+                  onChange={(e) => setNewRole(e.target.value)}
+                  className={`w-full px-4 py-3 rounded-lg border ${colors.border} focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all`}
+                >
+                  <option value="">Selecciona un rol</option>
+                  <option value="trainer">Entrenador</option>
+                  <option value="client">Cliente</option>
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowRoleModal(false)}
+                  className="px-4 py-2 rounded-lg bg-slate-200 text-slate-700 font-medium hover:bg-slate-300 transition-all"
+                >
+                  Cancelar
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleUpdateRole}
+                  disabled={!newRole}
+                  className={`px-4 py-2 rounded-lg text-white font-medium transition-all ${
+                    !newRole ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
+                >
+                  Confirmar
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

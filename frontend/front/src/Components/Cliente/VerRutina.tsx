@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
+import Image from 'next/image'
 
 interface Exercise {
   id: string
@@ -25,7 +26,7 @@ interface User {
 interface UserWorkout {
   id: string
   user: User
-  routine: Partial<Routine> // Puede venir incompleta al principio
+  routine: Partial<Routine>
   isActive: boolean
 }
 
@@ -84,6 +85,10 @@ const UserWorkoutRoutines = () => {
     return <p className="text-red-500">Hubo un error al cargar tus rutinas. Inténtalo más tarde.</p>
   }
 
+  if (data.length === 0) {
+    return <p className="text-gray-500 text-center">No tienes rutinas asignadas.</p>
+  }
+
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {data.map((workout) => (
@@ -94,13 +99,20 @@ const UserWorkoutRoutines = () => {
             workout.routine.imageUrl.endsWith('.mp4') ? (
               <video className="w-full rounded-lg" controls src={workout.routine.imageUrl} />
             ) : (
-              <img className="w-full rounded-lg object-cover" src={workout.routine.imageUrl} alt={workout.routine.name} />
+              <div className="relative w-full h-48 rounded-lg overflow-hidden">
+                <Image
+                  src={workout.routine.imageUrl}
+                  alt={workout.routine.name || 'Rutina'}
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  className="rounded-lg"
+                />
+              </div>
             )
           ) : (
             <div className="w-full h-40 bg-gray-200 rounded-lg" />
           )}
 
-          {/* Lista de ejercicios */}
           <div className="mt-4">
             <h3 className="text-lg font-semibold mb-2">Ejercicios</h3>
             {workout.routine.exercises && workout.routine.exercises.length > 0 ? (

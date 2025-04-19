@@ -13,7 +13,6 @@ export type Plan = {
 };
 
 const MembershipSection = () => {
-
   const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -29,7 +28,9 @@ const MembershipSection = () => {
         });
         const data = await response.json();
         if (Array.isArray(data)) {
-          setPlans(data);
+          // Filtra solo los planes activos
+          const activePlans = data.filter((plan: Plan) => plan.isActive);
+          setPlans(activePlans);
         } else {
           console.error("Unexpected data format from API:", data);
         }
@@ -38,7 +39,7 @@ const MembershipSection = () => {
       }
     };
     fetchPlans();
-  }, );
+  }, []); 
 
   const handleNavigation = (id: string) => {
     const plan = plans.find(p => p.id === id);
@@ -69,7 +70,8 @@ const MembershipSection = () => {
                   plan.name === "Pro"
                     ? "border-red-900 rounded-4xl bg-white shadow-xl hover:shadow-2xl transition-all duration-300 p-6 flex flex-col relative"
                     : "border-gray-200 rounded-4xl bg-white shadow-xl hover:shadow-2xl transition-all duration-300 p-6 flex flex-col"
-                }`}>
+                }`}
+              >
                 {plan.name === "Pro" && (
                   <div className="absolute top-0 right-0 bg-red-900 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-4xl">
                     POPULAR
@@ -97,10 +99,9 @@ const MembershipSection = () => {
                       plan.name === "Pro"
                         ? "bg-red-900 text-white border-2 border-red-900 hover:bg-red-800 hover:border-red-800"
                         : "bg-transparent text-red-950 border-2 border-red-950 hover:bg-red-950 hover:text-white"
-                    }`}>
-                    {plan.name === "Pro"
-                      ? "¡Quiero ser PRO!"
-                      : "Comenzar Ahora"}
+                    }`}
+                  >
+                    {plan.name === "Pro" ? "¡Quiero ser PRO!" : "Comenzar Ahora"}
                   </button>
                 </div>
               </div>

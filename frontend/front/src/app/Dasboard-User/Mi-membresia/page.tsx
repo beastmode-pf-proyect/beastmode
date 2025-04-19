@@ -1,9 +1,10 @@
+import ActiveSubscriptions from '@/Components/Cliente/SuscripActivodeaact'
 import React from 'react'
 
 function page() {
   return (
     <div>
-      Mi membresia  
+      <ActiveSubscriptions/>
     </div>
   )
 }
