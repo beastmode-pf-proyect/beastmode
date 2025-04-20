@@ -79,57 +79,69 @@ const CrearRutina: React.FC = () => {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ isSubmitting }) => (
-          <Form className="space-y-8 text-white">
-            <div>
-              <label htmlFor="name" className="flex items-center gap-2 text-sm font-semibold text-white">
-                <FaSignature className="text-white" />
-                Nombre de la rutina
-              </label>
-              <Field
-                type="text"
-                name="name"
-                className="mt-2 block w-full rounded-lg border border-[#842b2b] bg-white/90 text-red-950 shadow-sm px-4 py-3 focus:border-red-500 focus:ring-2 focus:ring-red-300 transition"
-              />
-              <ErrorMessage name="name" component="div" className="text-red-200 text-sm mt-1" />
+        {({ isSubmitting }) =>
+          isSubmitting ? (
+            <div className="space-y-8 animate-pulse">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="space-y-2">
+                  <div className="h-4 w-1/3 bg-white/30 rounded-md" />
+                  <div className="h-10 w-full bg-white/20 rounded-lg" />
+                </div>
+              ))}
+              <div className="h-12 w-full bg-white/30 rounded-xl" />
             </div>
+          ) : (
+            <Form className="space-y-8 text-white">
+              <div>
+                <label htmlFor="name" className="flex items-center gap-2 text-sm font-semibold text-white">
+                  <FaSignature className="text-white" />
+                  Nombre de la rutina
+                </label>
+                <Field
+                  type="text"
+                  name="name"
+                  className="mt-2 block w-full rounded-lg border border-[#842b2b] bg-white/90 text-red-950 shadow-sm px-4 py-3 focus:border-red-500 focus:ring-2 focus:ring-red-300 transition"
+                />
+                <ErrorMessage name="name" component="div" className="text-red-200 text-sm mt-1" />
+              </div>
 
-            <div>
-              <label htmlFor="description" className="flex items-center gap-2 text-sm font-semibold text-white">
-                <FaAlignLeft className="text-white" />
-                Descripción
-              </label>
-              <Field
-                as="textarea"
-                name="description"
-                rows={4}
-                className="mt-2 block w-full rounded-lg border border-[#842b2b] bg-white/90 text-red-950 shadow-sm px-4 py-3 focus:border-red-500 focus:ring-2 focus:ring-red-300 transition"
-              />
-              <ErrorMessage name="description" component="div" className="text-red-200 text-sm mt-1" />
-            </div>
+              <div>
+                <label htmlFor="description" className="flex items-center gap-2 text-sm font-semibold text-white">
+                  <FaAlignLeft className="text-white" />
+                  Descripción
+                </label>
+                <Field
+                  as="textarea"
+                  name="description"
+                  rows={4}
+                  className="mt-2 block w-full rounded-lg border border-[#842b2b] bg-white/90 text-red-950 shadow-sm px-4 py-3 focus:border-red-500 focus:ring-2 focus:ring-red-300 transition"
+                />
+                <ErrorMessage name="description" component="div" className="text-red-200 text-sm mt-1" />
+              </div>
 
-            <div>
-              <label htmlFor="imageUrl" className="flex items-center gap-2 text-sm font-semibold text-white">
-                <FaImage className="text-white" />
-                Imagen (URL opcional)
-              </label>
-              <Field
-                type="text"
-                name="imageUrl"
-                className="mt-2 block w-full rounded-lg border border-[#842b2b] bg-white/90 text-red-950 shadow-sm px-4 py-3 focus:border-red-500 focus:ring-2 focus:ring-red-300 transition"
-              />
-              <ErrorMessage name="imageUrl" component="div" className="text-red-200 text-sm mt-1" />
-            </div>
+              <div>
+                <label htmlFor="imageUrl" className="flex items-center gap-2 text-sm font-semibold text-white">
+                  <FaImage className="text-white" />
+                  Imagen (URL opcional)
+                </label>
+                <Field
+                  type="text"
+                  name="imageUrl"
+                  className="mt-2 block w-full rounded-lg border border-[#842b2b] bg-white/90 text-red-950 shadow-sm px-4 py-3 focus:border-red-500 focus:ring-2 focus:ring-red-300 transition"
+                />
+                <ErrorMessage name="imageUrl" component="div" className="text-red-200 text-sm mt-1" />
+              </div>
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-3 px-6 rounded-xl bg-[#ffffff] text-[#5e1914] font-extrabold text-lg tracking-wide shadow-lg hover:bg-red-100 hover:scale-[1.02] transition-all duration-200 ease-in-out disabled:opacity-50"
-            >
-              {isSubmitting ? 'Creando...' : 'Crear Rutina'}
-            </button>
-          </Form>
-        )}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-3 px-6 rounded-xl bg-[#ffffff] text-[#5e1914] font-extrabold text-lg tracking-wide shadow-lg hover:bg-red-100 hover:scale-[1.02] transition-all duration-200 ease-in-out disabled:opacity-50"
+              >
+                Crear Rutina
+              </button>
+            </Form>
+          )
+        }
       </Formik>
     </div>
   );

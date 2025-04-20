@@ -40,7 +40,9 @@ async function bootstrap() {
       if (
         !origin || // Permite Postman, cURL y servicios internos
         origin.endsWith('.vercel.app') ||
-        origin === 'http://localhost:3001'
+        origin === 'http://localhost:3000' ||
+        origin === 'http://localhost:3001' ||
+        origin.endsWith('.onrender.com')
       ) {
         callback(null, true);
       } else {

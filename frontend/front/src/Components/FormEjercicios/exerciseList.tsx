@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { Exercise } from "./types";
+import Image from "next/image";
 
 export default function ExerciseList() {
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -33,7 +34,7 @@ export default function ExerciseList() {
   }, []);
 
   if (loading) {
-    return <div className="text-center py-8">Cargando ejercicios...</div>;
+    return <div className="text-center py-8">Cargando ejercicios....</div>;
   }
 
   if (error) {
@@ -58,9 +59,10 @@ export default function ExerciseList() {
             </div>
             {exercise.imageUrl && (
               <div className="mb-4">
-                <img
+                <Image
                   src={exercise.imageUrl}
                   alt={exercise.name}
+                  fill
                   className="w-full h-auto rounded-md object-cover"
                 />
               </div>

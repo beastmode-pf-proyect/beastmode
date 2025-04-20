@@ -8,7 +8,7 @@ import { SessionUserProvider } from "./SessionUserContext";
 import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import Navbarp from "@/Components/Navbarp/Navbar";
-
+import DomainUpdater from "@/utils/domainUpdater"; 
 
 export const metadata: Metadata = {
   title: "BeastMode",
@@ -18,25 +18,22 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
- 
-
   return (
-    <AuthProvider>
-      <SessionUserProvider>
-        <StripeProvider>
-        <Navbarp/>
-        <Toaster position="top-center" />
-          <html lang="en">
-          
-            <body className="flex flex-col min-h-screen pt-24">
-            
-              <LoginFormProvider />
+    <html lang="en">
+      <body className="flex flex-col min-h-screen pt-24">
+        <AuthProvider>
+          <SessionUserProvider>
+            <StripeProvider>
+              <Navbarp />
+              <Toaster position="top-center" />
+                {/* {<LoginFormProvider />} */}
+              <DomainUpdater /> 
               <Suspense fallback={<div>Cargando....</div>}>{children}</Suspense>
               <Footer />
-            </body>
-          </html>
-        </StripeProvider>
-      </SessionUserProvider>
-    </AuthProvider>
+            </StripeProvider>
+          </SessionUserProvider>
+        </AuthProvider>
+      </body>
+    </html>
   );
 }

@@ -35,7 +35,7 @@ export class MembershipsController {
   }
 
   @Put(':id')
-  @UseInterceptors(validateMembershipInteceptor)
+  @UseInterceptors(validateMembershipInteceptor)                         //PASAR NAME, PRICE, DURATION, DESCRIPTION
   updateMembership(@Param('id', ParseUUIDPipe) id: string, updateMembership: updateMembershipDto){
     return this.membershipsService.updateMembership(id, updateMembership)
   }

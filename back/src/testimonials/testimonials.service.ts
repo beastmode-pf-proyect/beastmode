@@ -1,20 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import * as data from '../utils/Testimonials.json'
+import { Testimony } from 'src/entities/testimonies.entity';
+import { testimoniesRepository } from './testimonies.repository';
+import { createTestimonyDto } from 'src/dto/createTestimonyDto';
 
 @Injectable()
 export class TestimonialsService {
-    private data = require('../utils/Testimonials.json');
+    constructor(private testimoniesRepository: testimoniesRepository){}
 
-addTestimonials(cantidad = data.length){
-    const testimonialCopy = [...this.data];
-
-    for (let i = testimonialCopy.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [testimonialCopy[i], testimonialCopy[j]] = [testimonialCopy[j], testimonialCopy[i]];
-    }
-    
-    return testimonialCopy.slice(0, cantidad)
+addTestimonial(testimonies: createTestimonyDto){
+    return this.testimoniesRepository.createTestimonie(testimonies)
 }
+
+getTestimonials(){
+    return this.testimoniesRepository.getTestimonials()   
+}
+
+updateTestimonial(id: string, updateTestimonial: Partial<Testimony>){
+    return this.testimoniesRepository.updateTestimonie(id, updateTestimonial)
+
+}
+
 }
 
 

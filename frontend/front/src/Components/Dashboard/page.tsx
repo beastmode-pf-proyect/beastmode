@@ -19,5 +19,5 @@ const Dashboard = () => {
   );
 };
 
-// ✅ Exportamos la versión protegida de Dashboard
+
 export default (Dashboard);
