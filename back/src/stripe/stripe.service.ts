@@ -45,7 +45,7 @@ export class StripeService {
             quantity: 1,
           },
         ],
-        success_url: `https://beastmode-diph-flzhx826k-beastmodes-projects-d14b9acd.vercel.app/subscriptions/success?session_id={CHECKOUT_SESSION_ID}&transaction_id=${transactionId}`,
+        success_url: `http://localhost:3001/subscriptions/success?session_id={CHECKOUT_SESSION_ID}&transaction_id=${transactionId}`,
         cancel_url: 'https://beastmode-diph-flzhx826k-beastmodes-projects-d14b9acd.vercel.app/subscriptions/cancel',
         mode: 'payment',
       });
@@ -95,6 +95,7 @@ export class StripeService {
         });
 
         const user = await this.userService.getUserById(userId);
+        const membership = await this.membershipsRepository.getMembershipById(membershipId);
 
         if (!user?.email || !user?.name) {
           throw new BadRequestException('Información de usuario incompleta');
@@ -106,9 +107,17 @@ export class StripeService {
             to: user.email,
             subject: '¡Pago confirmado!',
             html: `
-              <h1>Hola ${user.name}, ¡Gracias por tu compra!</h1>
-              <p>Tu pago ha sido confirmado correctamente.</p>
-              <p>Tu membresía está activa por 30 días.</p>
+              <div style="background-color:#f9f9f9; padding:20px; border-radius:10px; font-family: sans-serif;">
+                <div style="text-align:center; margin-bottom:20px;">
+                  <img src="https://res.cloudinary.com/dbsv0u7h3/image/upload/v1743359702/visj3jouuj5qywu2oxtm.png" alt="Logo" style="max-width:100px;"/>
+                  <h1 style="color:#333; margin-top:0;">¡Pago confirmado!</h1>
+                </div>
+                <p style="color:#555; font-size:16px;">Hola <strong>${user.name}</strong>,</p>
+                <p style="color:#555; font-size:16px;">Tu pago ha sido confirmado correctamente.</p>
+                <p style="color:#555; font-size:16px;">Has adquirido la membresía: <strong style="color:#007bff;">${membership.name}</strong></p>
+                <p style="color:#555; font-size:16px;">Por valor de: <strong style="color:#28a745;">$${membership.price} USD</strong></p>
+                <p style="color:#555; font-size:16px;">Tu membresía es válida por 30 días.</p> 
+              </div>
             `,
           });
         } catch (error) {

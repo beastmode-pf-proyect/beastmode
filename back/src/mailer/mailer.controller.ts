@@ -1,5 +1,5 @@
 // mailer.controller.ts
-import { Controller, Get, Query, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { Controller, Get, Query, HttpException, HttpStatus, Logger, Post, Body } from '@nestjs/common';
 import { MailerService } from './mailer.service';
 
 @Controller('mailer')
@@ -36,4 +36,40 @@ export class MailerController {
       );
     }
   }
+
+  // mailer.controller.ts
+@Post('welcome')
+async sendWelcomeEmail(@Body() body: { email: string, name?: string }) {
+  const { email, name } = body;
+  
+  const subject = '¡Bienvenido a nuestra plataforma!';
+  const htmlContent = `
+    <div style="background-color:#f9f9f9; padding:20px; border-radius:10px; font-family: sans-serif;">
+                <div style="text-align:center; margin-bottom:20px;">
+                  <img src="https://res.cloudinary.com/dbsv0u7h3/image/upload/v1743359702/visj3jouuj5qywu2oxtm.png" alt="Logo" style="max-width:100px;"/>
+                  <h1 style="color:#333; margin-top:0;">¡Pago confirmado!</h1>
+                </div>   
+    <h1 style="color:#555; font-size:16px;">Hola <strong>${name || 'Usuario'}!</strong>,</h1>
+    <p>Gracias por registrarte en nuestra plataforma.</p>
+    <p>Estamos encantados de tenerte con nosotros.</p>
+  `;
+
+  try {
+    await this.mailerService.sendEmail({
+      to: email,
+      subject,
+      html: htmlContent,
+    });
+    return { message: 'Correo de bienvenida enviado exitosamente' };
+  } catch (error) {
+    this.logger.error(`Error al enviar correo de bienvenida a ${email}:`, error.stack);
+    throw new HttpException(
+      `Error al enviar correo de bienvenida: ${error.message}`,
+      HttpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+
+
+
 }
