@@ -5,6 +5,8 @@ import { toast } from "react-hot-toast";
 interface User {
   id: string;
   name: string;
+  email: string;
+  auth0_id: string;
 }
 
 interface Routine {
@@ -15,7 +17,7 @@ interface Routine {
 export default function AsignarRutina() {
   const [usuarios, setUsuarios] = useState<User[]>([]);
   const [rutinas, setRutinas] = useState<Routine[]>([]);
-  const [selectedUser, setSelectedUser] = useState<string>("");
+  const [selectedAuth0Id, setSelectedAuth0Id] = useState<string>("");
   const [selectedRoutine, setSelectedRoutine] = useState<string>("");
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [loadingRutinas, setLoadingRutinas] = useState(true);
@@ -43,26 +45,28 @@ export default function AsignarRutina() {
   }, []);
 
   const handleAsignar = async () => {
-    if (!selectedUser || !selectedRoutine) {
+    if (!selectedAuth0Id || !selectedRoutine) {
       toast("Selecciona un usuario y una rutina", { icon: "⚠️" });
       return;
     }
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user-workout/create`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: selectedUser,
-          routineId: selectedRoutine,
-        }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user-workout/create/${selectedAuth0Id}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            routineId: selectedRoutine,
+          }),
+        }
+      );
 
       const data = await res.json();
 
       if (res.ok) {
         toast.success("Rutina asignada correctamente");
-        setSelectedUser("");
+        setSelectedAuth0Id("");
         setSelectedRoutine("");
       } else {
         toast.error(data.message || "No se pudo asignar la rutina");
@@ -80,10 +84,13 @@ export default function AsignarRutina() {
           <h2 className="text-2xl font-bold text-[#5e1914] text-center">
             Asignar Rutina
           </h2>
-          <p className="text-gray-600 text-center mt-1">Selecciona usuario y rutina para asignar</p>
+          <p className="text-gray-600 text-center mt-1">
+            Selecciona usuario y rutina para asignar
+          </p>
         </div>
 
         <div className="p-6 space-y-6">
+          {/* Select Usuario */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
               Seleccionar Usuario
@@ -93,14 +100,14 @@ export default function AsignarRutina() {
             ) : (
               <div className="relative">
                 <select
-                  value={selectedUser}
-                  onChange={(e) => setSelectedUser(e.target.value)}
+                  value={selectedAuth0Id}
+                  onChange={(e) => setSelectedAuth0Id(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none focus:ring-2 focus:ring-[#5e1914]/50 focus:border-[#5e1914] outline-none transition-all"
                 >
                   <option value="">Selecciona un usuario</option>
                   {usuarios.map((user) => (
-                    <option key={user.id} value={user.id}>
-                      {user.name || user.id}
+                    <option key={user.auth0_id} value={user.auth0_id}>
+                      {user.name || user.email || user.auth0_id}
                     </option>
                   ))}
                 </select>
@@ -113,6 +120,7 @@ export default function AsignarRutina() {
             )}
           </div>
 
+          {/* Select Rutina */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
               Seleccionar Rutina
@@ -142,6 +150,7 @@ export default function AsignarRutina() {
             )}
           </div>
 
+          {/* Botón */}
           <button
             onClick={handleAsignar}
             className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all duration-300 ${
