@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Footer from "@/Components/Footer/Footer";
 import AuthProvider from "./AuthProvider";
-import LoginFormProvider from "@/Components/loginouth/LoginProvider";
+// import LoginFormProvider from "@/Components/loginouth/LoginProvider";
 import StripeProvider from "@/Components/Suscripcion/page";
 import { SessionUserProvider } from "./SessionUserContext";
 import { Suspense } from "react";
@@ -26,7 +26,7 @@ export default function RootLayout({
             <StripeProvider>
               <Navbarp />
               <Toaster position="top-center" />
-              <LoginFormProvider />
+              {/* <LoginFormProvider /> */}
               <DomainUpdater /> 
               <Suspense fallback={<div>Cargando....</div>}>{children}</Suspense>
               <Footer />
