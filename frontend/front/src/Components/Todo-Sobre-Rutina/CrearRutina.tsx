@@ -88,7 +88,7 @@ const RoutineForm = () => {
       formData.append('isActive', String(routineData.isActive));
       if (file) formData.append('file', file);
 
-      const response = await fetch('http://localhost:3000/workout-routine/create', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/workout-routine/create`, {
         method: 'POST',
         body: formData
       });
