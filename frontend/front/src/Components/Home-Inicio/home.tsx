@@ -1,19 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-
 import MembershipSection from "@/Components/memberships/memberships";
-
 import Ctestimonios from "../Ctestimonios/Ctestimonios";
-
 import { useSessionUser } from "@/app/SessionUserContext";
-
 import { Subscription } from "../Cliente/SuscripActivodeaact";
 
 const HomePage: React.FC = () => {
   const { user: currentUser, loading: userLoading, user } = useSessionUser();
   const [loading, setLoading] = useState<boolean>(true);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  console.log(loading);
 
   useEffect(() => {
     const fetchMemberships = async () => {
@@ -41,7 +38,6 @@ const HomePage: React.FC = () => {
     }
   }, [currentUser?.email, userLoading]);
 
-  console.log(loading);
   console.log(subscriptions);
 
   return (
@@ -76,7 +72,7 @@ const HomePage: React.FC = () => {
       <section className="py-12 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-red-950 mb-6">
-            Entrenamiento de Hoy
+            Tu Entrenamiento de Hoy
           </h2>
           <p>
             &apos;la mismas rutinas que estan en el dashboard (especie de acceso
@@ -94,6 +90,8 @@ const HomePage: React.FC = () => {
           <Ctestimonios />
         </div>
       </section>
+
+      {/* <ExerciseList /> */}
     </div>
   );
 };
