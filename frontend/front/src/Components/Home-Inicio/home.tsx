@@ -76,7 +76,7 @@ const HomePage: React.FC = () => {
       <section className="py-12 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-red-950 mb-6">
-            Tu Entrenamiento de Hoy
+            Entrenamiento de Hoy
           </h2>
           <p>
             &apos;la mismas rutinas que estan en el dashboard (especie de acceso
