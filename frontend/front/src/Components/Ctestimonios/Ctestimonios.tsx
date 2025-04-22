@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const MAX_DESCRIPCION_LENGTH = 100;
+const TESTIMONIOS_POR_PAGINA = 3;
 
 const Ctestimonios = () => {
   const [testimonios, setTestimonios] = useState<ITestimonios[]>([]);
@@ -15,6 +16,7 @@ const Ctestimonios = () => {
   const [selectedTestimonio, setSelectedTestimonio] =
     useState<ITestimonios | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [paginaActual, setPaginaActual] = useState(1);
   const { isAuthenticated } = useAuth0();
 
   useEffect(() => {
@@ -71,6 +73,22 @@ const Ctestimonios = () => {
 
   const defaultAvatar = "/descarga.png";
 
+  // Función para manejar la paginación
+  const handleChangePage = (direction: "next" | "prev") => {
+    if (direction === "next") {
+      setPaginaActual(prevPage => prevPage + 1);
+    } else if (direction === "prev") {
+      setPaginaActual(prevPage => prevPage - 1);
+    }
+  };
+
+  // Calcular los testimonios que se deben mostrar en la página actual
+  const startIndex = (paginaActual - 1) * TESTIMONIOS_POR_PAGINA;
+  const currentTestimonios = testimonios.slice(
+    startIndex,
+    startIndex + TESTIMONIOS_POR_PAGINA
+  );
+
   return (
     <div className="mx-4 mt-4 flex flex-col items-center">
       {isAuthenticated && (
@@ -89,12 +107,12 @@ const Ctestimonios = () => {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 pt-4 pb-6">
-        {testimonios.length === 0 ? (
+        {currentTestimonios.length === 0 ? (
           <div className="col-span-3 text-center text-gray-500">
             No hay testimonios disponibles. ¡Sé el primero en dejar uno!
           </div>
         ) : (
-          testimonios.map((testimonio, index) => (
+          currentTestimonios.map((testimonio, index) => (
             <div
               key={index}
               className="bg-gray-100 shadow-lg rounded-lg p-4 flex flex-col items-center text-center transition-all duration-300 transform hover:scale-105 hover:bg-gray-200 w-[260px] min-h-[300px] max-h-[300px]">
@@ -130,6 +148,21 @@ const Ctestimonios = () => {
             </div>
           ))
         )}
+      </div>
+
+      <div className="flex justify-between w-full mt-4">
+        <button
+          onClick={() => handleChangePage("prev")}
+          disabled={paginaActual === 1}
+          className="px-4 py-2 bg-gray-400 text-white rounded disabled:opacity-50">
+          Anterior
+        </button>
+        <button
+          onClick={() => handleChangePage("next")}
+          disabled={paginaActual * TESTIMONIOS_POR_PAGINA >= testimonios.length}
+          className="px-4 py-2 bg-gray-400 text-white rounded disabled:opacity-50">
+          Siguiente
+        </button>
       </div>
 
       <TestimonioCompletoModal
