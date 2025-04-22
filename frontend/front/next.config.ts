@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   matcher: ['/dashboard/:path*'],
 
   images: {
-    domains: ['www.gravatar.com','https://i.blogs.es',
+    domains: ['www.gravatar.com','https://i.blogs.es','images.unsplash.com',
               'tudominio.com', 'cdn.ejemplo.com', 'localhost','blogger.googleusercontent.com',
               's.gravatar.com', 'lh3.googleusercontent.com','res.cloudinary.com', 'encrypted-tbn0.gstatic.com'],
     remotePatterns: [
