@@ -22,7 +22,7 @@ export class testimoniesRepository{
 
 
     async getTestimonials() : Promise <Testimony[]> {
-        const testimonials = await this.testimoniesRepository.find()
+        const testimonials = await this.testimoniesRepository.find({relations: ['user']})
         return testimonials;
     }
 
