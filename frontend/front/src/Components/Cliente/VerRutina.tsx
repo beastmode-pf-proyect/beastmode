@@ -1,14 +1,10 @@
 'use client'
-
 import React, { useEffect, useState } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import Image from 'next/image'
-
-interface Exercise {
-  id: string
-  name: string
-  description: string
-}
+import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
+import { FiPlay, FiInfo, FiClock, FiActivity } from 'react-icons/fi'
 
 interface Routine {
   id: string
@@ -16,7 +12,8 @@ interface Routine {
   description: string
   imageUrl: string
   isActive: boolean
-  exercises?: Exercise[]
+  duration?: number
+  difficulty?: string
 }
 
 interface User {
@@ -26,20 +23,22 @@ interface User {
 interface UserWorkout {
   id: string
   user: User
-  routine: Partial<Routine>
+  routine: Routine
   isActive: boolean
 }
 
 const UserWorkoutRoutines = () => {
   const { user } = useAuth0()
-  const [data, setData] = useState<UserWorkout[]>([])
+  const router = useRouter()
+  const [routines, setRoutines] = useState<UserWorkout[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [expandedId, setExpandedId] = useState<string | null>(null)
 
   useEffect(() => {
     if (!user) return
 
-    const fetchData = async () => {
+    const fetchRoutines = async () => {
       try {
         const [userRes, routineRes] = await Promise.all([
           fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user-workout`),
@@ -59,7 +58,7 @@ const UserWorkoutRoutines = () => {
             }
           }))
 
-        setData(filtered)
+        setRoutines(filtered)
       } catch (err) {
         console.error('Error loading routines', err)
         setError(true)
@@ -68,73 +67,135 @@ const UserWorkoutRoutines = () => {
       }
     }
 
-    fetchData()
+    fetchRoutines()
   }, [user])
+
+  const toggleExpand = (id: string) => {
+    setExpandedId(expandedId === id ? null : id)
+  }
 
   if (loading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 3 }).map((_, idx) => (
-          <div key={idx} className="h-40 bg-gray-200 rounded-xl animate-pulse" />
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: idx * 0.1 }}
+            className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-sm h-96 animate-pulse"
+          />
         ))}
       </div>
     )
   }
 
   if (error) {
-    return <p className="text-red-500">Hubo un error al cargar tus rutinas. Inténtalo más tarde.</p>
+    return (
+      <div className="text-center py-12">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
+          <FiInfo className="w-8 h-8 text-red-500" />
+        </div>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">Error al cargar rutinas</h3>
+        <p className="text-gray-600">Inténtalo de nuevo más tarde</p>
+      </div>
+    )
   }
 
-  if (data.length === 0) {
-    return <p className="text-gray-500 text-center">No tienes rutinas asignadas.</p>
+  if (routines.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
+          <FiActivity className="w-8 h-8 text-red-950" />
+        </div>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">No tienes rutinas asignadas</h3>
+        <p className="text-gray-600">Contacta con tu entrenador para que te asigne una rutina personalizada</p>
+      </div>
+    )
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {data.map((workout) => (
-        <div key={workout.id} className="bg-white rounded-xl shadow-md p-4 flex flex-col gap-4">
-          <h2 className="text-xl font-bold text-center">{workout.routine.name}</h2>
-
-          {workout.routine.imageUrl ? (
-            workout.routine.imageUrl.endsWith('.mp4') ? (
-              <video className="w-full rounded-lg" controls src={workout.routine.imageUrl} />
-            ) : (
-              <div className="relative w-full h-48 rounded-lg overflow-hidden">
+    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      {routines.map((workout, index) => (
+        <motion.div
+          key={workout.id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: index * 0.1 }}
+          className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100"
+        >
+          <div className="relative h-48 w-full">
+            {workout.routine.imageUrl ? (
+              workout.routine.imageUrl.endsWith('.mp4') ? (
+                <video 
+                  className="w-full h-full object-cover" 
+                  src={workout.routine.imageUrl} 
+                  muted 
+                  loop 
+                  autoPlay
+                />
+              ) : (
                 <Image
                   src={workout.routine.imageUrl}
-                  alt={workout.routine.name || 'Rutina'}
+                  alt={workout.routine.name}
                   fill
-                  style={{ objectFit: 'cover' }}
-                  className="rounded-lg"
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  priority={index < 3}
                 />
-              </div>
-            )
-          ) : (
-            <div className="w-full h-40 bg-gray-200 rounded-lg" />
-          )}
-
-          <div className="mt-4">
-            <h3 className="text-lg font-semibold mb-2">Ejercicios</h3>
-            {workout.routine.exercises && workout.routine.exercises.length > 0 ? (
-              <ul className="list-disc list-inside space-y-1">
-                {workout.routine.exercises.map((exercise) => (
-                  <li key={exercise.id}>
-                    <span className="font-medium">{exercise.name}</span>: {exercise.description}
-                  </li>
-                ))}
-              </ul>
+              )
             ) : (
-              <p className="text-sm text-gray-500">No hay ejercicios asignados.</p>
+              <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300" />
             )}
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+              <h2 className="text-xl font-bold text-white">{workout.routine.name}</h2>
+              {workout.routine.difficulty && (
+                <span className="inline-block mt-1 px-2 py-1 text-xs font-semibold bg-white/20 text-white rounded-full backdrop-blur-sm">
+                  {workout.routine.difficulty}
+                </span>
+              )}
+            </div>
           </div>
 
-          <button
-            className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"
-            onClick={() => alert(`Ver ejercicios de ${workout.routine.name}`)}
-          >
-            Ver ejercicios
-          </button>
-        </div>
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              {workout.routine.duration && (
+                <div className="flex items-center text-gray-600">
+                  <FiClock className="mr-2" />
+                  <span className="text-sm font-medium">{workout.routine.duration} min</span>
+                </div>
+              )}
+              
+              <button 
+                onClick={() => toggleExpand(workout.id)}
+                className="text-sm font-medium text-red-950 hover:text-red-800 transition-colors"
+              >
+                {expandedId === workout.id ? 'Ver menos' : 'Ver descripción'}
+              </button>
+            </div>
+
+            {expandedId === workout.id && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-4 text-gray-600 text-sm"
+              >
+                {workout.routine.description || 'Esta rutina no tiene descripción disponible.'}
+              </motion.div>
+            )}
+
+            <div className="flex space-x-3">
+              <button
+                onClick={() => router.push(`/Dasboard-User/Rutina/rutinas/${workout.routine.id}`)}
+                className="flex-1 bg-gradient-to-r from-red-900 to-red-800 text-white py-3 px-4 rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center"
+              >
+                <FiPlay className="mr-2" />
+                Comenzar
+              </button>
+            </div>
+          </div>
+        </motion.div>
       ))}
     </div>
   )
