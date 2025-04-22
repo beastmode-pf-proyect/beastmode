@@ -154,13 +154,13 @@ const Ctestimonios = () => {
         <button
           onClick={() => handleChangePage("prev")}
           disabled={paginaActual === 1}
-          className="px-4 py-2 bg-gray-400 text-white rounded disabled:opacity-50">
+          className="px-4 py-2 bg-red-950/95 text-white rounded disabled:opacity-50">
           Anterior
         </button>
         <button
           onClick={() => handleChangePage("next")}
           disabled={paginaActual * TESTIMONIOS_POR_PAGINA >= testimonios.length}
-          className="px-4 py-2 bg-gray-400 text-white rounded disabled:opacity-50">
+          className="px-4 py-2 bg-red-950/95 text-white rounded disabled:opacity-50">
           Siguiente
         </button>
       </div>
