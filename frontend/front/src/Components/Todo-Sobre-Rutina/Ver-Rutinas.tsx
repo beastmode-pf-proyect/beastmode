@@ -196,7 +196,7 @@ const ListadeRutinas: React.FC = () => {
               <div className="flex justify-between items-center mt-4">
                 <button
                   onClick={() => openModal(routine.id)}
-                  className="w-full py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-all duration-200"
+                  className="w-full py-2 rounded-lg bg-red-950 hover:bg-red-800 text-white font-medium transition-all duration-200"
                 >
                   Ver y Agregar Ejercicios
                 </button>
@@ -214,7 +214,7 @@ const ListadeRutinas: React.FC = () => {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-40 z-50 mt-17">
+        <div className="fixed inset-0 flex justify-center items-center bg-[#5e191491] bg-opacity-40 z-50 mt-17">
           <div className="relative bg-white rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <button
               onClick={closeModal}

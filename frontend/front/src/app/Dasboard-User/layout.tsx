@@ -156,22 +156,14 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         <ul className="space-y-2">
           {clientMenu.map((item) => (
             <li key={item.name}>
-              <Link href={item.href} className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#5e1914] hover:scale-105 text-[#5e1914] hover:text-white">
+              <Link href={item.href} className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#5e1914] hover:scale-105 text-[#5e1914] hover:text-[#5e1914]">
                 {item.icon}
                 <span>{item.name}</span>
               </Link>
             </li>
           ))}
         </ul>
-        <div className="mt-4">
-          <button
-            onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-            className="w-full flex items-center justify-center gap-2 bg-[#5e1914] hover:bg-[#a82717] text-white p-2 rounded-md transition-all duration-300 transform hover:scale-105"
-          >
-            <HiOutlineLogout className="w-5 h-5" />
-            <span>Cerrar sesión</span>
-          </button>
-        </div>
+        
       </div>
 
       {/* Mobile sidebar */}
@@ -185,7 +177,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                   <Link
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#5e1914] hover:scale-105 text-[#5e1914] hover:text-white"
+                    className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#5e1914] hover:scale-105 text-[#5e1914] hover:text-[#5e1914]"
                   >
                     {item.icon}
                     <span>{item.name}</span>
