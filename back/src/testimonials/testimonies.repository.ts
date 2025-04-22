@@ -1,5 +1,6 @@
 import { NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { createTestimonyDto } from "src/dto/createTestimonyDto";
 import { Testimony } from "src/entities/testimonies.entity";
 import { Repository } from "typeorm";
 
@@ -9,14 +10,14 @@ export class testimoniesRepository{
         private testimoniesRepository: Repository<Testimony>,
     ){}
 
-    async createTestimonie(testimonie: Partial<Testimony>){
+    async createTestimonie(testimonie: createTestimonyDto) {
         const createdTestimonie = await this.testimoniesRepository.save(testimonie);
     
-        if (!testimonie) {
+        if (!createdTestimonie) {
             throw new Error('No se pudo crear el testimonio');
         }
     
-        return `Testimonio de ${testimonie.fullName} creada exitosamente`;
+        return `Testimonio de ${createdTestimonie.fullName} creada exitosamente`;
     }
 
 

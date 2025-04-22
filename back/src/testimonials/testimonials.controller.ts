@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post, Put, UseInterceptors } from '@nestj
 import { TestimonialsService } from './testimonials.service';
 import { Testimony } from 'src/entities/testimonies.entity';
 import { TestimonialsValidationInterceptor } from 'src/interceptors/testimonials.interceptor';
+import { createTestimonyDto } from 'src/dto/createTestimonyDto';
 
 
 @Controller('testimonials')
@@ -10,7 +11,7 @@ export class TestimonialsController {
 
     @Post()
     @UseInterceptors(TestimonialsValidationInterceptor)
-    addTestimonials(@Body() testimonies: Partial<Testimony>) {
+    addTestimonials(@Body() testimonies: createTestimonyDto) {
       return this.testimonialsService.addTestimonial(testimonies);
   }
 
