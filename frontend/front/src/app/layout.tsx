@@ -27,7 +27,7 @@ export default function RootLayout({
             <StripeProvider>
               <Navbarp />
               <Toaster position="top-center" />
-              <LoginFormProvider />
+                {/* {<LoginFormProvider />} */}
               <DomainUpdater /> 
               <Suspense fallback={<div>Cargando....</div>}>{children}</Suspense>
               <Footer />
