@@ -1,20 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import MembershipSection from "@/Components/memberships/memberships";
-import ExerciseList from "@/Components/FormEjercicios/exerciseList";
-import { useAuth0 } from "@auth0/auth0-react";
 import Ctestimonios from "../Ctestimonios/Ctestimonios";
-import { supabase } from "@/lib/supabaseClient";
 import { useSessionUser } from "@/app/SessionUserContext";
-import { Loader2 } from "lucide-react";
 import { Subscription } from "../Cliente/SuscripActivodeaact";
 
 const HomePage: React.FC = () => {
   const { user: currentUser, loading: userLoading, user } = useSessionUser();
   const [loading, setLoading] = useState<boolean>(true);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  console.log(loading)
 
   useEffect(() => {
     const fetchMemberships = async () => {
