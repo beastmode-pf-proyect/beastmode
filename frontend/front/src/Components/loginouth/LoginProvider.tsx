@@ -122,7 +122,7 @@ const LoginFormProvider = () => {
     };
 
     handleAuth();
-  }, [isAuthenticated, user, saveUserToSupabase, router]); 
+  }, [isAuthenticated, user, saveUserToSupabase, router]);
 
   if (isLoading) return null;
   if (error) return null;
