@@ -1,0 +1,103 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import MembershipSection from "@/Components/memberships/memberships";
+import ExerciseList from "@/Components/FormEjercicios/exerciseList";
+import { useAuth0 } from "@auth0/auth0-react";
+import Ctestimonios from "../Ctestimonios/Ctestimonios";
+import { supabase } from "@/lib/supabaseClient";
+import { useSessionUser } from "@/app/SessionUserContext";
+import { Loader2 } from "lucide-react";
+import { Subscription } from "../Cliente/SuscripActivodeaact";
+
+const HomePage: React.FC = () => {
+  const { user: currentUser, loading: userLoading, user } = useSessionUser();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+
+  useEffect(() => {
+    const fetchMemberships = async () => {
+      try {
+        if (!currentUser?.email) {
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/subscriptions`
+        );
+        if (!response.ok) {
+          throw new Error("No se pudo obtener las suscripciones");
+        }
+        const data: Subscription[] = await response.json();
+
+        setSubscriptions(data);
+      } catch (error) {
+        console.error("No se pudo", error);
+      }
+    };
+    if (!userLoading) {
+      fetchMemberships();
+    }
+  }, [currentUser?.email, userLoading]);
+
+  console.log(subscriptions);
+
+  return (
+    <div className="bg-gray-50 min-h-screen">
+      {/* Banner de bienvenida personalizado */}
+      <section className="bg-gradient-to-r from-red-900 to-red-700 text-white py-8 px-4">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold mb-6">
+            ¡Bienvenid@ de vuelta,{" "}
+            <span className="capitalize">{user?.name}</span>!
+          </h1>
+          <section className="mb-8">
+            {subscriptions?.length > 0 ? (
+              <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                {/* Cabecera */}
+                <p className="text-green-800 font-medium">
+                  ¡Ya eres miembro{" "}
+                  <span className="font-bold">
+                    {subscriptions[0]?.membershipPlan?.name}
+                  </span>
+                  !
+                </p>
+              </div>
+            ) : (
+              <MembershipSection />
+            )}
+          </section>
+        </div>
+      </section>
+
+      {/* Sección de entrenamiento rápido */}
+      <section className="py-12 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-red-950 mb-6">
+            Tu Entrenamiento de Hoy
+          </h2>
+          <p>
+            &apos;la mismas rutinas que estan en el dashboard (especie de acceso
+            directo)&apos;
+          </p>
+        </div>
+      </section>
+
+      {/* Comunidad */}
+      <section className="py-12 px-4 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold text-red-950 mb-6">
+            Opiniones de la Comunidad
+          </h2>
+          <Ctestimonios />
+        </div>
+      </section>
+
+      {/* <ExerciseList /> */}
+    </div>
+  );
+};
+
+export default HomePage;
