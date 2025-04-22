@@ -16,7 +16,47 @@ export class StripeService {
     });
   }
 
-  async payment(id: string, membershipId: string) {
+  // async payment(id: string, membershipId: string) {
+  //   const membershipSearch =
+  //     await this.membershipsRepository.getMembershipById(membershipId);
+
+  //   if (!membershipSearch) {
+  //     throw new BadRequestException('Plan de membresía no encontrado.');
+  //   }
+
+  //   try {
+  //     const transactionId = `${id}_${membershipId}_${Date.now()}`;
+
+  //     const session = await this.stripe.checkout.sessions.create({
+  //       payment_method_types: ['card'],
+  //       line_items: [
+  //         {
+  //           price_data: {
+  //             currency: 'usd',
+  //             product_data: {
+  //               name: membershipSearch.name,
+  //             },
+  //             unit_amount: membershipSearch.price * 100,
+  //           },
+  //           quantity: 1,
+  //         },
+  //       ],
+  //       success_url: `https://beastmode-diph-flzhx826k-beastmodes-projects-d14b9acd.vercel.app/subscriptions/success?session_id={CHECKOUT_SESSION_ID}&transaction_id=${transactionId}`,
+  //       cancel_url: 'https://beastmode-diph-flzhx826k-beastmodes-projects-d14b9acd.vercel.app/subscriptions/cancel',
+  //       mode: 'payment',
+  //     });
+
+  //     await this.storePendingTransaction(transactionId, id, membershipId);
+
+  //     return { sessionId: session.id, url: session.url };
+  //   } catch (error) {
+  //     console.error(`Error al crear la sesión de pago: ${error.message}`);
+  //     throw new BadRequestException(
+  //       'Ocurrió un error al efectuar el pago, por favor intente nuevamente',
+  //     );
+  //   }
+  // }
+  async payment(id: string, membershipId: string, origin: string) {
     const membershipSearch =
       await this.membershipsRepository.getMembershipById(membershipId);
 
@@ -41,8 +81,8 @@ export class StripeService {
             quantity: 1,
           },
         ],
-        success_url: `https://beastmode-diph-flzhx826k-beastmodes-projects-d14b9acd.vercel.app/subscriptions/success?session_id={CHECKOUT_SESSION_ID}&transaction_id=${transactionId}`,
-        cancel_url: 'https://beastmode-diph-flzhx826k-beastmodes-projects-d14b9acd.vercel.app/subscriptions/cancel',
+        success_url: `${origin}/subscriptions/success?session_id={CHECKOUT_SESSION_ID}&transaction_id=${transactionId}`,
+        cancel_url: `${origin}/subscriptions/cancel`,
         mode: 'payment',
       });
 
@@ -51,11 +91,10 @@ export class StripeService {
       return { sessionId: session.id, url: session.url };
     } catch (error) {
       console.error(`Error al crear la sesión de pago: ${error.message}`);
-      throw new BadRequestException(
-        'Ocurrió un error al efectuar el pago, por favor intente nuevamente',
-      );
+      throw new BadRequestException('Ocurrió un error al efectuar el pago');
     }
   }
+
   // Método para almacenar temporalmente la transacción pendiente
   private async storePendingTransaction(
     transactionId: string,
@@ -70,8 +109,6 @@ export class StripeService {
     sessionId: string,
     transactionId: string,
   ) {
-
-
     // Validar parámetros
     if (!sessionId || !transactionId) {
       throw new BadRequestException('Faltan parámetros para verificar el pago');
