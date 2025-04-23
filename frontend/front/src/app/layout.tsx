@@ -9,7 +9,7 @@ import { SessionUserProvider } from "./SessionUserContext";
 import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import Navbarp from "@/Components/Navbarp/Navbar";
-import DomainUpdater from "@/utils/domainUpdater"; 
+// import DomainUpdater from "@/utils/domainUpdater"; 
 
 export const metadata: Metadata = {
   title: "BeastMode",
@@ -27,8 +27,8 @@ export default function RootLayout({
             <StripeProvider>
               <Navbarp />
               <Toaster position="top-center" />
-                {<LoginFormProvider />}
-              <DomainUpdater /> 
+                <LoginFormProvider />
+              {/* <DomainUpdater />  */}
               <Suspense fallback={<div>Cargando....</div>}>{children}</Suspense>
               <Footer />
             </StripeProvider>
