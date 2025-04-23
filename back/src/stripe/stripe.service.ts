@@ -105,7 +105,7 @@ export class StripeService {
         try {
           await this.mailerService.sendEmail({
             to: user.email,
-            subject: '¡Tu membresía premium está activa! 🎉',
+            subject: '¡Tu membresía está activa! 🎉',
             html: `
               <div style="
                 background: linear-gradient(135deg, #f9f5f5 0%, #f0ebeb 100%);
@@ -125,10 +125,10 @@ export class StripeService {
                   color: white;
                   margin-bottom: 30px;
                 ">
-                  <img src="https://res.cloudinary.com/dbsv0u7h3/image/upload/v1743359702/visj3jouuj5qywu2oxtm.png" 
+                  <img src="https://res.cloudinary.com/dbsv0u7h3/image/upload/v1745434841/visj3jouuj5qywu2oxtm.png" 
                        alt="Logo" 
                        style="max-width: 120px; margin-bottom: 15px; filter: brightness(0) invert(1);"/>
-                  <h1 style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: 0.5px;">¡Bienvenido a Premium!</h1>
+                  <h1 style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: 0.5px;">¡Bienvenido a BetsMode!</h1>
                   <p style="margin: 10px 0 0; opacity: 0.9; font-size: 16px;">Tu acceso exclusivo ha sido activado</p>
                 </div>
         
@@ -142,7 +142,7 @@ export class StripeService {
                 ">
                   <p style="font-size: 18px; color: #333; margin-bottom: 25px; line-height: 1.6;">
                     Hola <strong style="color: #5e1914;">${user.name}</strong>,<br>
-                    Gracias por confiar en nosotros. Aquí tienes los detalles de tu membresía premium:
+                    Gracias por confiar en nosotros. Aquí tienes los detalles de tu membresía:
                   </p>
         
                   <!-- Tarjeta de membresía -->
@@ -250,7 +250,7 @@ export class StripeService {
                        onmouseover="this.style.background='#7a241e'; this.style.boxShadow='0 6px 20px rgba(94, 25, 20, 0.4)';"
                        onmouseout="this.style.background='#5e1914'; this.style.boxShadow='0 4px 15px rgba(94, 25, 20, 0.3)';"
                     >
-                      Comenzar mi experiencia premium
+                      Comenzar mi experiencia
                     </a>
                   </div>
         

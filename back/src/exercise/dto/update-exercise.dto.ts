@@ -1,4 +1,4 @@
-import { IsOptional,IsBoolean } from 'class-validator';
+import { IsOptional,IsBoolean, IsString } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateExerciseDto } from './create-exercise.dto';
 import { ApiProperty } from '@nestjs/swagger';
@@ -11,4 +11,7 @@ export class UpdateExerciseDto extends PartialType(CreateExerciseDto) {
     @IsBoolean()
     @IsOptional()
     isActive?: boolean;
+
+    @IsString()
+    category?: string;
 }
