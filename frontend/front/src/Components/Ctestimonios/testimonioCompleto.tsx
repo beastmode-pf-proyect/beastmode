@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 import { ITestimonios } from "../interfaces/testimonios";
 
 interface TestimonyProps {
@@ -35,28 +34,19 @@ const TestimonioCompleto = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm px-4 transition-opacity duration-300 ease-in-out opacity-100">
       <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-2xl">
-        <div className="flex flex-col md:flex-row items-center gap-6">
-          <Image
-            src={testimonial.imagen || "/descarga.png"}
-            alt={testimonial.fullName}
-            width={120}
-            height={120}
-            className="rounded-full object-cover"
-          />
-          <div className="text-center md:text-left">
-            <h2 className="text-xl font-semibold text-gray-900">
-              {testimonial.fullName}
-            </h2>
-            <p className="text-sm text-gray-500 italic">
-              {testimonial.occupation}
-            </p>
-            <div className="flex justify-center md:justify-start mt-2">
-              {renderStars(testimonial.score)}
-            </div>
+        <div className="text-center md:text-left">
+          <h2 className="text-xl font-semibold text-gray-900">
+            {testimonial.fullName}
+          </h2>
+          <p className="text-sm text-gray-500 italic">
+            {testimonial.occupation}
+          </p>
+          <div className="flex justify-center md:justify-start mt-2">
+            {renderStars(testimonial.score)}
           </div>
         </div>
 
-        <div className="mt-6 text-gray-700 text-justify">
+        <div className="mt-6 text-gray-700 text-justify leading-relaxed">
           {testimonial.content}
         </div>
 

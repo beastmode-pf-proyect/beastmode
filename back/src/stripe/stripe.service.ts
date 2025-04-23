@@ -21,8 +21,89 @@ export class StripeService {
     });
   }
 
-  async payment(id: string, membershipId: string) {
-    const membershipSearch = await this.membershipsRepository.getMembershipById(membershipId);
+  // async payment(id: string, membershipId: string) {
+  //   const membershipSearch =
+  //     await this.membershipsRepository.getMembershipById(membershipId);
+
+  //   if (!membershipSearch) {
+  //     throw new BadRequestException('Plan de membresía no encontrado.');
+  //   }
+
+  //   try {
+  //     const transactionId = `${id}_${membershipId}_${Date.now()}`;
+
+  //     const session = await this.stripe.checkout.sessions.create({
+  //       payment_method_types: ['card'],
+  //       line_items: [
+  //         {
+  //           price_data: {
+  //             currency: 'usd',
+  //             product_data: {
+  //               name: membershipSearch.name,
+  //             },
+  //             unit_amount: membershipSearch.price * 100,
+  //           },
+  //           quantity: 1,
+  //         },
+  //       ],
+  //       success_url: `https://beastmode-diph-flzhx826k-beastmodes-projects-d14b9acd.vercel.app/subscriptions/success?session_id={CHECKOUT_SESSION_ID}&transaction_id=${transactionId}`,
+  //       cancel_url: 'https://beastmode-diph-flzhx826k-beastmodes-projects-d14b9acd.vercel.app/subscriptions/cancel',
+  //       mode: 'payment',
+  //     });
+
+  //     await this.storePendingTransaction(transactionId, id, membershipId);
+
+  //     return { sessionId: session.id, url: session.url };
+  //   } catch (error) {
+  //     console.error(`Error al crear la sesión de pago: ${error.message}`);
+  //     throw new BadRequestException(
+  //       'Ocurrió un error al efectuar el pago, por favor intente nuevamente',
+  //     );
+  //   }
+  // }
+
+  // async payment(id: string, membershipId: string) {
+  //   const membershipSearch = await this.membershipsRepository.getMembershipById(membershipId);
+
+  //   if (!membershipSearch) {
+  //     throw new BadRequestException('Plan de membresía no encontrado.');
+  //   }
+
+  //   try {
+  //     const transactionId = `${id}_${membershipId}_${Date.now()}`;
+
+  //     const session = await this.stripe.checkout.sessions.create({
+  //       payment_method_types: ['card'],
+  //       line_items: [
+  //         {
+  //           price_data: {
+  //             currency: 'usd',
+  //             product_data: {
+  //               name: membershipSearch.name,
+  //             },
+  //             unit_amount: membershipSearch.price * 100,
+  //           },
+  //           quantity: 1,
+  //         },
+  //       ],
+
+  //       success_url: `http://localhost:3001/subscriptions/success?session_id={CHECKOUT_SESSION_ID}&transaction_id=${transactionId}`,
+  //       cancel_url: 'https://beastmode-diph-flzhx826k-beastmodes-projects-d14b9acd.vercel.app/subscriptions/cancel',
+  //       mode: 'payment',
+  //     });
+
+  //     await this.storePendingTransaction(transactionId, id, membershipId);
+
+  //     return { sessionId: session.id, url: session.url };
+  //   } catch (error) {
+  //     console.error(`Error al crear la sesión de pago: ${error.message}`);
+  //     throw new BadRequestException('Ocurrió un error al efectuar el pago');
+  //   }
+  // }
+
+  async payment(id: string, membershipId: string, origin: string) {
+    const membershipSearch =
+      await this.membershipsRepository.getMembershipById(membershipId);
 
     if (!membershipSearch) {
       throw new BadRequestException('Plan de membresía no encontrado.');
@@ -45,8 +126,8 @@ export class StripeService {
             quantity: 1,
           },
         ],
-        success_url: `http://localhost:3001/subscriptions/success?session_id={CHECKOUT_SESSION_ID}&transaction_id=${transactionId}`,
-        cancel_url: 'https://beastmode-diph-flzhx826k-beastmodes-projects-d14b9acd.vercel.app/subscriptions/cancel',
+        success_url: `${origin}/subscriptions/success?session_id={CHECKOUT_SESSION_ID}&transaction_id=${transactionId}`,
+        cancel_url: `${origin}/subscriptions/cancel`,
         mode: 'payment',
       });
 
@@ -55,9 +136,7 @@ export class StripeService {
       return { sessionId: session.id, url: session.url };
     } catch (error) {
       console.error(`Error al crear la sesión de pago: ${error.message}`);
-      throw new BadRequestException(
-        'Ocurrió un error al efectuar el pago, por favor intente nuevamente',
-      );
+      throw new BadRequestException('Ocurrió un error al efectuar el pago');
     }
   }
 
@@ -69,7 +148,10 @@ export class StripeService {
     // Espacio para lógica futura de almacenamiento de transacción
   }
 
-  async verifyPaymentAndCreateSubscription(sessionId: string, transactionId: string) {
+  async verifyPaymentAndCreateSubscription(
+    sessionId: string,
+    transactionId: string,
+  ) {
     if (!sessionId || !transactionId) {
       throw new BadRequestException('Faltan parámetros para verificar el pago');
     }
@@ -95,7 +177,8 @@ export class StripeService {
         });
 
         const user = await this.userService.getUserById(userId);
-        const membership = await this.membershipsRepository.getMembershipById(membershipId);
+        const membership =
+          await this.membershipsRepository.getMembershipById(membershipId);
 
         if (!user?.email || !user?.name) {
           throw new BadRequestException('Información de usuario incompleta');
@@ -269,7 +352,9 @@ export class StripeService {
         } catch (error) {
           this.logger.error(`Error al enviar correo a ${user.email}:, error`);
           console.error('Error al enviar correo:', error);
-          throw new BadRequestException('Error al enviar correo de confirmación: ' + error.message);
+          throw new BadRequestException(
+            'Error al enviar correo de confirmación: ' + error.message,
+          );
         }
 
         return {
