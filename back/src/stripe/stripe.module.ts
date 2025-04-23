@@ -11,10 +11,11 @@ import { UsersService } from 'src/users/users.service';
 import { UsersRepository } from 'src/users/users.repository';
 import { MembershipsService } from 'src/memberships/memberships.service';
 import { User } from 'src/entities/users.entity';
+import { MailerModule } from 'src/mailer/mailer.module';
 import { RolesModule } from 'src/roles/roles.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MembershipPlan, Subscription, User]), StripeModule, RolesModule],
+  imports: [TypeOrmModule.forFeature([MembershipPlan, Subscription, User]), StripeModule, MailerModule,  RolesModule],
 
   controllers: [StripeController],
   providers: [StripeService, MembershipsRepository, SubscriptionsService, SubscriptionsRepository, UsersService, MembershipsService, UsersRepository],
