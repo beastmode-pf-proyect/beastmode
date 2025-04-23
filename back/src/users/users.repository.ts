@@ -13,7 +13,7 @@ export class UsersRepository{
     ){}
 
     async getUsersTrainerAndClient() : Promise <Partial<User>[]> {
-      let users = await this.usersRepository.find({
+      const users = await this.usersRepository.find({
         relations: ['role']
       })
       const nonAdminUsers = users.filter(user => !user.role || user.role.name !== 'admin');
@@ -24,7 +24,7 @@ export class UsersRepository{
     }
 
     async getUsersTrainer() : Promise <Partial<User>[]> {
-      let users = await this.usersRepository.find({
+      const users = await this.usersRepository.find({
         relations: ['role']
       })
       const trainersUsers = users.filter(user =>  user.role.name !== 'admin' && user.role.name !== 'client');
@@ -35,7 +35,7 @@ export class UsersRepository{
     }
 
     async getUsersClient() : Promise <Partial<User>[]> {
-      let users = await this.usersRepository.find({
+      const users = await this.usersRepository.find({
         relations: ['role']
       })
       const clientUsers = users.filter(user =>  user.role.name !== 'admin' && user.role.name !== 'trainer');
@@ -50,11 +50,12 @@ export class UsersRepository{
       const user = await this.usersRepository.findOne({
         where:{ auth0_id : id }
       });
-    
+
       if(!user){
         throw new NotFoundException('Usuario no encontrado')
       }
           return user;
+
     }
 
     async getRoleByUserId(id : string) {

@@ -99,9 +99,10 @@ const MembershipSection = () => {
                       plan.name === "Pro"
                         ? "bg-red-900 text-white border-2 border-red-900 hover:bg-red-800 hover:border-red-800"
                         : "bg-transparent text-red-950 border-2 border-red-950 hover:bg-red-950 hover:text-white"
-                    }`}
-                  >
-                    {plan.name === "Pro" ? "¡Quiero ser PRO!" : "Comenzar Ahora"}
+                    }`}>
+                    {plan.name === "Pro"
+                      ? "¡Quiero ser PRO!"
+                      : "Comenzar Ahora"}
                   </button>
                 </div>
               </div>

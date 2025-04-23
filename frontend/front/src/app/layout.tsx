@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import "./globals.css";
 import Footer from "@/Components/Footer/Footer";
@@ -26,7 +27,7 @@ export default function RootLayout({
             <StripeProvider>
               <Navbarp />
               <Toaster position="top-center" />
-              <LoginFormProvider />
+                {/* {<LoginFormProvider />} */}
               <DomainUpdater /> 
               <Suspense fallback={<div>Cargando....</div>}>{children}</Suspense>
               <Footer />
