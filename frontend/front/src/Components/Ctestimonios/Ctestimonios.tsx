@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { ITestimonios } from "../interfaces/testimonios";
 import ModalTestimonios from "./modalTestimonios";
 import TestimonioCompletoModal from "./testimonioCompleto";
-import Image from "next/image";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const TESTIMONIOS_POR_PAGINA = 3;
@@ -64,8 +63,6 @@ const Ctestimonios = () => {
     return "⭐".repeat(fullStars);
   };
 
-  const defaultAvatar = "/descarga.png";
-
   const handleChangePage = (direction: "next" | "prev") => {
     if (direction === "next") {
       setPaginaActual(prevPage => prevPage + 1);
@@ -106,20 +103,12 @@ const Ctestimonios = () => {
           currentTestimonios.map((testimonio, index) => (
             <div
               key={index}
-              className="bg-gray-100 shadow-lg rounded-lg p-4 flex flex-col items-center text-center transition-all duration-300 transform hover:scale-105 hover:bg-gray-200 w-[260px] min-h-[300px] max-h-[300px]">
+              className="bg-gray-100 shadow-lg rounded-lg p-4 flex flex-col items-center text-center transition-all duration-300 transform hover:scale-105 hover:bg-gray-200 w-[260px] min-h-[220px] max-h-[220px]">
               <div className="flex flex-col items-center flex-grow w-full">
-                <Image
-                  src={testimonio.imagen || defaultAvatar}
-                  alt={`Imagen de ${testimonio.fullName}`}
-                  width={70}
-                  height={70}
-                  className="w-16 h-16 rounded-full object-cover mb-2"
-                />
                 <h3 className="text-md font-semibold">{testimonio.fullName}</h3>
                 <p className="text-sm text-gray-600 italic">
                   {testimonio.occupation}
                 </p>
-                {/* 👇 TEXTO LIMITADO A 3 LÍNEAS CON PUNTOS SUSPENSIVOS */}
                 <p className="text-sm text-gray-700 my-2 line-clamp-3">
                   {testimonio.content}
                 </p>
