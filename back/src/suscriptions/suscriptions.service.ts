@@ -114,7 +114,7 @@ export class SubscriptionsService {
                     color: white;
                     margin-bottom: 30px;
                 ">
-                    <img src="https://res.cloudinary.com/dbsv0u7h3/image/upload/v1743359702/visj3jouuj5qywu2oxtm.png" 
+                    <img src="https://res.cloudinary.com/dbsv0u7h3/image/upload/v1745434841/visj3jouuj5qywu2oxtm.png" 
                         alt="Logo" 
                         style="max-width: 120px; margin-bottom: 15px; filter: brightness(0) invert(1);"/>
                     <h1 style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: 0.5px;">¡Tu membresia está por expirar!</h1>
