@@ -303,14 +303,6 @@ export class StripeService {
                         <p style="margin: 0; font-weight: 600; color: #5e1914; font-size: 15px;">Seguimiento</p>
                         <p style="margin: 8px 0 0; color: #666; font-size: 14px;">Monitoreo detallado de tu progreso</p>
                       </div>
-                      <div style="background: #fdf9f9; padding: 15px; border-radius: 6px; border-left: 3px solid #5e1914;">
-                        <p style="margin: 0; font-weight: 600; color: #5e1914; font-size: 15px;">Entrenadores</p>
-                        <p style="margin: 8px 0 0; color: #666; font-size: 14px;">Asesoramiento de expertos</p>
-                      </div>
-                      <div style="background: #fdf9f9; padding: 15px; border-radius: 6px; border-left: 3px solid #5e1914;">
-                        <p style="margin: 0; font-weight: 600; color: #5e1914; font-size: 15px;">Contenido VIP</p>
-                        <p style="margin: 8px 0 0; color: #666; font-size: 14px;">Material exclusivo cada semana</p>
-                      </div>
                     </div>
                   </div>
         
