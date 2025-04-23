@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-type DietType = "keto" | "volumen"; // 1. Define un tipo literal
+type DietType = "keto" | "volumen";
 
 const DownloadDietSection = () => {
   // 2. Estado tipado específicamente
@@ -32,7 +32,6 @@ const DownloadDietSection = () => {
             <span className="block text-red-200">con dietas saludables?</span>
           </h2>
 
-          {/* Selector de dieta */}
           <div className="mt-6 flex justify-center gap-4">
             {Object.keys(dietFiles).map((diet) => (
               <button
@@ -49,7 +48,6 @@ const DownloadDietSection = () => {
             ))}
           </div>
 
-          {/* Botón de descarga */}
           <div className="mt-8 flex justify-center">
             <button
               onClick={handleDownload}
