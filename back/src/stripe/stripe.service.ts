@@ -128,7 +128,7 @@ export class StripeService {
                   <img src="https://res.cloudinary.com/dbsv0u7h3/image/upload/v1745434841/visj3jouuj5qywu2oxtm.png" 
                        alt="Logo" 
                        style="max-width: 120px; margin-bottom: 15px; filter: brightness(0) invert(1);"/>
-                  <h1 style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: 0.5px;">¡Bienvenido a BetsMode!</h1>
+                  <h1 style="margin: 0; font-size: 28px; font-weight: 600; letter-spacing: 0.5px;">¡Bienvenido a BeastMode!</h1>
                   <p style="margin: 10px 0 0; opacity: 0.9; font-size: 16px;">Tu acceso exclusivo ha sido activado</p>
                 </div>
         
