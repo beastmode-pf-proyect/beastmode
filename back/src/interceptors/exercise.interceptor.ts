@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
 import { Observable } from "rxjs";
 
@@ -17,6 +18,10 @@ export class ExerciseValidationInterceptor implements NestInterceptor {
             throw new BadRequestException('El campo description es requerido');
         }
         
+        if (!body.category){
+            throw new BadRequestException('El campo category es requerido');
+        }
+        
         // Validación simple de URLs si están presentes
         if (body.imageUrl && !this.isValidUrl(body.imageUrl)) {
             throw new BadRequestException('El campo imageUrl debe ser una URL válida');
@@ -25,7 +30,7 @@ export class ExerciseValidationInterceptor implements NestInterceptor {
         if (body.videoUrl && !this.isValidUrl(body.videoUrl)) {
             throw new BadRequestException('El campo videoUrl debe ser una URL válida');
         }
-        
+
         return next.handle();
     }
     
