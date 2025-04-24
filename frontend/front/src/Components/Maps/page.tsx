@@ -1,9 +1,8 @@
-"use client"
-import React, { useEffect, useState } from "react";
-import { MapPin } from "lucide-react";
+"use client";
+import React, { useEffect, useRef, useState } from "react";
+import { MapPin, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
-import { X } from "lucide-react";
 
 const MapWithMarkers = dynamic(() => import("./maps"), {
   ssr: false,
@@ -17,10 +16,17 @@ const MapWithMarkers = dynamic(() => import("./maps"), {
 export default function FloatingMapButton() {
   const [open, setOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+      setOpen(false);
+    }
+  };
 
   return (
     <>
@@ -33,22 +39,36 @@ export default function FloatingMapButton() {
       <AnimatePresence>
         {open && isClient && (
           <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed top-0 right-0 h-full w-full sm:w-[90%] md:w-[70%] lg:w-[50%] z-50 bg-white shadow-2xl rounded-l-2xl overflow-hidden border-l-4 border-red-700 flex flex-col">
-            <div className="flex justify-end p-4">
-              <button
-                onClick={() => setOpen(false)}
-                className="text-gray-500 hover:text-red-600 transition-all">
-                <X className="w-6 h-6" />
-              </button>
-            </div>
+            onClick={handleBackdropClick}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex justify-center items-center bg-black/30 backdrop-blur-sm">
+            <motion.div
+              ref={modalRef}
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className="relative w-full max-w-2xl h-[70vh] bg-white rounded-xl shadow-2xl overflow-hidden border-2 border-[#5e1914] flex flex-col">
+              <div className="flex justify-between items-center px-4 py-2 bg-[#5e1914] border-b">
+                <div className="flex items-center space-x-2">
+                  <MapPin className="w-5 h-5 text-white" />
+                  <h1 className="text-lg font-semibold text-white">
+                    Nuestras sedes
+                  </h1>
+                </div>
+                <button
+                  onClick={() => setOpen(false)}
+                  className="text-white hover:text-gray-300 transition-all">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
 
-            <div className="flex-grow px-4 pb-4 overflow-hidden">
-              <MapWithMarkers open={open} />
-            </div>
+              <div className="flex-grow overflow-hidden">
+                <MapWithMarkers open={open} />
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
