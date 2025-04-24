@@ -4,6 +4,7 @@ import Ctestimonios from "@/Components/Ctestimonios/Ctestimonios";
 import AboutUs from "@/Components/intro-about_us/aboutus";
 import MembershipSection from "@/Components/memberships/memberships";
 import Phrase from "@/Components/phrase/phrase";
+import { UserMembership } from "@/Components/verificar/verificar";
 
 const Landing = () => {
   return (
@@ -32,6 +33,7 @@ const Landing = () => {
             Lo que dicen nuestros miembros
           </h2>
           <Ctestimonios  />
+          <UserMembership/>
         </div>
       </section>
     </div>

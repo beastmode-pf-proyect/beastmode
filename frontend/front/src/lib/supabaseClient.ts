@@ -9,4 +9,5 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 
 console.log("✅ Conectando a Supabase con:", SUPABASE_URL);
 
+
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
