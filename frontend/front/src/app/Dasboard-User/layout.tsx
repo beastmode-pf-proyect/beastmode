@@ -5,7 +5,9 @@ import {
   HiMenu,
   HiX,
   HiUser,
+  HiOutlineDocumentText,
 } from "react-icons/hi";
+import { MdFitnessCenter } from "react-icons/md";
 import Link from "next/link";
 import { useAuth0 } from "@auth0/auth0-react";
 import Swal from "sweetalert2";
@@ -106,10 +108,26 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   if (!isAuthenticated || !userData) return null;
 
   const clientMenu = [
-    { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/Dasboard-User" },
-    { name: "Ruttinas", icon: <HiHome className="w-5 h-5" />, href: "/Dasboard-User/Rutina" },
-    { name: "Membresia", icon: <HiUser className="w-5 h-5" />, href: "/Dasboard-User/Mi-membresia" },
-    { name: "Historial de Pagos", icon: <HiUser className="w-5 h-5" />, href: "/Dasboard-User/Historial-Pagos" },
+    {
+      name: "Inicio",
+      icon: <HiHome className="w-5 h-5" />,
+      href: "/Dasboard-User",
+    },
+    {
+      name: "Rutinas",
+      icon: <MdFitnessCenter className="w-5 h-5" />,
+      href: "/Dasboard-User/Rutina",
+    },
+    {
+      name: "Membresía",
+      icon: <HiUser className="w-5 h-5" />,
+      href: "/Dasboard-User/Mi-membresia",
+    },
+    {
+      name: "Historial de Pagos",
+      icon: <HiOutlineDocumentText className="w-5 h-5" />,
+      href: "/Dasboard-User/Historial-Pagos",
+    },
   ];
 
   const UserInfo = () => (
@@ -135,7 +153,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         <div>
           <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
           <p className="text-sm text-[#5e1914]">{userData.email}</p>
-          <p className="text-sm text-[#5e1914] font-bold">ROL: Cliente</p>
+          <p className="text-sm text-[#5e1914] font-bold">Cliente</p>
         </div>
       </div>
     </>
@@ -163,7 +181,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             </li>
           ))}
         </ul>
-        
       </div>
 
       {/* Mobile sidebar */}
@@ -177,7 +194,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
                   <Link
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#5e1914] hover:scale-105 text-[#5e1914] hover:text-[#5e1914]"
+                    className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#5e1914] hover:scale-105 text-[#5e1914] hover:text-white"
                   >
                     {item.icon}
                     <span>{item.name}</span>

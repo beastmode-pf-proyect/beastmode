@@ -1,10 +1,11 @@
-import Factura from '@/Components/Factura/Factura'
+import UserSubscriptions from '@/Components/Admin/Usuarios-suscrip'
 import React from 'react'
 
 function page() {
   return (
     <div>
-      <Factura/>
+      <UserSubscriptions/>
+
     </div>
   )
 }
