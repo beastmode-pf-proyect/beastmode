@@ -36,9 +36,7 @@ export class CreateExerciseDto {
   @IsOptional()
   isActive = true;
 
-    @IsBoolean()
-    @IsOptional()
-    isActive = true;
+    
     
     @IsString()    
     category: string;
