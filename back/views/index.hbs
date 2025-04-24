@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link href="https://cdn.maptiler.com/maplibre-gl-js/v2.4.0/maplibre-gl.css" rel="stylesheet" />
+    <link href="/css/styles.css" rel="stylesheet" />
+    <style>
+        .container {
+            display: flex; /* Para alinear el mapa y la lista */
+            flex-direction: row; /* Alinea los elementos en fila (izquierda a derecha) */
+            gap: 20px; /* Espacio entre el mapa y la lista */
+            padding: 20px; /* Añade padding al contenedor principal */
+            max-width: 1200px; /* Ancho máximo del contenedor */
+            margin: 0 auto; /* Centra el contenedor en la pantalla */
+        }
+
+        #map {
+            width: 70%; /* Ajusta el ancho del mapa según necesites */
+            height: 600px; /* Ajusta la altura del mapa */
+            flex-grow: 1; /* Permite que el mapa crezca para ocupar el espacio restante */
+            border-radius: 8px; /* Borde redondeado */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+        }
+
+        .locations-list {
+            width: 30%; /* Ajusta el ancho de la lista */
+            border: 1px solid #ccc;
+            padding: 10px;
+            overflow-y: auto; /* Para hacer la lista scrollable si es muy larga */
+            border-radius: 4px; /* Borde redondeado */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Sombra suave */
+        }
+
+        .locations-list h2 {
+            margin-top: 0;
+            text-align: center; /* Centra el título de la lista */
+            margin-bottom: 10px;
+        }
+
+        .location-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer; /* Indica que es interactivo */
+        }
+
+        .location-item:last-child {
+            border-bottom: none;
+        }
+
+        .location-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4; /* Un fondo suave para la página */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333; /* Color del título principal */
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <div class="container">
+        <aside class="locations-list">
+            <h2>Sedes</h2>
+            <ul>
+                {{#each locations}}
+                <li class="location-item"
+                    data-lat="{{this.latitude}}"
+                    data-lng="{{this.longitude}}"
+                    data-name="{{this.name}}">
+                    {{this.name}}
+                </li>
+                {{/each}}
+            </ul>
+        </aside>
+        <div id="map"></div>
+    </div>
+
+    <script>
+        const apiKey = '{{ apiKey }}'; // Definimos la apiKey globalmente
+    </script>
+    <script src="https://cdn.maptiler.com/maplibre-gl-js/v2.4.0/maplibre-gl.js"></script>
+    <script src="/js/map.js"></script>
+</body>
+</html>
