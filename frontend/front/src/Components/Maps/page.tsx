@@ -55,7 +55,7 @@ export default function FloatingMapButton() {
                 <div className="flex items-center space-x-2">
                   <MapPin className="w-5 h-5 text-white" />
                   <h1 className="text-lg font-semibold text-white">
-                    Nuestras sedes
+                    Nuestras sedes.
                   </h1>
                 </div>
                 <button
