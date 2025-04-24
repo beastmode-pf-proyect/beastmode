@@ -9,7 +9,7 @@ import { SessionUserProvider } from "./SessionUserContext";
 import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import Navbarp from "@/Components/Navbarp/Navbar";
-import DomainUpdater from "@/utils/domainUpdater"; 
+import FloatingMapButton from "@/Components/Maps/page";
 
 export const metadata: Metadata = {
   title: "BeastMode",
@@ -19,6 +19,8 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+
+
   return (
     <html lang="en">
       <body className="flex flex-col min-h-screen pt-24">
@@ -28,8 +30,10 @@ export default function RootLayout({
               <Navbarp />
               <Toaster position="top-center" />
               <LoginFormProvider />
-              <DomainUpdater /> 
-              <Suspense fallback={<div>Cargando....</div>}>{children}</Suspense>
+              <Suspense fallback={<div>Cargando....</div>}>
+                {children}
+                <FloatingMapButton />
+              </Suspense>
               <Footer />
             </StripeProvider>
           </SessionUserProvider>

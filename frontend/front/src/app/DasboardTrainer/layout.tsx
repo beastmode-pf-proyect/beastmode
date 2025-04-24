@@ -157,7 +157,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
         <div className="bg-[#ffffff] p-3 rounded-md mb-6 text-center">
           <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
           <p className="text-sm text-[#5e1914]">{userData.email}</p>
-          <p className="text-sm text-[#5e1914] font-bold">ROL: Entrenador</p>
+          <p className="text-sm text-[#5e1914] font-bold"> Entrenador</p>
         </div>
 
         <ul className="space-y-2">
@@ -202,7 +202,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
             <div className="bg-[#ffffff] p-3 rounded-md mb-6 text-center">
               <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
               <p className="text-sm text-[#5e1914]">{userData.email}</p>
-              <p className="text-sm text-[#5e1914] font-bold">ROL: Entrenador</p>
+              <p className="text-sm text-[#5e1914] font-bold"> Entrenador</p>
             </div>
 
             <ul className="space-y-2">

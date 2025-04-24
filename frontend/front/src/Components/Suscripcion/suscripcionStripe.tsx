@@ -17,6 +17,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
 
   const handleSubscribe = async () => {
     const userId = sessionStorage.getItem("id");
+    const origin = window.location.origin;
 
     if (!userId) {
       Swal.fire({
@@ -46,6 +47,7 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({
         },
         body: JSON.stringify({
           id: plan.id,
+          origin
         }),
       });
 

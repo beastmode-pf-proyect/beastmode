@@ -9,8 +9,8 @@ const DownloadDietSection = () => {
 
   // 3. Objeto con tipo explícito
   const dietFiles: Record<DietType, string> = {
-    keto: "/dietaspdfs/plan-keto.pdf",
-    volumen: "/dietaspdfs/plan-volumen.pdf",
+    keto: "/dietaspdfs/dieta-keto.pdf",
+    volumen: "/dietaspdfs/dieta-volumen.pdf",
   };
 
   const handleDownload = () => {

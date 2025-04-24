@@ -4,10 +4,8 @@ import React, { useEffect, useState } from "react";
 import { ITestimonios } from "../interfaces/testimonios";
 import ModalTestimonios from "./modalTestimonios";
 import TestimonioCompletoModal from "./testimonioCompleto";
-import Image from "next/image";
 import { useAuth0 } from "@auth0/auth0-react";
 
-const MAX_DESCRIPCION_LENGTH = 100;
 const TESTIMONIOS_POR_PAGINA = 3;
 
 const Ctestimonios = () => {
@@ -50,12 +48,6 @@ const Ctestimonios = () => {
     }
   };
 
-  const truncarDescripcion = (descripcion: string): string => {
-    return descripcion.length > MAX_DESCRIPCION_LENGTH
-      ? `${descripcion.slice(0, MAX_DESCRIPCION_LENGTH)}...`
-      : descripcion;
-  };
-
   const openModal = (testimonio: ITestimonios) => {
     setSelectedTestimonio(testimonio);
     setIsModalOpen(true);
@@ -71,9 +63,6 @@ const Ctestimonios = () => {
     return "⭐".repeat(fullStars);
   };
 
-  const defaultAvatar = "/descarga.png";
-
-  // Función para manejar la paginación
   const handleChangePage = (direction: "next" | "prev") => {
     if (direction === "next") {
       setPaginaActual(prevPage => prevPage + 1);
@@ -82,7 +71,6 @@ const Ctestimonios = () => {
     }
   };
 
-  // Calcular los testimonios que se deben mostrar en la página actual
   const startIndex = (paginaActual - 1) * TESTIMONIOS_POR_PAGINA;
   const currentTestimonios = testimonios.slice(
     startIndex,
@@ -115,21 +103,14 @@ const Ctestimonios = () => {
           currentTestimonios.map((testimonio, index) => (
             <div
               key={index}
-              className="bg-gray-100 shadow-lg rounded-lg p-4 flex flex-col items-center text-center transition-all duration-300 transform hover:scale-105 hover:bg-gray-200 w-[260px] min-h-[300px] max-h-[300px]">
+              className="bg-gray-100 shadow-lg rounded-lg p-4 flex flex-col items-center text-center transition-all duration-300 transform hover:scale-105 hover:bg-gray-200 w-[260px] min-h-[220px] max-h-[220px]">
               <div className="flex flex-col items-center flex-grow w-full">
-                <Image
-                  src={testimonio.imagen || defaultAvatar}
-                  alt={`Imagen de ${testimonio.fullName}`}
-                  width={70}
-                  height={70}
-                  className="w-16 h-16 rounded-full object-cover mb-2"
-                />
                 <h3 className="text-md font-semibold">{testimonio.fullName}</h3>
                 <p className="text-sm text-gray-600 italic">
                   {testimonio.occupation}
                 </p>
-                <p className="text-sm text-gray-700 my-2 overflow-hidden text-ellipsis h-[3.6em]">
-                  {truncarDescripcion(testimonio.content)}
+                <p className="text-sm text-gray-700 my-2 line-clamp-3">
+                  {testimonio.content}
                 </p>
               </div>
 
@@ -137,7 +118,7 @@ const Ctestimonios = () => {
                 <p className="text-lg text-yellow-500">
                   {renderStars(testimonio.score)}
                 </p>
-                {testimonio.content.length > MAX_DESCRIPCION_LENGTH && (
+                {testimonio.content.length > 100 && (
                   <button
                     onClick={() => openModal(testimonio)}
                     className="text-[#a82717] font-medium mt-1">

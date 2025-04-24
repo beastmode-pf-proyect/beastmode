@@ -18,12 +18,10 @@ export class Exercise {
   @Column({ default: true })
   isActive: boolean;
 
-  @Column({ nullable: true })
-  category: string;
+    @Column({nullable: true})
+    category: string;
 
-  @OneToMany(
-    () => RoutineExercise,
-    (routineExercise) => routineExercise.exercise,
-  )
-  routineExercises: RoutineExercise[];
+    @OneToMany(() => RoutineExercise, (routineExercise) => routineExercise.exercise)
+    routineExercises: RoutineExercise[];    
+
 }
