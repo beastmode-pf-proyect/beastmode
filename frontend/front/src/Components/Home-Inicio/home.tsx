@@ -7,8 +7,8 @@ import { useSessionUser } from "@/app/SessionUserContext";
 import UserWorkoutRoutines from "../Cliente/VerRutina";
 import DownloadDietSection from "./diets";
 import { Subscription } from "../Cliente/SuscripActivodeaact";
-import UserWorkoutRoutines from "../Cliente/VerRutina";
-import DownloadDietSection from "./diets";
+
+
 
 const HomePage: React.FC = () => {
   const { user: currentUser, loading: userLoading, user } = useSessionUser();
