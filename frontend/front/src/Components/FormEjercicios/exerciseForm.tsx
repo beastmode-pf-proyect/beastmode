@@ -8,6 +8,7 @@ export default function ExerciseForm() {
   const [exercise, setExercise] = useState<Exercise>({
     name: "",
     description: "",
+    category: "",
     imageUrl: "",
   });
 
@@ -32,13 +33,16 @@ export default function ExerciseForm() {
     setSuccess(false);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/exercises/create`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(exercise),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/exercises/create`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(exercise),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Error al crear el ejercicio");
@@ -48,6 +52,7 @@ export default function ExerciseForm() {
       setExercise({
         name: "",
         description: "",
+        category: "",
         imageUrl: "",
       });
 
@@ -118,15 +123,34 @@ export default function ExerciseForm() {
 
         <div className="mb-6">
           <label
-            htmlFor="imageLink"
+            htmlFor="category"
+            className="block text-gray-700 font-medium mb-2"
+          >
+            Musculo a entrenar
+          </label>
+          <input
+            type="text"
+            id="category"
+            name="category"
+            value={exercise.category}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Brazos, Piernas, Hombros, Espalda..."
+            required
+          />
+        </div>
+
+        <div className="mb-6">
+          <label
+            htmlFor="imageUrl"
             className="block text-gray-700 font-medium mb-2"
           >
             Link de la imagen
           </label>
           <input
             type="url"
-            id="imageLink"
-            name="imageLink"
+            id="imageUrl"
+            name="imageUrl"
             value={exercise.imageUrl}
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

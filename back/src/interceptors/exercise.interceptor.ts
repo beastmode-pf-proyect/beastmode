@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
 import { Observable } from "rxjs";
@@ -33,13 +34,22 @@ export class ExerciseValidationInterceptor implements NestInterceptor {
 
         return next.handle();
     }
-    
-    private isValidUrl(url: string): boolean {
-        try {
-            new URL(url);
-            return true;
-        } catch {
-            return false;
-        }
+
+    if (body.videoUrl && !this.isValidUrl(body.videoUrl)) {
+      throw new BadRequestException(
+        'El campo videoUrl debe ser una URL válida',
+      );
     }
+
+    return next.handle();
+  }
+
+  private isValidUrl(url: string): boolean {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }

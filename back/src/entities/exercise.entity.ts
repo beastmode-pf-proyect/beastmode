@@ -3,24 +3,25 @@ import { RoutineExercise } from './Routine.exercise.entity';
 
 @Entity('exercise')
 export class Exercise {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column('text')
-    description: string;
+  @Column('text')
+  description: string;
 
-    @Column({ nullable: true })
-    imageUrl: string;
+  @Column({ nullable: true })
+  imageUrl: string;
 
-    @Column({ default: true })
-    isActive: boolean;
+  @Column({ default: true })
+  isActive: boolean;
 
     @Column({nullable: true})
     category: string;
 
     @OneToMany(() => RoutineExercise, (routineExercise) => routineExercise.exercise)
     routineExercises: RoutineExercise[];    
+
 }
