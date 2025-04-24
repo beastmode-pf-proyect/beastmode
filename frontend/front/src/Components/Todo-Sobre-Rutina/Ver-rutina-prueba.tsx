@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
@@ -20,7 +20,7 @@ interface Exercise {
   imageUrl?: string | null;
 }
 
-const ListadeRutinas: React.FC = () => {
+const ListadeRutinasprueba: React.FC = () => {
   const [routines, setRoutines] = useState<Routine[]>([]);
   const [filteredRoutines, setFilteredRoutines] = useState<Routine[]>([]);
   const [search, setSearch] = useState('');
@@ -42,9 +42,10 @@ const ListadeRutinas: React.FC = () => {
       if (!response.ok) throw new Error(`Error al obtener las rutinas`);
 
       const data = await response.json();
-      const filtered = data.filter((r: Routine) => !r.name.toLowerCase().startsWith('prueba'));
-      setRoutines(filtered);
-      setFilteredRoutines(filtered);
+      // Filtra solo las rutinas que empiezan con "Prueba"
+      const filteredData = data.filter((routine: Routine) => routine.name.startsWith('Prueba'));
+      setRoutines(filteredData);
+      setFilteredRoutines(filteredData);
     } catch (error) {
       console.error('Error al obtener las rutinas:', error);
       toast.error('Error al obtener las rutinas');
@@ -68,8 +69,8 @@ const ListadeRutinas: React.FC = () => {
 
   const openModal = async (routineId: string) => {
     setSelectedRoutineId(routineId);
-    setIsModalOpen(true);  
-    setSelectedExercises(new Set()); 
+    setIsModalOpen(true);
+    setSelectedExercises(new Set());
     await fetchExercises();
   };
 
@@ -134,10 +135,9 @@ const ListadeRutinas: React.FC = () => {
       const updatedRoutines = routines.map((routine) =>
         routine.id === id ? { ...routine, isActive: !currentState } : routine
       );
-      const filtered = updatedRoutines.filter((r) => !r.name.toLowerCase().startsWith('prueba'));
-      setRoutines(filtered);
+      setRoutines(updatedRoutines);
       setFilteredRoutines(
-        filtered.filter((routine) =>
+        updatedRoutines.filter((routine) =>
           routine.name.toLowerCase().includes(search.toLowerCase())
         )
       );
@@ -163,11 +163,7 @@ const ListadeRutinas: React.FC = () => {
           onChange={(e) => {
             setSearch(e.target.value);
             const query = e.target.value.toLowerCase();
-            setFilteredRoutines(
-              routines
-                .filter(r => !r.name.toLowerCase().startsWith('prueba'))
-                .filter(r => r.name.toLowerCase().includes(query))
-            );
+            setFilteredRoutines(routines.filter(r => r.name.toLowerCase().includes(query)));
           }}
           className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
         />
@@ -263,4 +259,4 @@ const ListadeRutinas: React.FC = () => {
   );
 };
 
-export default ListadeRutinas;
+export default ListadeRutinasprueba;

@@ -38,14 +38,7 @@ export class ExerciseValidationInterceptor implements NestInterceptor {
       );
     }
 
-    if (body.videoUrl && !this.isValidUrl(body.videoUrl)) {
-      throw new BadRequestException(
-        'El campo videoUrl debe ser una URL válida',
-      );
-    }
-
-    return next.handle();
-  }
+    
 
   private isValidUrl(url: string): boolean {
     try {

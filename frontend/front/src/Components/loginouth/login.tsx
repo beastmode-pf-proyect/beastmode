@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import Swal from "sweetalert2";
 import { FaSignInAlt } from "react-icons/fa";
+import { WelcomeModalHandler } from "../Cliente/Modalbienvenida";
 
 const LoginForm = () => {
   const { loginWithRedirect, user, isAuthenticated, isLoading } = useAuth0();
@@ -89,8 +90,9 @@ const LoginForm = () => {
               showConfirmButton: false,
             });
             window.sessionStorage.setItem("hasWelcomed", "true");
+            
           }
-
+<WelcomeModalHandler/>
           if (isNewUser && !hasInitialized) {
             localStorage.setItem("hasInitialized", "true");
             router.push("/landing");
