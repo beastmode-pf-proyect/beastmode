@@ -1,14 +1,15 @@
 "use client";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-
 import { supabase } from "@/lib/supabaseClient";
 import Swal from "sweetalert2";
+import WelcomeModal from "@/Components/Cliente/Modalbienvenida"; // Asegúrate de ajustar esta ruta si es diferente
 
 const LoginFormProvider = () => {
   const { user, isAuthenticated, isLoading, logout } = useAuth0();
   const [error, setError] = useState("");
   const hasHandledLogin = useRef(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
   interface Auth0User {
     sub: string;
@@ -17,7 +18,6 @@ const LoginFormProvider = () => {
     picture?: string;
   }
 
-  // Función para verificar si el email ya existe
   const checkEmailExists = useCallback(async (email: string) => {
     const { data, error } = await supabase
       .from("users2")
@@ -35,7 +35,6 @@ const LoginFormProvider = () => {
         throw new Error("Datos de usuario incompletos");
       }
 
-      // Verificar si el email ya existe para otro usuario
       const emailExists = await checkEmailExists(auth0User.email);
       if (emailExists) {
         const { data: existingUser } = await supabase
@@ -44,7 +43,6 @@ const LoginFormProvider = () => {
           .eq("email", auth0User.email)
           .single();
 
-        // Si el email existe pero no coincide con el auth0_id actual
         if (existingUser?.auth0_id !== auth0User.sub) {
           Swal.fire({
             icon: "error",
@@ -57,7 +55,6 @@ const LoginFormProvider = () => {
         }
       }
 
-      // Resto de la lógica original...
       const { data, error: fetchError } = await supabase
         .from("users2")
         .select("is_blocked")
@@ -109,12 +106,20 @@ const LoginFormProvider = () => {
             name: user.name,
             picture: user.picture,
           });
+
+          // Mostrar modal solo si no se mostró antes
+          const alreadyShown = localStorage.getItem("hasShownWelcomeModal");
+          if (!alreadyShown) {
+            setShowWelcomeModal(true);
+            localStorage.setItem("hasShownWelcomeModal", "true");
+          }
+
         } catch (error) {
           if (
             error instanceof Error && 
             (error.message === "Usuario bloqueado" || error.message === "Correo ya registrado")
           ) {
-            // No hacer nada, ya mostramos SweetAlert
+            // SweetAlert ya mostrado
           } else {
             console.error("Error de login:", error);
             setError(
@@ -130,10 +135,15 @@ const LoginFormProvider = () => {
     handleAuth();
   }, [isAuthenticated, user, saveUserToSupabase]);
 
-  if (isLoading) return null;
-  if (error) return null;
+  if (isLoading || error) return null;
 
-  return null;
+  return (
+    <WelcomeModal
+      show={showWelcomeModal}
+      onClose={() => setShowWelcomeModal(false)}
+      userName={user?.name || user?.nickname}
+    />
+  );
 };
 
 export default LoginFormProvider;

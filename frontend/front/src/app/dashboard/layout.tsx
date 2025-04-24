@@ -124,6 +124,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { name: "Estadísticas", icon: <HiChartBar className="w-5 h-5" />, href: "/dashboard/Estadisticas" },
     { name: "Membresías", icon: <HiOutlineStar className="w-5 h-5" />, href: "/dashboard/Membresia" },
     { name: "Usuarios-Suscripcion", icon: <HiOutlineStar className="w-5 h-5" />, href: "/dashboard/User-Suscripcion" },
+    { name: "Rutina de Prueba", icon: <HiOutlineStar className="w-5 h-5" />, href: "/dashboard/Rutina-de-Prueba" },
     { name: "Configuración", icon: <HiCog className="w-5 h-5" />, href: "/dashboard/configuracion" },
   ];
 

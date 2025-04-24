@@ -2,7 +2,6 @@
 import React, { useState, useRef, ChangeEvent, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import Swal from 'sweetalert2';
 
 interface RoutineData {
   name: string;
@@ -10,7 +9,7 @@ interface RoutineData {
   isActive: boolean;
 }
 
-const RoutineForm = () => {
+const RoutineFormPrueba = () => {
   const [routineData, setRoutineData] = useState<RoutineData>({
     name: '',
     description: '',
@@ -74,16 +73,6 @@ const RoutineForm = () => {
     e.preventDefault();
     setSubmitAttempted(true);
 
-    // Validación para comprobar si el nombre contiene "Prueba"
-    if (routineData.name.toLowerCase().includes("prueba")) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Nombre no válido',
-        text: 'El nombre de la rutina no puede contener la palabra "Prueba".',
-      });
-      return; // Detiene el envío del formulario
-    }
-
     if (!validateForm()) {
       setMessage('❌ Por favor completa todos los campos requeridos');
       return;
@@ -94,7 +83,8 @@ const RoutineForm = () => {
 
     try {
       const formData = new FormData();
-      formData.append('name', routineData.name);
+      // Agregar "Prueba" al inicio del nombre antes de enviarlo
+      formData.append('name', `Prueba ${routineData.name}`);
       formData.append('description', routineData.description);
       formData.append('isActive', String(routineData.isActive));
       if (file) formData.append('file', file);
@@ -138,7 +128,7 @@ const RoutineForm = () => {
         transition={{ duration: 0.5 }}
         className="text-center mb-8"
       >
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">Crear Nueva Rutina</h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-2">Crear Nueva Rutina para calentamiento inicial</h2>
         <p className="text-gray-600">Diseña la rutina perfecta para tus clientes</p>
       </motion.div>
 
@@ -261,31 +251,29 @@ const RoutineForm = () => {
               <span className="flex items-center justify-center">
                 <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 1116 0A8 8 0 014 12z"></path>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Enviando...
+                Creando rutina...
               </span>
             ) : (
-              'Crear Rutina'
+              <span className="flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
+                </svg>
+                Crear Rutina
+              </span>
             )}
           </button>
         </motion.div>
       </form>
 
       {message && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className={`mt-6 text-center text-sm font-semibold ${
-            message.startsWith('❌') ? 'text-red-500' : 'text-green-500'
-          }`}
-        >
-          {message}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }} className="mt-6 text-center">
+          <p className={`text-sm font-semibold ${message.startsWith('❌') ? 'text-red-600' : 'text-green-600'}`}>{message}</p>
         </motion.div>
       )}
     </div>
   );
 };
 
-export default RoutineForm;
+export default RoutineFormPrueba;
