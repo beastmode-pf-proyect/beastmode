@@ -123,6 +123,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     { name: "Rutinas", icon: <HiBookOpen className="w-5 h-5" />, href: "/dashboard/rutina" },
     { name: "Estadísticas", icon: <HiChartBar className="w-5 h-5" />, href: "/dashboard/Estadisticas" },
     { name: "Membresías", icon: <HiOutlineStar className="w-5 h-5" />, href: "/dashboard/Membresia" },
+    { name: "Usuarios-Suscripcion", icon: <HiOutlineStar className="w-5 h-5" />, href: "/dashboard/User-Suscripcion" },
     { name: "Configuración", icon: <HiCog className="w-5 h-5" />, href: "/dashboard/configuracion" },
   ];
 
@@ -169,7 +170,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
             <p className="text-sm text-[#5e1914]">{userData.email}</p>
             <p className="text-sm text-[#5e1914] font-bold">
-              ROL: {userData.role === "ADMIN" ? "Administrador" : userData.role === "TRAINER" ? "Entrenador" : "Usuario"}
+               {userData.role === "ADMIN" ? "Administrador" : userData.role === "TRAINER" ? "Entrenador" : "Usuario"}
             </p>
           </div>
         </div>
@@ -184,16 +185,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </li>
           ))}
         </ul>
-
-        <div className="mt-4">
-          <button
-            onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-            className="w-full flex items-center justify-center gap-2 bg-[#5e1914] hover:bg-[#a82717] text-white p-2 rounded-md transition-all duration-300 transform hover:scale-105"
-          >
-            <HiOutlineLogout className="w-5 h-5" />
-            <span>Cerrar sesión</span>
-          </button>
-        </div>
       </div>
 
       {/* Mobile menu */}
@@ -208,7 +199,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
                 <p className="text-sm text-[#5e1914]">{userData.email}</p>
                 <p className="text-sm text-[#5e1914] font-bold">
-                  ROL: {userData.role === "ADMIN" ? "Administrador" : userData.role === "TRAINER" ? "Entrenador" : "Usuario"}
+                 {userData.role === "ADMIN" ? "Administrador" : userData.role === "TRAINER" ? "Entrenador" : "Usuario"}
                 </p>
               </div>
             </div>
