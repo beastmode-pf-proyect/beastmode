@@ -36,12 +36,7 @@ export class CreateExerciseDto {
   @IsOptional()
   isActive = true;
 
-    @IsBoolean()
-    @IsOptional()
-    isActive = true;
-    
-    @IsString()    
-    category: string;
-     // Asegúrate de que este campo esté definido en tu entidad y DTO
+  @IsString()
+  category: string;
+  // Asegúrate de que este campo esté definido en tu entidad y DTO
 }
-
