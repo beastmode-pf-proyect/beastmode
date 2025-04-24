@@ -17,6 +17,7 @@ import { StripeModule } from './stripe/stripe.module';
 import { JwtModule } from '@nestjs/jwt';
 import { RolesController } from './roles/roles.controller';
 import { RolesModule } from './roles/roles.module';
+import { MapsModule } from './maps/maps.module';
 
 
 
@@ -47,7 +48,7 @@ import { RolesModule } from './roles/roles.module';
   UsersModule, SubscriptionsModule, 
   MembershipsModule, WorkoutRoutineModule, 
   TestimonialsModule, FileUploadModule, 
-  ExerciseModule, RoutineExerciseModule, RoutineExerciseModule, UserWorkoutRoutineModule, StripeModule, RolesModule
+  ExerciseModule, RoutineExerciseModule, RoutineExerciseModule, UserWorkoutRoutineModule, StripeModule, RolesModule, MapsModule
   ],
   controllers: [AppController, RolesController],
   providers: [AppService],
