@@ -21,21 +21,11 @@ export class FileUploadService {
 
     ) {}
 
-    async uploadUserImage(file: Express.Multer.File, userId: string) {
+    async uploadUserImage(file: Express.Multer.File) {
         
-        const userExists = await this.usersRepository.findOneBy({ id: userId });
-        if (!userExists) {
-            return 'El usuario no existe!';
-        }
-
-        // Sube la imagen a Cloudinary y obtiene la URL segura
         const uploadedImage = await this.fileUploadRepository.uploadImage(file);
 
-        // Actualiza la URL de la imagen en la base de datos
-        await this.usersRepository.update(userId, { picture: uploadedImage.secure_url });
-
-        // Retorna el user actualizado
-        return await this.usersRepository.findOneBy({ id: userId });
+        return uploadedImage;
     }
 
 

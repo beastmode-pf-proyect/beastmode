@@ -2,6 +2,7 @@ import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { updateUserDto } from "src/dto/updateUserDto";
 import { User } from "src/entities/users.entity";
+import { FileUploadService } from "src/file-upload/file-upload.service";
 import { RolesService } from "src/roles/roles.service";
 import { Repository } from "typeorm";
 
@@ -10,6 +11,7 @@ export class UsersRepository{
     constructor(
         @InjectRepository(User) private usersRepository: Repository<User>,
         private readonly roleService: RolesService,
+        private readonly fileUploadService: FileUploadService,
     ){}
 
     async getUsersTrainerAndClient() : Promise <Partial<User>[]> {
@@ -102,17 +104,35 @@ export class UsersRepository{
           return user;
     }
 
-    async updateUser(id : string, user: updateUserDto) {
-      await this.usersRepository.update(id, user) 
+    async updateUser(id : string, userName: updateUserDto, file: Express.Multer.File) {
       
       const updateUser = await this.usersRepository.findOneBy({
-       auth0_id : id
+        auth0_id : id
       })
-    
-      const {role, ...userWithoutPassword } = updateUser
-    
-      return 'Usuario Actualizado'
+
+      if(!updateUser){
+          throw new NotFoundException('Usuario no encontrado')
+      }
+
+      interface UpdateData {
+        name: string;
+        picture?: string;
     }
+
+      const updateData:UpdateData = { ...userName };
+
+    if (file) {
+        const uploadResponse = await this.fileUploadService.uploadUserImage(file);
+        
+        updateData.picture = uploadResponse.secure_url;
+    }
+    
+    await this.usersRepository.update({ auth0_id: id }, updateData);
+    
+    const updatedUser = await this.usersRepository.findOneBy({ auth0_id: id });
+    return updatedUser;
+}
+
 
     async updateRoleUser(id:string, role: string){
       const serchUser = await this.usersRepository.findOne({
