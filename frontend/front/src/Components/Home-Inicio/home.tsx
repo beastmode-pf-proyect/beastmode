@@ -7,17 +7,29 @@ import { useSessionUser } from "@/app/SessionUserContext";
 import UserWorkoutRoutines from "../Cliente/VerRutina";
 import DownloadDietSection from "./diets";
 import { Subscription } from "../Cliente/SuscripActivodeaact";
-
-
+import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 const HomePage: React.FC = () => {
   const { user: currentUser, loading: userLoading, user } = useSessionUser();
   const [loading, setLoading] = useState<boolean>(true);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-
-  console.log(loading)
+  const router = useRouter();
 
   console.log(loading);
+
+  useEffect(() => {
+    if (!user?.email) {
+      Swal.fire({
+        icon: "error",
+        title: "Acceso denegado",
+        text: "Debes iniciar sesión para acceder a esta página.",
+        confirmButtonText: "Aceptar",
+      }).then(() => {
+        router.push("/");
+      });
+    }
+  }, [user, router]);
 
   useEffect(() => {
     const fetchMemberships = async () => {
@@ -120,6 +132,10 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* Call to Action */}
+      <section className="bg-red-700">
+        <DownloadDietSection />
+      </section>
 
       {/* Comunidad */}
       <section className="bg-[length:150px_150px] bg-[radial-gradient(circle_at_15%_30%,transparent_40%,#d1bdbd_41%),radial-gradient(circle_at_85%_30%,transparent_40%,#d1bdbd_41%),radial-gradient(circle_at_50%_70%,transparent_40%,#d1bdbd_41%),radial-gradient(circle_at_15%_70%,transparent_40%,#d1bdbd_41%),radial-gradient(circle_at_85%_70%,transparent_40%,#d1bdbd_41%),linear-gradient(45deg,#d1bdbd_25%,rgba(0,0,0,0.067)_0,rgba(0,0,0,0.067)_50%,#d1bdbd_0,#d1bdbd_75%,#1111_0,#1111_100%,#d1bdbd_0)]  py-20 px-4 sm:px-8 lg:px-16">
@@ -134,11 +150,6 @@ const HomePage: React.FC = () => {
           </div>
           <Ctestimonios />
         </div>
-      </section>
-
-      {/* Call to Action */}
-      <section className="bg-red-700">
-        <DownloadDietSection />
       </section>
     </div>
   );
