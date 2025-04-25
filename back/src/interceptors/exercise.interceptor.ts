@@ -38,7 +38,8 @@ export class ExerciseValidationInterceptor implements NestInterceptor {
       );
     }
 
-    
+    return next.handle();
+  }
 
   private isValidUrl(url: string): boolean {
     try {
