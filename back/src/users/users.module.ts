@@ -6,9 +6,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/entities/users.entity';
 import { requiresAuth } from 'express-openid-connect';
 import { RolesModule } from 'src/roles/roles.module';
+import { FileUploadModule } from 'src/file-upload/file-upload.module';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([User]), RolesModule],
+  imports:[TypeOrmModule.forFeature([User]), RolesModule, FileUploadModule],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository],
   exports: [UsersService]

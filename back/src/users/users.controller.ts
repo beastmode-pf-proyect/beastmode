@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, Put, Query, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { updateUserDto } from 'src/dto/updateUserDto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 
 @Controller('users')
@@ -43,8 +44,26 @@ export class UsersController {
   }
 
   @Put(':id')
-  updateUser(@Param('id') id: string, @Body() updateUser: updateUserDto){
-    return this.usersService.updateUser(id, updateUser);
+  @UseInterceptors(FileInterceptor('file'))
+  updateUser(@Param('id') id: string,
+   @Body() userName: updateUserDto,
+   @UploadedFile( // Valida el archivo.
+          new ParseFilePipe({
+              validators: [
+                // Valida que el archivo no sea muy grande.
+                  new MaxFileSizeValidator({
+                      maxSize: 2000000,
+                      message: 'Tamaño de la imagen permitido es de 2MB',
+                  }),
+                  // Valida que el archivo sea una imagen.
+                  new FileTypeValidator({
+                      fileType: /(jpg|jpeg|png|webp|gif|mp4)$/,
+                  }),
+              ],
+          })
+      ) file: Express.Multer.File,// Archivo validado
+      ){
+    return this.usersService.updateUser(id, userName, file);
   }
 
   @Put('/upRole/:id')
