@@ -18,11 +18,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { RolesController } from './roles/roles.controller';
 import { RolesModule } from './roles/roles.module';
 import { MapsModule } from './maps/maps.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 
 
 @Module({
-  imports: [ConfigModule.forRoot({
+  imports: [
+    ScheduleModule.forRoot(),
+    ConfigModule.forRoot({
     isGlobal: true,
     load: [typeOrm],
   }),
