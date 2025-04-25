@@ -26,6 +26,7 @@ export default function ExerciseForm() {
     "Cardio",
     "Glúteos",
     "Antebrazo",
+    "Full Body",
   ];
 
   const handleChange = (
