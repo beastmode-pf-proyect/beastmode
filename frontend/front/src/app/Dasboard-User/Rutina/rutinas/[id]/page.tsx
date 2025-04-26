@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { FiClock, FiRepeat, FiActivity, FiZap } from 'react-icons/fi'
 import Image from 'next/image'
@@ -24,6 +24,7 @@ interface ExerciseData {
 
 const RoutineDetailPage = () => {
   const { id } = useParams()
+  const router = useRouter()
   const [exercises, setExercises] = useState<ExerciseData[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -44,106 +45,99 @@ const RoutineDetailPage = () => {
   }, [id])
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="w-full max-w-7xl mx-auto px-4 py-6">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-12 text-center"
+        transition={{ duration: 0.3 }}
+        className="mb-8 text-center"
       >
-        <h1 className="text-4xl font-extrabold bg-gradient-to-r from-[#5e1914] to-[#8a2a22] bg-clip-text text-transparent mb-2">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-[#5e1914] to-[#8a2a22] bg-clip-text text-transparent">
           Detalle de Rutina
         </h1>
-        <p className="text-gray-500 max-w-2xl mx-auto">
-          Sigue cada ejercicio con precisión para maximizar tus resultados
-        </p>
+        <p className="text-gray-500 mt-2 text-sm">Sigue cada ejercicio paso a paso</p>
       </motion.div>
 
       {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-pulse flex space-x-4">
-            <div className="rounded-full bg-[#5e1914]/10 h-12 w-12"></div>
-          </div>
+        <div className="grid grid-cols-1 gap-6">
+          {[1, 2].map((_, index) => (
+            <div key={index} className="h-40 bg-gray-100 rounded-lg animate-pulse" />
+          ))}
         </div>
       ) : exercises.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="mx-auto h-24 w-24 text-[#5e1914] mb-4">
+        <div className="text-center py-8">
+          <div className="mx-auto h-16 w-16 text-[#5e1914] mb-3">
             <FiActivity className="w-full h-full" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900">No hay ejercicios asignados</h3>
-          <p className="mt-1 text-sm text-gray-500">Comienza agregando ejercicios a esta rutina</p>
+          <h3 className="text-base font-medium text-gray-900">No hay ejercicios asignados</h3>
+          <p className="mt-1 text-sm text-gray-500">Agrega ejercicios para comenzar</p>
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
           {exercises.map((e, index) => (
             <motion.div
               key={e.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow duration-300"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
+              className="w-full bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-100 group"
             >
-              <div className="flex flex-col md:flex-row">
+              <div className="flex flex-col md:flex-row h-70">
                 {e.exercise.imageUrl && (
-                  <div className="md:w-1/3 h-48 md:h-auto relative">
+                  <div className="w-full md:w-[50%] relative aspect-video md:aspect-auto md:h-auto overflow-hidden">
                     <Image
                       src={e.exercise.imageUrl}
                       alt={e.exercise.name}
                       fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      priority={index < 2} 
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      priority={index < 2}
                     />
-                    <div className="absolute top-3 left-3 bg-[#5e1914] text-white text-xs font-bold px-2 py-1 rounded z-10">
+                    <div className="absolute top-1 left-1 bg-[#5e1914]/90 text-white text-xs px-2 py-1 rounded-full">
                       #{index + 1}
                     </div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/5 via-transparent to-transparent" />
                   </div>
                 )}
-                <div className="p-6 flex-1">
-                  <div className="flex justify-between items-start">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{e.exercise.name}</h3>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#5e1914]/10 text-[#5e1914]">
-                      Activo
-                    </span>
+
+                <div className="flex-1 p-4 flex flex-col justify-between">
+                  <div>
+                    <div className="flex justify-between items-start">
+                      <h3 className="text-base font-semibold text-gray-900 truncate">{e.exercise.name}</h3>
+                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${e.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}`}>
+                        {e.isActive ? 'Activo' : 'Inactivo'}
+                      </span>
+                    </div>
+                    <p className="text-gray-500 text-sm mt-2 line-clamp-2">{e.exercise.description}</p>
                   </div>
-                  <p className="text-gray-600 mb-4">{e.exercise.description}</p>
-                  
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="flex items-center">
-                      <FiRepeat className="text-[#5e1914] mr-2" />
-                      <div>
-                        <p className="text-xs text-gray-500">Series</p>
-                        <p className="font-semibold">{e.sets}</p>
-                      </div>
+
+                  <div className="grid grid-cols-2 gap-2 mt-3">
+                    <div className="flex items-center text-xs">
+                      <FiRepeat className="text-[#5e1914] mr-1" />
+                      <span className="font-medium">{e.sets} series</span>
                     </div>
-                    <div className="flex items-center">
-                      <FiZap className="text-[#5e1914] mr-2" />
-                      <div>
-                        <p className="text-xs text-gray-500">Repeticiones</p>
-                        <p className="font-semibold">{e.reps}</p>
-                      </div>
+                    <div className="flex items-center text-xs">
+                      <FiZap className="text-[#5e1914] mr-1" />
+                      <span className="font-medium">{e.reps} reps</span>
                     </div>
-                    <div className="flex items-center">
-                      <FiClock className="text-[#5e1914] mr-2" />
-                      <div>
-                        <p className="text-xs text-gray-500">Duración</p>
-                        <p className="font-semibold">{e.duration}s</p>
-                      </div>
+                    <div className="flex items-center text-xs">
+                      <FiClock className="text-[#5e1914] mr-1" />
+                      <span className="font-medium">{e.duration}s</span>
                     </div>
-                    <div className="flex items-center">
-                      <FiActivity className="text-[#5e1914] mr-2" />
-                      <div>
-                        <p className="text-xs text-gray-500">Descanso</p>
-                        <p className="font-semibold">{e.rest}s</p>
-                      </div>
+                    <div className="flex items-center text-xs">
+                      <FiActivity className="text-[#5e1914] mr-1" />
+                      <span className="font-medium">{e.rest}s</span>
                     </div>
                   </div>
-                  
-                  <button className="w-full bg-gradient-to-r from-[#5e1914] to-[#8a2a22] text-white py-2 px-4 rounded-lg hover:opacity-90 transition-opacity">
-                    Iniciar ejercicio
-                  </button>
                 </div>
               </div>
+
+              <button
+                onClick={() => router.push(`/Dasboard-User/Rutina/ejercicio/${e.exercise.id}`)}
+                className="w-full border-t border-gray-100 text-sm font-medium text-[#5e1914] hover:bg-gray-50 py-2 px-4 transition-colors"
+              >
+                Comenzar ejercicio →
+              </button>
             </motion.div>
           ))}
         </div>
