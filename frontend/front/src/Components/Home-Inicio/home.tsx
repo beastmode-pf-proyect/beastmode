@@ -4,32 +4,24 @@ import React, { useEffect, useState } from "react";
 import MembershipSection from "@/Components/memberships/memberships";
 import Ctestimonios from "../Ctestimonios/Ctestimonios";
 import { useSessionUser } from "@/app/SessionUserContext";
-import UserWorkoutRoutines from "../Cliente/VerRutina";
+
 import DownloadDietSection from "./diets";
 import { Subscription } from "../Cliente/SuscripActivodeaact";
-import { useRouter } from "next/navigation";
-import Swal from "sweetalert2";
+
+
+import TrialRoutinesOnly from "../Todo-Sobre-Rutina/Rutina-PruebaClient"; // ✅
+
+
+
 
 const HomePage: React.FC = () => {
   const { user: currentUser, loading: userLoading, user } = useSessionUser();
   const [loading, setLoading] = useState<boolean>(true);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-  const router = useRouter();
+
+  console.log(loading)
 
   console.log(loading);
-
-  useEffect(() => {
-    if (!user?.email) {
-      Swal.fire({
-        icon: "error",
-        title: "Acceso denegado",
-        text: "Debes iniciar sesión para acceder a esta página.",
-        confirmButtonText: "Aceptar",
-      }).then(() => {
-        router.push("/");
-      });
-    }
-  }, [user, router]);
 
   useEffect(() => {
     const fetchMemberships = async () => {
@@ -113,29 +105,10 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* Sección de entrenamiento - Mejorada */}
-      <section className="relative py-16 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-              <span className="block">Tu Entrenamiento de Hoy</span>
-              <span className="block text-red-600 text-xl mt-2">
-                Rutinas destacadas de tu plan
-              </span>
-            </h2>
-          </div>
-
-          {/* Tarjeta de rutina 1 */}
-
-          <UserWorkoutRoutines />
+      <div className="mt-8 mb-6 mx-4">
+            <TrialRoutinesOnly/>
         </div>
-      </section>
-
-      {/* Call to Action */}
-      <section className="bg-red-700">
-        <DownloadDietSection />
-      </section>
+              
 
       {/* Comunidad */}
       <section className="bg-[length:150px_150px] bg-[radial-gradient(circle_at_15%_30%,transparent_40%,#d1bdbd_41%),radial-gradient(circle_at_85%_30%,transparent_40%,#d1bdbd_41%),radial-gradient(circle_at_50%_70%,transparent_40%,#d1bdbd_41%),radial-gradient(circle_at_15%_70%,transparent_40%,#d1bdbd_41%),radial-gradient(circle_at_85%_70%,transparent_40%,#d1bdbd_41%),linear-gradient(45deg,#d1bdbd_25%,rgba(0,0,0,0.067)_0,rgba(0,0,0,0.067)_50%,#d1bdbd_0,#d1bdbd_75%,#1111_0,#1111_100%,#d1bdbd_0)]  py-20 px-4 sm:px-8 lg:px-16">
@@ -150,6 +123,11 @@ const HomePage: React.FC = () => {
           </div>
           <Ctestimonios />
         </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="bg-red-700">
+        <DownloadDietSection />
       </section>
     </div>
   );
