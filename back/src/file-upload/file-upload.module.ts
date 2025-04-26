@@ -10,7 +10,6 @@ import { WorkoutRoutine } from 'src/entities/workout.routine.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User,WorkoutRoutine,Exercise])],
-
   controllers: [FileUploadController],
   providers: [FileUploadService,FileUploadRepository,CloudinaryConfig],
   exports: [CloudinaryConfig,FileUploadService]

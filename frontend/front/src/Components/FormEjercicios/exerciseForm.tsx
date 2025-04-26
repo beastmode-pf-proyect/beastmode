@@ -1,28 +1,64 @@
-// components/ExerciseForm.tsx
 "use client";
-
 import { useState } from "react";
-import { Exercise } from "./types";
+import Image from "next/image";
 
 export default function ExerciseForm() {
-  const [exercise, setExercise] = useState<Exercise>({
+  const [exercise, setExercise] = useState({
     name: "",
     description: "",
     category: "",
-    imageUrl: "",
+    imageFile: null as File | null,
+    previewUrl: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  const categories = [
+    "Piernas",
+    "Espalda",
+    "Hombros",
+    "Pecho",
+    "Bíceps",
+    "Tríceps",
+    "Abdomen",
+    "Cardio",
+    "Glúteos",
+    "Antebrazo",
+    "Full Body",
+  ];
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     setExercise((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setExercise((prev) => ({
+        ...prev,
+        imageFile: file,
+        previewUrl,
+      }));
+    }
+  };
+
+  const handleFileRemove = () => {
+    URL.revokeObjectURL(exercise.previewUrl);
+    setExercise((prev) => ({
+      ...prev,
+      imageFile: null,
+      previewUrl: "",
     }));
   };
 
@@ -33,19 +69,25 @@ export default function ExerciseForm() {
     setSuccess(false);
 
     try {
+      const formData = new FormData();
+      formData.append("name", exercise.name);
+      formData.append("description", exercise.description);
+      formData.append("category", exercise.category);
+      if (exercise.imageFile) {
+        formData.append("file", exercise.imageFile);
+      }
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/exercises/create`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(exercise),
+          body: formData,
         }
       );
 
       if (!response.ok) {
-        throw new Error("Error al crear el ejercicio");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error al crear el ejercicio");
       }
 
       setSuccess(true);
@@ -53,10 +95,9 @@ export default function ExerciseForm() {
         name: "",
         description: "",
         category: "",
-        imageUrl: "",
+        imageFile: null,
+        previewUrl: "",
       });
-
-      // Puedes recargar los ejercicios aquí si es necesario
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Ocurrió un error desconocido"
@@ -67,110 +108,137 @@ export default function ExerciseForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">
-        Crear Nuevo Ejercicio
-      </h2>
+    <div className="max-w-3xl mx-auto p-8 bg-gradient-to-br from-[#7a2e28] to-[#5e1914] rounded-2xl shadow-2xl">
+      <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/20">
+        <h2 className="text-3xl font-bold mb-8 text-center text-white uppercase tracking-wider">
+          Crear Nuevo Ejercicio
+        </h2>
 
-      {error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
-          {error}
-        </div>
-      )}
+        {error && (
+          <div className="mb-6 p-4 bg-red-500/10 text-red-200 rounded-lg border border-red-500/30">
+            ⚠️ {error}
+          </div>
+        )}
 
-      {success && (
-        <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">
-          ¡Ejercicio creado exitosamente!
-        </div>
-      )}
+        {success && (
+          <div className="mb-6 p-4 bg-green-500/10 text-green-200 rounded-lg border border-green-500/30">
+            ✅ ¡Ejercicio creado exitosamente!
+          </div>
+        )}
 
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label
-            htmlFor="name"
-            className="block text-gray-700 font-medium mb-2"
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-white font-medium mb-2 text-lg">
+              Nombre del Ejercicio
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={exercise.name}
+              onChange={handleChange}
+              className="w-full px-5 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-white font-medium mb-2 text-lg">
+              Descripción
+            </label>
+            <textarea
+              name="description"
+              value={exercise.description}
+              onChange={handleChange}
+              rows={4}
+              className="w-full px-5 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-red-950 font-medium mb-2 text-lg">
+              Categoría
+            </label>
+            <select
+              name="category"
+              value={exercise.category}
+              onChange={handleChange}
+              className="w-full px-5 py-3 bg-white/10 border border-red-900 rounded-xl text-red-950 focus:outline-none focus:ring-2 focus:ring-red-950 transition-all"
+              required
+            >
+              <option value="" disabled>
+                Selecciona una categoría
+              </option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-white font-medium mb-2 text-lg">
+              Imagen del Ejercicio
+            </label>
+            <div className="relative group">
+              <div className="flex items-center justify-center w-full h-32 border-2 border-dashed border-white/30 rounded-xl bg-white/10 hover:border-white transition-colors cursor-pointer">
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  accept="image/*"
+                />
+                <span className="text-white/70 group-hover:text-white transition-colors">
+                  {exercise.imageFile
+                    ? exercise.imageFile.name
+                    : "Arrastra o haz clic para subir"}
+                </span>
+              </div>
+            </div>
+
+            {exercise.previewUrl && (
+              <div className="mt-6 relative group">
+                <div className="relative w-full h-64 rounded-xl overflow-hidden border border-white/20 bg-black/20">
+                  <Image
+                    src={exercise.previewUrl}
+                    alt="Vista previa"
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 100vw, 700px"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleFileRemove}
+                  className="absolute top-2 right-2 px-3 py-1 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors shadow-lg"
+                >
+                  ✕ Eliminar
+                </button>
+              </div>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className={`w-full py-4 text-lg font-bold rounded-xl transition-all ${
+              isSubmitting
+                ? "bg-white/10 cursor-not-allowed"
+                : "bg-white/20 hover:bg-white/30 hover:scale-[1.01] active:scale-95"
+            } text-white shadow-lg hover:shadow-xl`}
           >
-            Nombre del Ejercicio
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={exercise.name}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="description"
-            className="block text-gray-700 font-medium mb-2"
-          >
-            Descripción del Ejercicio
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            value={exercise.description}
-            onChange={handleChange}
-            rows={4}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-
-        <div className="mb-6">
-          <label
-            htmlFor="category"
-            className="block text-gray-700 font-medium mb-2"
-          >
-            Musculo a entrenar
-          </label>
-          <input
-            type="text"
-            id="category"
-            name="category"
-            value={exercise.category}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Brazos, Piernas, Hombros, Espalda..."
-            required
-          />
-        </div>
-
-        <div className="mb-6">
-          <label
-            htmlFor="imageUrl"
-            className="block text-gray-700 font-medium mb-2"
-          >
-            Link de la imagen
-          </label>
-          <input
-            type="url"
-            id="imageUrl"
-            name="imageUrl"
-            value={exercise.imageUrl}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="https://ejemplo.com/ejercicio.jpg.png.gif"
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={`w-full py-2 px-4 rounded-md text-white font-medium ${
-            isSubmitting
-              ? "bg-red-400"
-              : "bg-red-900 hover:bg-red-950 hover:cursor-pointer"
-          } transition duration-200`}
-        >
-          {isSubmitting ? "Enviando..." : "Crear Ejercicio"}
-        </button>
-      </form>
+            {isSubmitting ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="w-5 h-5 border-2 border-white/50 border-t-transparent rounded-full animate-spin"></div>
+                Creando...
+              </span>
+            ) : (
+              "🎯 Crear Ejercicio"
+            )}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
