@@ -35,8 +35,8 @@ export class UsersService {
         return this.usersRepository.getUserByIdAndRole(id, role)
     }
 
-    updateUser(id: string, user: updateUserDto) {                                  
-        return this.usersRepository.updateUser(id, user);
+    updateUser(id: string, userName: updateUserDto, file: Express.Multer.File) {                                  
+        return this.usersRepository.updateUser(id, userName, file);
     }
 
     updateRoleUser(id: string, role: string){

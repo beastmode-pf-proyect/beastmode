@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from 'next/image';
 
 interface Routine {
   id: string;
@@ -15,10 +16,10 @@ const FilteredRoutines = () => {
   useEffect(() => {
     const fetchRoutines = async () => {
       try {
-        const response = await fetch("http://localhost:3000/workout-routine");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/workout-routine`);
         const data: Routine[] = await response.json();
 
-        // Filtrar rutinas cuyo nombre empieza con "Prueba" (ignora mayúsculas/minúsculas)
+       
         const filtered = data.filter((routine) =>
           routine.name?.toLowerCase().startsWith("prueba")
         );
@@ -39,11 +40,13 @@ const FilteredRoutines = () => {
           key={routine.id}
           className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200"
         >
-          <img
-            src={routine.imageUrl}
-            alt={routine.name}
-            className="w-full h-48 object-cover"
-          />
+              <Image
+              src={routine.imageUrl}
+              alt={routine.name}
+              width={500}  // Puedes ajustar el tamaño según sea necesario
+              height={192} // Ajusta la altura según lo que necesites
+              className="w-full h-48 object-cover"
+            />
           <div className="p-4">
             <h2 className="text-xl font-bold text-gray-800 mb-2">{routine.name}</h2>
             <p className="text-gray-600 text-sm">{routine.description}</p>

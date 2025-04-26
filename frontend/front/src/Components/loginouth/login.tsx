@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabaseClient";
 import Swal from "sweetalert2";
 import { FaSignInAlt } from "react-icons/fa";
 
+
 const LoginForm = () => {
   const { loginWithRedirect, user, isAuthenticated, isLoading } = useAuth0();
   const router = useRouter();
@@ -91,6 +92,7 @@ const LoginForm = () => {
             window.sessionStorage.setItem("hasWelcomed", "true");
             
           }
+
           if (isNewUser && !hasInitialized) {
             localStorage.setItem("hasInitialized", "true");
             router.push("/landing");

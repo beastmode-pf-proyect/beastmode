@@ -40,27 +40,22 @@ const MembershipSection = () => {
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<UserRole>(null);
 
+  // Asignar rol por defecto o desde backend si hay sesión
   useEffect(() => {
+    if (!currentUser) {
+      setUserRole("CLIENT"); // Visitante sin sesión
+      return;
+    }
+
     const fetchUserRole = async () => {
       try {
-        if (!currentUser?.id) return;
-
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/role/${currentUser.id}`
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch user role");
-        }
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/role/${currentUser.id}`);
+        if (!response.ok) throw new Error("Error obteniendo rol de usuario");
 
         const roleText = await response.text();
-        const normalizedRole = roleText.toUpperCase();
-
-        if (["ADMIN", "TRAINER", "CLIENT"].includes(normalizedRole)) {
-          setUserRole(normalizedRole as UserRole);
-        } else {
-          setUserRole("CLIENT");
-        }
+        const normalized = roleText.toUpperCase().trim();
+        const validRoles: UserRole[] = ["ADMIN", "TRAINER", "CLIENT"];
+        setUserRole(validRoles.includes(normalized as UserRole) ? (normalized as UserRole) : "CLIENT");
       } catch (error) {
         console.error("Error fetching user role:", error);
         setUserRole("CLIENT");
@@ -68,38 +63,35 @@ const MembershipSection = () => {
     };
 
     fetchUserRole();
-  }, [currentUser?.id]);
+  }, [currentUser]);
 
+  // Cargar planes y suscripción del usuario (si hay)
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Si el usuario es ADMIN o TRAINER, no necesitamos cargar los planes
         if (userRole === "ADMIN" || userRole === "TRAINER") {
           setLoading(false);
+          setPlans([]);
           return;
         }
 
         const plansResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/memberships`);
         const plansData = await plansResponse.json();
-        const activePlans = Array.isArray(plansData)
-          ? plansData.filter((plan: Plan) => plan.isActive)
-          : [];
-        setPlans(activePlans);
+        setPlans(Array.isArray(plansData) ? plansData.filter((plan: Plan) => plan.isActive) : []);
 
         if (currentUser?.email) {
           const subsResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/subscriptions`);
           const subsData: SubscriptionResponse[] = await subsResponse.json();
 
           const activeSub = subsData.find(
-            (sub) =>
-              sub.user.email === currentUser.email && sub.isActive && sub.isPago
+            sub => sub.user.email === currentUser.email && sub.isActive && sub.isPago
           );
 
           if (activeSub) {
             setUserSubscription({
               id: activeSub.id,
               isActive: activeSub.isActive,
-              membershipPlan: activeSub.membershipPlan,
+              membershipPlan: activeSub.membershipPlan
             });
           }
         }
@@ -114,51 +106,59 @@ const MembershipSection = () => {
   }, [currentUser?.email, userRole]);
 
   const handleNavigation = (id: string) => {
-    const plan = plans.find((p) => p.id === id);
+    const plan = plans.find(p => p.id === id);
     if (plan) {
-      if (userSubscription?.membershipPlan.id === id) return;
       setSelectedPlan(plan);
     } else {
       router.push(`/membership/${id}`);
     }
   };
 
-  const handleCloseModal = () => {
-    setSelectedPlan(null);
-  };
+  const handleCloseModal = () => setSelectedPlan(null);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center text-center h-screen">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-red-900 mb-4"></div>
-          <span className="text-xl text-gray-600">Cargando...</span>
-        </div>
+      <div className="flex items-center justify-center min-h-screen">
+  <div className="flex flex-col items-center space-y-4">
+    {/* Animación de mancuerna */}
+    <div className="relative flex items-center">
+      {/* Pesas laterales */}
+      <div className="absolute -left-8 animate-[bounce_1.2s_infinite]">
+        <div className="w-8 h-12 bg-gradient-to-b from-red-900 to-red-700 rounded-full shadow-lg transform skew-x-12" />
       </div>
+      
+      {/* Barra central */}
+      <div className="w-16 h-4 bg-gradient-to-r from-red-800 to-red-600 rounded-lg animate-spin duration-1000" />
+      
+      {/* Pesas laterales */}
+      <div className="absolute -right-8 animate-[bounce_1.2s_infinite] delay-150">
+        <div className="w-8 h-12 bg-gradient-to-b from-red-900 to-red-700 rounded-full shadow-lg transform -skew-x-12" />
+      </div>
+    </div>
+
+    {/* Texto animado */}
+    <div className="text-center space-y-2">
+      <p className="text-lg font-bold text-red-900 animate-pulse">
+        Preparando tu entrenamiento...
+      </p>
+      <p className="text-sm text-gray-600 italic">
+        La fuerza crece con cada repetición
+      </p>
+    </div>
+  </div>
+</div>
     );
   }
 
-  // Si el usuario es ADMIN o TRAINER, mostrar mensaje motivador
   if (userRole === "ADMIN" || userRole === "TRAINER") {
     return (
       <div className="min-h-[50vh] flex flex-col items-center justify-center text-center px-4">
-        <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-900">
-          ¡Gracias por tu increíble trabajo!
-        </h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-900">¡Gracias por tu increíble trabajo!</h2>
         <p className="text-xl text-gray-700 mb-8 max-w-2xl">
-          {userRole === "ADMIN" ? (
-            <span>
-              Como administrador, tu trabajo detrás de escena es crucial para que todo funcione a la perfección. 
-              Aunque no necesitas una suscripción, tu esfuerzo y visión siguen siendo la fuerza que impulsa nuestra comunidad.
-            </span>
-          ) : (
-            <span>
-              Como entrenador, eres la inspiración y guía para nuestros miembros. Tu conocimiento y dedicación son el motor que impulsa el éxito de todos, 
-              y no necesitas un plan de suscripción para seguir liderando.
-            </span>
-          )}
+          {userRole === "ADMIN"
+            ? "Como administrador, tu trabajo detrás de escena es crucial para que todo funcione a la perfección."
+            : "Como entrenador, eres la inspiración y guía para nuestros miembros. Tu conocimiento y dedicación son el motor del éxito."}
         </p>
-        
       </div>
     );
   }
@@ -166,98 +166,89 @@ const MembershipSection = () => {
   return (
     <div className="min-h-screen w-full px-4 py-12 sm:py-20 lg:px-8 xl:px-20 flex items-center justify-center">
       <div className="max-w-7xl w-full">
-        {/* Título agregado */}
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-8 text-center text-red-950">
-          Nuestros Planes
-        </h2>
-
-        {userSubscription ? (
-          <>
-            <div className="mb-6 flex flex-col items-center text-center">
-              <h3 className="text-2xl font-semibold text-gray-800">Este es tu plan activo</h3>
-              <p className="text-gray-600">
-                Estás disfrutando del plan <span className="font-bold">{userSubscription.membershipPlan.name}</span>.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-              {plans
-                .filter((plan) => plan.id === userSubscription.membershipPlan.id)
-                .map((plan) => (
-                  <div
-                    key={plan.id}
-                    className="border-2 border-gray-400 rounded-4xl bg-gray-100 p-6 flex flex-col relative opacity-80"
-                  >
-                    <div className="absolute top-0 right-0 bg-gray-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-4xl">
-                      ACTUAL
-                    </div>
-                    <div className="flex-grow">
-                      <p className="text-xl md:text-2xl font-light mb-2 text-gray-600">
-                        {plan.name}
-                      </p>
-                      <p className="text-3xl md:text-4xl font-extrabold mb-6 font-[Inter] text-red-950">
-                        ${plan.price}
-                        <span className="text-lg md:text-xl">/{plan.duration}</span>
-                      </p>
-                      <p className="text-sm md:text-base mb-4 text-gray-700">
-                        {plan.description}
-                      </p>
-                    </div>
-                    <div className="mt-8">
-                      <button
-                        disabled
-                        className="w-full rounded-3xl px-6 py-3 font-medium bg-gray-400 text-white border-2 border-gray-400 cursor-not-allowed"
-                      >
-                        Plan Actual
-                      </button>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-            {plans.map((plan) => (
-              <div
-                key={plan.id}
-                className="border-2 border-gray-200 rounded-4xl bg-white shadow-xl hover:shadow-2xl transition-all duration-300 p-6 flex flex-col relative"
-              >
-                {plan.name === "Pro" && (
-                  <div className="absolute top-0 right-0 bg-red-900 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-4xl">
-                    POPULAR
-                  </div>
-                )}
-                <div className="flex-grow">
-                  <p className="text-xl md:text-2xl font-light mb-2 text-gray-600">
-                    {plan.name}
-                  </p>
-                  <p className="text-3xl md:text-4xl font-extrabold mb-6 font-[Inter] text-red-950">
-                    ${plan.price}
-                    <span className="text-lg md:text-xl">/{plan.duration}</span>
-                  </p>
-                  <p className="text-sm md:text-base mb-4 text-gray-700">
-                    {plan.description}
-                  </p>
-                </div>
-                <div className="mt-8">
-                  <button
-                    onClick={() => handleNavigation(plan.id)}
-                    className={`w-full rounded-3xl px-6 py-3 font-medium transition-colors duration-300 ${
-                      plan.name === "Pro"
-                        ? "bg-red-900 text-white border-2 border-red-900 hover:bg-red-800 hover:border-red-800"
-                        : "bg-transparent text-red-950 border-2 border-red-950 hover:bg-red-950 hover:text-white"
-                    }`}
-                  >
-                    {plan.name === "Pro" ? "¡Quiero ser PRO!" : "Comenzar Ahora"}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+        {!userSubscription && (
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-8 text-center text-red-950">
+            Nuestros Planes
+          </h2>
         )}
-      </div>
 
-      {selectedPlan && <SubscriptionModal plan={selectedPlan} onClose={handleCloseModal} />}
+          {userSubscription ? (
+            <>
+              <div className="mb-6 flex flex-col items-center text-center">
+                <h3 className="text-2xl font-semibold text-gray-800">Plan activo actual</h3>
+                <p className="text-gray-600">
+                  Estás disfrutando del plan <span className="font-bold">{userSubscription.membershipPlan.name}</span>
+                </p>
+              </div>
+
+              <div className="flex flex-wrap justify-center gap-8 lg:gap-12">
+                {plans
+                  .filter(plan => plan.id === userSubscription.membershipPlan.id)
+                  .map(plan => (
+                    <div
+                      key={plan.id}
+                      className="w-full md:w-[500px] border-2 border-gray-400 rounded-4xl bg-gray-100 p-6 flex flex-col relative opacity-80"
+                    >
+                      <div className="absolute top-0 right-0 bg-gray-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-4xl">
+                        ACTUAL
+                      </div>
+                      <div className="flex-grow">
+                        <p className="text-xl md:text-2xl font-light mb-2 text-gray-600">{plan.name}</p>
+                        <p className="text-3xl md:text-4xl font-extrabold mb-6 font-[Inter] text-red-950">
+                          ${plan.price}<span className="text-lg md:text-xl">/{plan.duration}</span>
+                        </p>
+                        <p className="text-sm md:text-base mb-4 text-gray-700">{plan.description}</p>
+                      </div>
+                      <div className="mt-8">
+                        <button
+                          disabled
+                          className="w-full rounded-3xl px-6 py-3 font-medium bg-gray-400 text-white border-2 border-gray-400 cursor-not-allowed"
+                        >
+                          Plan Actual
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-wrap justify-center gap-8 lg:gap-12">
+              {plans.map(plan => (
+                <div
+                  key={plan.id}
+                  className="w-full md:w-[500px] border-2 border-gray-200 rounded-4xl bg-white shadow-xl hover:shadow-2xl transition-all duration-300 p-6 flex flex-col relative"
+                >
+                  {plan.name === "Pro" && (
+                    <div className="absolute top-0 right-0 bg-red-900 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-4xl">
+                      POPULAR
+                    </div>
+                  )}
+                  <div className="flex-grow">
+                    <p className="text-xl md:text-2xl font-light mb-2 text-gray-600">{plan.name}</p>
+                    <p className="text-3xl md:text-4xl font-extrabold mb-6 font-[Inter] text-red-950">
+                      ${plan.price}<span className="text-lg md:text-xl">/{plan.duration}</span>
+                    </p>
+                    <p className="text-sm md:text-base mb-4 text-gray-700">{plan.description}</p>
+                  </div>
+                  <div className="mt-8">
+                    <button
+                      onClick={() => handleNavigation(plan.id)}
+                      className={`w-full rounded-3xl px-6 py-3 font-medium transition-colors duration-300 ${
+                        plan.name === "Pro"
+                          ? "bg-red-900 text-white border-2 border-red-900 hover:bg-red-800"
+                          : "bg-transparent text-red-950 border-2 border-red-950 hover:bg-red-950 hover:text-white"
+                      }`}
+                    >
+                      {plan.name === "Pro" ? "¡Quiero ser PRO!" : "Comenzar Ahora"}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+        {selectedPlan && <SubscriptionModal plan={selectedPlan} onClose={handleCloseModal} />}
+      </div>
     </div>
   );
 };
