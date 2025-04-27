@@ -8,18 +8,14 @@ import { useSessionUser } from "@/app/SessionUserContext";
 import DownloadDietSection from "./diets";
 import { Subscription } from "../Cliente/SuscripActivodeaact";
 
-
-import TrialRoutinesOnly from "../Todo-Sobre-Rutina/Rutina-PruebaClient"; // ✅
-
-
-
+import TrialRoutinesOnly from "../Todo-Sobre-Rutina/Rutina-PruebaClient"; 
 
 const HomePage: React.FC = () => {
   const { user: currentUser, loading: userLoading, user } = useSessionUser();
   const [loading, setLoading] = useState<boolean>(true);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
 
-  console.log(loading)
+  console.log(loading);
 
   console.log(loading);
 
@@ -63,6 +59,22 @@ const HomePage: React.FC = () => {
     }
   };
 
+  const formatDate = (dateString: string) => {
+    // Opción 1: Usando split (siempre que el formato sea consistente)
+    const datePart = dateString.split("T")[0];
+    const [year, month, day] = datePart.split("-");
+    return `${day}/${month}/${year}`; // Formato DD/MM/YYYY
+
+    /* Opción 2: Más robusta con Date (recomendada)
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+    */
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       {/* Banner de bienvenida - Mejorado */}
@@ -82,7 +94,7 @@ const HomePage: React.FC = () => {
             {subscriptions?.length > 0 ? (
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
                 <p className="text-amber-50 font-medium text-lg">
-                  Membresía:{" "}
+                  Membresía:
                   <span className="font-bold text-2xl text-white">
                     {subscriptions[0]?.membershipPlan?.name}
                   </span>
@@ -92,10 +104,10 @@ const HomePage: React.FC = () => {
                     {checkSubStatus()}
                   </span>
                   <span className="text-sm text-white/80">
-                    Desde: {subscriptions[0].startDate}
+                    Desde: {formatDate(subscriptions[0].startDate)}
                   </span>
                   <span className="text-sm text-white/80">
-                    Hasta: {subscriptions[0].endDate}
+                    Hasta: {formatDate(subscriptions[0].endDate)}
                   </span>
                 </div>
               </div>
@@ -106,9 +118,13 @@ const HomePage: React.FC = () => {
         </div>
       </section>
       <div className="mt-8 mb-6 mx-4">
-            <TrialRoutinesOnly/>
-        </div>
-              
+        <TrialRoutinesOnly />
+      </div>
+
+      {/* Call to Action */}
+      <section className="bg-red-700">
+        <DownloadDietSection />
+      </section>
 
       {/* Comunidad */}
       <section className="bg-[length:150px_150px] bg-[radial-gradient(circle_at_15%_30%,transparent_40%,#d1bdbd_41%),radial-gradient(circle_at_85%_30%,transparent_40%,#d1bdbd_41%),radial-gradient(circle_at_50%_70%,transparent_40%,#d1bdbd_41%),radial-gradient(circle_at_15%_70%,transparent_40%,#d1bdbd_41%),radial-gradient(circle_at_85%_70%,transparent_40%,#d1bdbd_41%),linear-gradient(45deg,#d1bdbd_25%,rgba(0,0,0,0.067)_0,rgba(0,0,0,0.067)_50%,#d1bdbd_0,#d1bdbd_75%,#1111_0,#1111_100%,#d1bdbd_0)]  py-20 px-4 sm:px-8 lg:px-16">
@@ -123,11 +139,6 @@ const HomePage: React.FC = () => {
           </div>
           <Ctestimonios />
         </div>
-      </section>
-
-      {/* Call to Action */}
-      <section className="bg-red-700">
-        <DownloadDietSection />
       </section>
     </div>
   );
