@@ -10,7 +10,7 @@ export class UsersController {
   
   @Get()
   getUsersTrainerAndClient(){
-    return this.usersService.getUsersTrainerAndClient();
+    return this.usersService.getUsers();
   }
 
   @Get('/trainer')
