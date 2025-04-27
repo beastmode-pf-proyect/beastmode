@@ -109,7 +109,7 @@ const Ctestimonios = () => {
                 <p className="text-sm text-gray-600 italic">
                   {testimonio.occupation}
                 </p>
-                <p className="text-sm text-gray-700 my-2 line-clamp-3">
+                <p className="text-sm text-gray-700 my-2 break-all whitespace-pre-wrap overflow-hidden line-clamp-3">
                   {testimonio.content}
                 </p>
               </div>
@@ -121,7 +121,7 @@ const Ctestimonios = () => {
                 {testimonio.content.length > 100 && (
                   <button
                     onClick={() => openModal(testimonio)}
-                    className="text-[#a82717] font-medium mt-1">
+                    className="text-[#a82717] font-medium mt-1 transition-colors duration-300 hover:underline hover:text-[#7f1d1d]">
                     Ver más
                   </button>
                 )}

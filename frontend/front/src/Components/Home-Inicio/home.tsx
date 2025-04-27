@@ -4,32 +4,20 @@ import React, { useEffect, useState } from "react";
 import MembershipSection from "@/Components/memberships/memberships";
 import Ctestimonios from "../Ctestimonios/Ctestimonios";
 import { useSessionUser } from "@/app/SessionUserContext";
-import UserWorkoutRoutines from "../Cliente/VerRutina";
+
 import DownloadDietSection from "./diets";
 import { Subscription } from "../Cliente/SuscripActivodeaact";
-import { useRouter } from "next/navigation";
-import Swal from "sweetalert2";
+
+import TrialRoutinesOnly from "../Todo-Sobre-Rutina/Rutina-PruebaClient"; 
 
 const HomePage: React.FC = () => {
   const { user: currentUser, loading: userLoading, user } = useSessionUser();
   const [loading, setLoading] = useState<boolean>(true);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-  const router = useRouter();
 
   console.log(loading);
 
-  useEffect(() => {
-    if (!user?.email) {
-      Swal.fire({
-        icon: "error",
-        title: "Acceso denegado",
-        text: "Debes iniciar sesión para acceder a esta página.",
-        confirmButtonText: "Aceptar",
-      }).then(() => {
-        router.push("/");
-      });
-    }
-  }, [user, router]);
+  console.log(loading);
 
   useEffect(() => {
     const fetchMemberships = async () => {
@@ -71,6 +59,22 @@ const HomePage: React.FC = () => {
     }
   };
 
+  const formatDate = (dateString: string) => {
+    // Opción 1: Usando split (siempre que el formato sea consistente)
+    const datePart = dateString.split("T")[0];
+    const [year, month, day] = datePart.split("-");
+    return `${day}/${month}/${year}`; // Formato DD/MM/YYYY
+
+    /* Opción 2: Más robusta con Date (recomendada)
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+    */
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       {/* Banner de bienvenida - Mejorado */}
@@ -90,7 +94,7 @@ const HomePage: React.FC = () => {
             {subscriptions?.length > 0 ? (
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
                 <p className="text-amber-50 font-medium text-lg">
-                  Membresía:{" "}
+                  Membresía:
                   <span className="font-bold text-2xl text-white">
                     {subscriptions[0]?.membershipPlan?.name}
                   </span>
@@ -100,10 +104,10 @@ const HomePage: React.FC = () => {
                     {checkSubStatus()}
                   </span>
                   <span className="text-sm text-white/80">
-                    Desde: {subscriptions[0].startDate}
+                    Desde: {formatDate(subscriptions[0].startDate)}
                   </span>
                   <span className="text-sm text-white/80">
-                    Hasta: {subscriptions[0].endDate}
+                    Hasta: {formatDate(subscriptions[0].endDate)}
                   </span>
                 </div>
               </div>
@@ -113,24 +117,9 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* Sección de entrenamiento - Mejorada */}
-      <section className="relative py-16 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-              <span className="block">Tu Entrenamiento de Hoy</span>
-              <span className="block text-red-600 text-xl mt-2">
-                Rutinas destacadas de tu plan
-              </span>
-            </h2>
-          </div>
-
-          {/* Tarjeta de rutina 1 */}
-
-          <UserWorkoutRoutines />
-        </div>
-      </section>
+      <div className="mt-8 mb-6 mx-4">
+        <TrialRoutinesOnly />
+      </div>
 
       {/* Call to Action */}
       <section className="bg-red-700">

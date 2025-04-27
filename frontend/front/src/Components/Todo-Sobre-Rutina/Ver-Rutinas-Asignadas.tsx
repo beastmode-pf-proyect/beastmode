@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import Swal from "sweetalert2";
 import { FaUser, FaEnvelope, FaCalendarAlt, FaClock, FaChevronDown } from "react-icons/fa";
 import Image from "next/image";
+import { useAuth0 } from "@auth0/auth0-react";
 
 interface AssignedRoutine {
   id: string;
@@ -24,12 +25,66 @@ interface AssignedRoutine {
   };
   assigned_at?: string;
 }
+interface User {
+  id: string;
+  name: string;
+  picture: string;
+  email: string;
+  auth0_id: string; 
+  role: {
+    name: string;
+  };
+}
 
 export default function VerRutinasAsignadas() {
   const [asignaciones, setAsignaciones] = useState<AssignedRoutine[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [openAccordions, setOpenAccordions] = useState<Record<string, boolean>>({});
+  const { isAuthenticated, isLoading, error, user, getAccessTokenSilently } = useAuth0();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [apiError, setApiError] = useState<string>("");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const accessToken = await getAccessTokenSilently();
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        if (!response.ok) throw new Error("Error al obtener usuarios");
+        
+        const usersData: User[] = await response.json();
+
+        const auth0Id = user?.sub;
+        const matchedUser = usersData.find((u) => u.auth0_id === auth0Id);
+
+        if (matchedUser) {
+          setCurrentUser(matchedUser);
+        } else {
+          setApiError("Usuario no encontrado en la base de datos");
+        }
+      } catch (err) {
+        setApiError(err instanceof Error ? err.message : "Error desconocido");
+      }
+    };
+
+    if (isAuthenticated) fetchUserData();
+  }, [isAuthenticated, getAccessTokenSilently, user?.sub]);
+
+  let content = null;
+  if (isLoading) {
+    content = <div className="p-4">Cargando...</div>;
+  } else if (error) {
+    content = <div className="p-4 text-red-500">Error: {error.message}</div>;
+  } else if (!isAuthenticated) {
+    content = <div className="p-4">No estás autenticado</div>;
+  } else if (apiError) {
+    content = <div className="p-4 text-red-500">Error: {apiError}</div>;
+  }
 
   const fetchAsignaciones = () => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user-workout`)
@@ -45,9 +100,13 @@ export default function VerRutinasAsignadas() {
       });
   };
 
-  useEffect(() => {
-    fetchAsignaciones();
-  }, []);
+  if (!currentUser && !content) {
+    content = <div className="p-4">Cargando usuario...</div>;
+  }
+    if (currentUser) {
+      fetchAsignaciones();
+    }
+    
 
   const eliminarAsignacion = async (id: string) => {
     const result = await Swal.fire({
@@ -83,7 +142,7 @@ export default function VerRutinasAsignadas() {
 
   const groupedByUser = asignaciones.reduce(
     (acc: Record<string, AssignedRoutine[]>, asignacion) => {
-      const userName = asignacion.user.name || "Desconocido";
+      const userName = asignacion.user?.name || "Desconocido";
       if (!acc[userName]) acc[userName] = [];
       acc[userName].push(asignacion);
       return acc;

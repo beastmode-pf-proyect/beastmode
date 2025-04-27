@@ -25,6 +25,13 @@ const ModalTestimonios: React.FC<ModalTestimoniosProps> = ({
 
   const [hoveredStars, setHoveredStars] = useState<number | null>(null);
 
+  const sanitizeInput = (input: string) => {
+    return input
+      .replace(/[<>{}[\]`~$%^&*]/g, "") // elimina algunos caracteres peligrosos
+      .replace(/\s{2,}/g, " ") // elimina espacios duplicados
+      .trim();
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -45,17 +52,30 @@ const ModalTestimonios: React.FC<ModalTestimoniosProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validaciones
+    const cleanContent = sanitizeInput(formData.content);
+    const cleanOccupation = sanitizeInput(formData.occupation);
+
+    if (cleanContent.length > 500) {
+      toast.error("El testimonio no debe exceder los 500 caracteres.");
+      return;
+    }
+
+    if (cleanContent.length < 10) {
+      toast.error("El testimonio debe tener al menos 10 caracteres.");
+      return;
+    }
+
     setIsLoading(true);
 
     const payload: ITestimonios = {
-        fullName: user?.name || "Usuario Anónimo",
-  age: user?.age && user.age > 0 ? user.age : 30,
-  occupation: formData.occupation,
-  content: formData.content,
-  score: formData.score,
+      fullName: user?.name || "Usuario Anónimo",
+      age: user?.age && user.age > 0 ? user.age : 30,
+      occupation: cleanOccupation,
+      content: cleanContent,
+      score: formData.score,
     };
-
-    console.log(payload); 
 
     try {
       const response = await fetch(
@@ -81,7 +101,6 @@ const ModalTestimonios: React.FC<ModalTestimoniosProps> = ({
     }
   };
 
-
   if (!isAuthenticated) return null;
 
   return (
@@ -94,7 +113,7 @@ const ModalTestimonios: React.FC<ModalTestimoniosProps> = ({
             <label className="block text-gray-700 text-sm font-bold mb-1">
               Nombre:
             </label>
-            <p className="text-gray-600">{user?.name}</p>
+            <p className="text-gray-600 break-words">{user?.name}</p>
           </div>
 
           {/* Ocupación */}
@@ -105,7 +124,7 @@ const ModalTestimonios: React.FC<ModalTestimoniosProps> = ({
               value={formData.occupation}
               onChange={handleChange}
               placeholder="Ocupación"
-              className="w-full p-2 border rounded bg-gray-100"
+              className="w-full p-2 border rounded bg-gray-100 break-words"
             />
           </div>
 
@@ -115,7 +134,8 @@ const ModalTestimonios: React.FC<ModalTestimoniosProps> = ({
             value={formData.content}
             onChange={handleChange}
             placeholder="Escribe tu testimonio"
-            className="w-full p-2 border rounded mb-2 bg-gray-100"
+            maxLength={500}
+            className="w-full p-2 border rounded mb-2 bg-gray-100 break-words whitespace-pre-wrap resize-none"
           />
 
           {/* Calificación */}
