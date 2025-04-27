@@ -1,9 +1,9 @@
+"use client";
+
 import React, { useEffect, useState, Fragment } from "react";
 import Image from "next/image";
 import { Dialog, Transition } from "@headlessui/react";
 import { Menu } from "lucide-react"; 
-import { useAuth0 } from "@auth0/auth0-react";
-import Swal from "sweetalert2";
 
 interface Exercise {
   id: string;
@@ -14,7 +14,7 @@ interface Exercise {
   category: string;
 }
 
-const Page = () => {
+const Ejercicios = () => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [filteredExercises, setFilteredExercises] = useState<Exercise[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -26,20 +26,8 @@ const Page = () => {
   );
   const [isOpen, setIsOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { isAuthenticated } = useAuth0();
 
   const openModal = (exercise: Exercise) => {
-if (!isAuthenticated) {
-  Swal.fire({
-    title: "Acceso restringido",
-    text: "Debes registrarte o iniciar sesión para ver los detalles de los ejercicios.",
-    icon: "warning",
-    confirmButtonColor: "#5e1914",
-    confirmButtonText: "Entendido",
-  });
-  return;
-}
-
     setSelectedExercise(exercise);
     setIsOpen(true);
   };
@@ -91,7 +79,7 @@ if (!isAuthenticated) {
   return (
     <div className="relative min-h-screen flex">
       <aside className="hidden lg:flex flex-col fixed top-[80px] left-0 w-[250px] h-[calc(100vh-80px)] bg-[#5e1914] py-1 z-30 overflow-y-auto">
-        <h2 className="text-xl font-semibold mb-2 text-white">Categorías</h2>
+        <h2 className="text-xl font-semibold mb-2 text-white mt-12">Categorías</h2>
         <div className="flex flex-col gap-2">
           {categories.map(cat => (
             <button
@@ -121,12 +109,12 @@ if (!isAuthenticated) {
           as="div"
           className="relative z-50 lg:hidden"
           onClose={() => setSidebarOpen(false)}>
-          <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm" />
+          <div className="fixed inset-0 bg-[#5e19148f] bg-opacity-30 backdrop-blur-sm" />
           <div className="fixed top-0 left-0 w-64 h-full bg-[#5e1914] p-4 shadow-lg overflow-y-auto">
             <button
               onClick={() => setSidebarOpen(false)}
               className="text-white text-right w-full mb-4 font-bold">
-              Cerrar ✖
+              Cerrar X
             </button>
             <h2 className="text-xl font-semibold mb-4 text-white">
               Categorías
@@ -245,5 +233,4 @@ if (!isAuthenticated) {
   );
 };
 
-export default Page;
-
+export default Ejercicios;
