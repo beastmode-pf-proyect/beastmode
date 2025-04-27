@@ -118,30 +118,30 @@ const MembershipSection = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center h-max">
   <div className="flex flex-col items-center space-y-4">
     {/* Animación de mancuerna */}
     <div className="relative flex items-center">
       {/* Pesas laterales */}
       <div className="absolute -left-8 animate-[bounce_1.2s_infinite]">
-        <div className="w-8 h-12 bg-gradient-to-b from-red-900 to-red-700 rounded-full shadow-lg transform skew-x-12" />
+        <div className="w-8 h-12 bg-white rounded-full shadow-lg transform skew-x-12" />
       </div>
       
       {/* Barra central */}
-      <div className="w-16 h-4 bg-gradient-to-r from-red-800 to-red-600 rounded-lg animate-spin duration-1000" />
+      <div className="w-16 h-4 bg-white rounded-lg animate-spin duration-1000" />
       
       {/* Pesas laterales */}
       <div className="absolute -right-8 animate-[bounce_1.2s_infinite] delay-150">
-        <div className="w-8 h-12 bg-gradient-to-b from-red-900 to-red-700 rounded-full shadow-lg transform -skew-x-12" />
+        <div className="w-8 h-12 bg-white rounded-full shadow-lg transform -skew-x-12" />
       </div>
     </div>
 
     {/* Texto animado */}
     <div className="text-center space-y-2">
-      <p className="text-lg font-bold text-red-900 animate-pulse">
+      <p className="text-lg font-bold text-white animate-pulse">
         Preparando tu entrenamiento...
       </p>
-      <p className="text-sm text-gray-600 italic">
+      <p className="text-sm text-gray-200 italic">
         La fuerza crece con cada repetición
       </p>
     </div>
@@ -152,9 +152,9 @@ const MembershipSection = () => {
 
   if (userRole === "ADMIN" || userRole === "TRAINER") {
     return (
-      <div className="min-h-[50vh] flex flex-col items-center justify-center text-center px-4">
-        <h2 className="text-3xl md:text-4xl font-bold mb-6 text-red-900">¡Gracias por tu increíble trabajo!</h2>
-        <p className="text-xl text-gray-700 mb-8 max-w-2xl">
+      <div className="min-h-[50vh] flex flex-col items-center justify-center text-center text-white px-4">
+        <h2 className="text-3xl md:text-4xl font-bold mb-6 ">¡Gracias por tu increíble trabajo!</h2>
+        <p className="text-xl text-white mb-8 max-w-2xl">
           {userRole === "ADMIN"
             ? "Como administrador, tu trabajo detrás de escena es crucial para que todo funcione a la perfección."
             : "Como entrenador, eres la inspiración y guía para nuestros miembros. Tu conocimiento y dedicación son el motor del éxito."}

@@ -4,6 +4,8 @@ import React, { useEffect, useState, Fragment } from "react";
 import Image from "next/image";
 import { Dialog, Transition } from "@headlessui/react";
 import { Menu } from "lucide-react"; 
+import { useAuth0 } from "@auth0/auth0-react";
+import Swal from "sweetalert2";
 
 interface Exercise {
   id: string;
@@ -26,8 +28,20 @@ const Page = () => {
   );
   const [isOpen, setIsOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { isAuthenticated } = useAuth0();
 
   const openModal = (exercise: Exercise) => {
+if (!isAuthenticated) {
+  Swal.fire({
+    title: "Acceso restringido",
+    text: "Debes registrarte o iniciar sesión para ver los detalles de los ejercicios.",
+    icon: "warning",
+    confirmButtonColor: "#5e1914",
+    confirmButtonText: "Entendido",
+  });
+  return;
+}
+
     setSelectedExercise(exercise);
     setIsOpen(true);
   };
