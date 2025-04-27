@@ -204,13 +204,13 @@ export const Navbarp = () => {
 
   // Efectos al hover para el avatar
   const getAvatarHoverEffect = () => {
-    if (membershipLoading || !membership) return "hover:shadow-gray-400/30";
+    if (membershipLoading || !membership) return "hover:shadow-gray-400";
     const membershipName = membership.name.toLowerCase();
-    if (membershipName.includes("premium")) return "hover:shadow-yellow-400/70 hover:rotate-12";
-    if (membershipName.includes("gold")) return "hover:shadow-amber-600/90 hover:scale-110";
-    if (membershipName.includes("platino") || membershipName.includes("platinum")) return "hover:shadow-cyan-300/70 hover:brightness-125";
-    if (membershipName.includes("diamante") || membershipName.includes("diamond")) return "hover:shadow-purple-500/70 hover:animate-pulse";
-    return "hover:shadow-red-500/70";
+    if (membershipName.includes("premium")) return "hover:shadow-yellow-400 hover:rotate-12";
+    if (membershipName.includes("gold")) return "hover:shadow-amber-600 hover:scale-110";
+    if (membershipName.includes("platino") || membershipName.includes("platinum")) return "hover:shadow-cyan-300 hover:brightness-125";
+    if (membershipName.includes("diamante") || membershipName.includes("diamond")) return "hover:shadow-purple-500 hover:animate-pulse";
+    return "hover:shadow-red-500";
   };
 
   // Badge de membresía
@@ -240,11 +240,11 @@ export const Navbarp = () => {
       } ${
         scrolled
           ? isProUser
-            ? "bg-yellow-700/95 shadow-lg backdrop-blur-sm py-2"
-            : "bg-red-950/95 shadow-lg backdrop-blur-sm py-2"
+            ? "bg-yellow-700 shadow-lg backdrop-blur-sm py-2"
+            : "bg-red-950 shadow-lg backdrop-blur-sm py-2"
           : isProUser
-          ? "bg-yellow-700/90 py-4"
-          : "bg-red-950/90 py-4"
+          ? "bg-yellow-700 py-4"
+          : "bg-red-950 py-4"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -322,11 +322,7 @@ export const Navbarp = () => {
               </Link>
             ))}
 
-            <div
-              className={`h-6 w-px ${
-                isProUser ? "bg-gray-900/30" : "bg-gray-100/20"
-              }`}
-            />
+            <div className={`h-6 w-px ${isProUser ? "bg-gray-900/30" : "bg-gray-100/20"}`} />
 
             {isAuthenticated ? (
               <div className="flex items-center gap-4 relative profile-menu-container">
@@ -335,12 +331,12 @@ export const Navbarp = () => {
                   className="flex items-center gap-2 cursor-pointer group"
                   onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                 >
-                    <div className="relative w-10 h-10">
-                      <div
+                  <div className="relative w-10 h-10">
+                    <div
                       className={`w-11 h-11 rounded-full border-4 overflow-hidden ${getAvatarStyle()} ${getAvatarHoverEffect()} transition-all duration-300 ${
                         isProUser ? "ring-2 ring-yellow-400" : ""
                       }`}
-                      >
+                    >
                       <Image
                         src={avatarSrc}
                         alt="Avatar"
@@ -348,9 +344,9 @@ export const Navbarp = () => {
                         height={50}
                         className="w-full h-full rounded-full object-cover"
                       />
-                      </div>
-                      {getMembershipBadge()}
                     </div>
+                    {getMembershipBadge()}
+                  </div>
                   {isProfileMenuOpen ? (
                     <FaChevronUp
                       className={`transition-transform ${
@@ -372,19 +368,13 @@ export const Navbarp = () => {
                     isProfileMenuOpen
                       ? "opacity-100 translate-y-0"
                       : "opacity-0 translate-y-2 pointer-events-none"
-                  } ${
-                    isProUser
-                      ? "bg-yellow-600 border-yellow-700"
-                      : "bg-[#5e1914] border-red-900/50"
-                  }`}
+                  } ${isProUser ? "bg-yellow-600 border-yellow-700" : "bg-[#5e1914] border-red-900"}`}
                 >
                   <div
-                    className={`px-4 py-3 border-b ${
-                      isProUser ? "border-yellow-700" : "border-red-900/50"
-                    }`}
+                    className={`px-4 py-3 border-b ${isProUser ? "border-yellow-700" : "border-red-900"}`}
                   >
                     <p className={`text-sm font-medium ${isProUser ? "text-gray-900" : "text-white"}`}>
-                        {fetchedUser?.name || "Usuario"}
+                      {fetchedUser?.name || "Usuario"}
                     </p>
                     <p className={`text-xs ${isProUser ? "text-gray-800" : "text-gray-300"} truncate`}>
                       {user?.email}
@@ -416,7 +406,7 @@ export const Navbarp = () => {
                     className={`flex items-center gap-3 w-full px-4 py-3 transition duration-200 text-left border-t ${
                       isProUser
                         ? "border-yellow-700 text-gray-900 hover:bg-yellow-500"
-                        : "border-red-900/50 text-gray-100 hover:bg-red-800"
+                        : "border-red-900 text-gray-100 hover:bg-red-800"
                     }`}
                   >
                     <FaSignOutAlt className="text-lg flex-shrink-0" />
@@ -435,7 +425,7 @@ export const Navbarp = () => {
           <button
             onClick={() => setIsOpen(!isOpen)}
             className={`lg:hidden p-2 rounded-lg focus:outline-none transition-colors duration-300 ${
-              isProUser ? "text-gray-900 hover:bg-yellow-500/50" : "text-gray-100 hover:bg-red-900/50"
+              isProUser ? "text-gray-900 hover:bg-yellow-500" : "text-gray-100 hover:bg-red-900"
             }`}
           >
             <div className={`w-6 h-0.5 mb-1.5 ${isProUser ? "bg-gray-900" : "bg-gray-100"}`} />
@@ -448,7 +438,8 @@ export const Navbarp = () => {
         <div
           className={`lg:hidden transition-all duration-300 ease-in-out overflow-hidden ${
             isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
-          } ${isProUser ? "bg-yellow-600/95" : "bg-[#5e1914]"}`}
+          } ${isProUser ? "bg-yellow-600" : "bg-[#5e1914]"}`
+          }
         >
           <div className="pt-2 pb-4 space-y-2">
             {itemNavbar.map((item, index) => (
@@ -456,7 +447,7 @@ export const Navbarp = () => {
                 key={index}
                 href={item.href}
                 className={`block px-4 py-2 rounded-lg transition-colors duration-300 ${
-                  isProUser ? "text-gray-900 hover:bg-yellow-500/50" : "text-gray-100 hover:bg-red-900/50"
+                  isProUser ? "text-gray-900 hover:bg-yellow-500" : "text-gray-100 hover:bg-red-900"
                 }`}
                 onClick={() => setIsOpen(false)}
               >
@@ -464,7 +455,7 @@ export const Navbarp = () => {
               </Link>
             ))}
 
-            <div className={`pt-2 mt-2 border-t ${isProUser ? "border-yellow-700" : "border-red-900/50"}`}>
+            <div className={`pt-2 mt-2 border-t ${isProUser ? "border-yellow-700" : "border-red-900"}`}>
               {isAuthenticated ? (
                 <div className="space-y-3 pt-2 px-4 mobile-menu-container">
                   {/* Avatar móvil */}
@@ -512,9 +503,7 @@ export const Navbarp = () => {
                         setIsProfileMenuOpen(false);
                       }}
                       className={`flex items-center gap-3 w-full px-4 py-2 rounded-lg transition duration-200 text-left ${
-                        isProUser
-                          ? "text-gray-900 hover:bg-yellow-500/50"
-                          : "text-gray-100 hover:bg-red-800/30"
+                        isProUser ? "text-gray-900 hover:bg-yellow-500" : "text-gray-100 hover:bg-red-800"
                       }`}
                     >
                       <FaUserCog className="text-lg" />
@@ -531,9 +520,7 @@ export const Navbarp = () => {
                         setIsProfileMenuOpen(false);
                       }}
                       className={`flex items-center gap-3 w-full px-4 py-2 rounded-lg transition duration-200 text-left ${
-                        isProUser
-                          ? "text-gray-900 hover:bg-yellow-500/50"
-                          : "text-gray-100 hover:bg-red-800/30"
+                        isProUser ? "text-gray-900 hover:bg-yellow-500" : "text-gray-100 hover:bg-red-800"
                       }`}
                     >
                       <FaSignOutAlt className="text-lg" />

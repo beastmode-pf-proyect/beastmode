@@ -13,13 +13,15 @@ import {
   HiMenu,
   HiX,
   HiOutlineClipboardList,
-  HiOutlineCog
+  HiOutlineCog,
+  HiChevronDoubleLeft,
+  HiChevronDoubleRight,
 } from "react-icons/hi";
 
 // Skeleton Loader Component
 function SkeletonLoader() {
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8]">
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8] overflow-auto md:overflow-visible">
       <div className="hidden md:block w-64 bg-white p-4 animate-pulse">
         <div className="flex flex-col items-center">
           <div className="w-20 h-20 bg-gray-300 rounded-full mb-4" />
@@ -41,7 +43,7 @@ function SkeletonLoader() {
           <div className="h-10 bg-gray-300 rounded w-full" />
         </div>
       </div>
-      <main className="flex-1 p-4 md:p-8 bg-white">
+      <main className="flex-1 p-4 md:p-8 bg-white overflow-auto md:overflow-visible">
         <div className="h-10 w-1/3 bg-gray-300 rounded mb-4 animate-pulse" />
         <div className="h-48 w-full bg-gray-200 rounded animate-pulse" />
       </main>
@@ -64,14 +66,34 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [apiError, setApiError] = useState<string>("");
+  const [desktopMenuCollapsed, setDesktopMenuCollapsed] = useState(false);
 
   const router = useRouter();
+
+  // Load desktop menu state from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("desktopMenuCollapsed");
+      if (stored !== null) {
+        setDesktopMenuCollapsed(stored === "true");
+      }
+    }
+  }, []);
+
+  // Toggle desktop menu and save state
+  const toggleDesktopMenu = () => {
+    setDesktopMenuCollapsed((prev) => {
+      const newState = !prev;
+      localStorage.setItem("desktopMenuCollapsed", newState.toString());
+      return newState;
+    });
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const accessToken = await getAccessTokenSilently();
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/trainer`, {
           headers: { Authorization: `Bearer ${accessToken}` },
         });
 
@@ -127,18 +149,18 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
   ];
   
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8]">
+    <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8] overflow-auto md:overflow-visible">
       {/* Navbar móvil */}
-      <div className="md:hidden fixed top-4 left-0 right-0 bg-white z-30 p-2 flex justify-between items-center">
+      <div className="md:hidden fixed top-4 mt-16 left-0 right-0 bg-white z-30 p-2 flex justify-between items-center">
         <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 text-[#5e1914]">
           {mobileMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
         </button>
       </div>
 
       {/* Sidebar Desktop */}
-      <div className="hidden md:flex flex-col w-64 bg-white p-4">
+      <div className={`hidden md:flex flex-col ${desktopMenuCollapsed ? "w-20" : "w-64"} bg-white p-4 transition-all duration-300`}>
         <div className="flex flex-col items-center mb-6">
-          <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-[#5e1914]">
+          <div className={`relative ${desktopMenuCollapsed ? "w-16 h-16" : "w-32 h-32"} rounded-full overflow-hidden border-4 border-[#5e1914]`}>
             <Image
               src={currentUser.picture || "/placeholder.png"}
               alt={currentUser.name || "Usuario"}
@@ -150,32 +172,47 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
               }}
             />
           </div>
-          
-       
-
-        <div className="bg-[#ffffff] p-4 rounded-md text-center mb-6">
-        <h1 className="text-2xl font-bold text-[#5e1914] mt-4">BeastMode Trainer</h1>
-          <h2 className="text-lg font-semibold text-[#5e1914]">{currentUser.name}</h2>
-          <p className="text-sm text-[#5e1914]">{currentUser.email}</p>
-          <p className="text-sm font-bold text-[#5e1914]">Entrenador</p>
-        </div>
+          {!desktopMenuCollapsed && (
+            <div className="bg-[#ffffff] p-4 rounded-md text-center mt-4">
+              <h1 className="text-2xl font-bold text-[#5e1914]">BeastMode Trainer</h1>
+              <h2 className="text-lg font-semibold text-[#5e1914]">{currentUser.name}</h2>
+              <p className="text-sm text-[#5e1914]">{currentUser.email}</p>
+              <p className="text-sm font-bold text-[#5e1914]">Entrenador</p>
+            </div>
+          )}
         </div>
         <ul className="space-y-2">
           {trainerMenu.map((item) => (
             <li key={item.name}>
               <Link href={item.href} className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#5e1914] hover:scale-105 text-[#5e1914] hover:text-[#5e1914]">
                 {item.icon}
-                <span>{item.name}</span>
+                {!desktopMenuCollapsed && <span>{item.name}</span>}
               </Link>
             </li>
           ))}
         </ul>
+        <button
+          onClick={toggleDesktopMenu}
+          className="mt-auto p-2 hover:bg-gray-200 rounded flex items-center justify-center"
+        >
+          {desktopMenuCollapsed ? (
+            <>
+              <HiChevronDoubleRight className="w-5 h-5" />
+              {!desktopMenuCollapsed && <span> Expandir</span>}
+            </>
+          ) : (
+            <>
+              <HiChevronDoubleLeft className="w-5 h-5" />
+              <span> Colapsar</span>
+            </>
+          )}
+        </button>
       </div>
 
       {/* Sidebar móvil */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 flex">
-          <div className="w-64 bg-white p-4 flex flex-col">
+        <div className="fixed inset-0 z-40 flex mt-20">
+          <div className="w-64 bg-white p-4 flex flex-col overflow-y-auto max-h-screen">
             <div className="flex flex-col items-center mb-6">
               <Image
                 src={currentUser.picture || "/placeholder.png"}
@@ -196,7 +233,11 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
             <ul className="space-y-2">
               {trainerMenu.map((item) => (
                 <li key={item.name}>
-                  <Link href={item.href} onClick={() => setMobileMenuOpen(false)} className="flex items-center p-2 space-x-3 rounded-md hover:bg-[#5e1914] hover:text-white transition duration-300">
+                  <Link
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center p-2 space-x-3 rounded-md hover:bg-[#5e1914] hover:text-white transition duration-300"
+                  >
                     {item.icon}
                     <span>{item.name}</span>
                   </Link>
@@ -218,7 +259,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
         </div>
       )}
 
-      <main className="flex-1 p-4 md:p-8 min-h-screen bg-[#f4c5c50f] mt-20 md:mt-0">
+      <main className="flex-1 p-4 md:p-8 min-h-screen bg-[#f4c5c50f] mt-20 md:mt-0 overflow-auto md:overflow-visible">
         {children}
       </main>
     </div>
