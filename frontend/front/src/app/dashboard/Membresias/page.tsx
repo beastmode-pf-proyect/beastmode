@@ -4,7 +4,7 @@ import React from 'react'
 function page() {
   return (
     <div className='p-9'>
-      <MembresiasActivas/>
+      <MembresiasActivas />
     </div>
   )
 }
