@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import {
   HiHome,
   HiOutlineLogout,
@@ -12,7 +12,6 @@ import { MdFitnessCenter } from "react-icons/md";
 import Link from "next/link";
 import { useAuth0 } from "@auth0/auth0-react";
 import Swal from "sweetalert2";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -163,16 +162,16 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <div className="flex justify-center mb-4">
         <div className="w-[80px] h-[80px] rounded-full bg-[#e0e0e0] overflow-hidden flex items-center justify-center">
           {imageError || !currentUser?.picture ? (
-        <HiUser className="w-10 h-10 text-[#5e1914]" />
+            <HiUser className="w-10 h-10 text-[#5e1914]" />
           ) : (
-        <Image
-          src={currentUser.picture || "/avatar2.avif"}
-          alt="Usuario"
-          width={80}
-          height={80}
-          className="object-cover"
-          onError={() => setImageError(true)}
-        />
+            <Image
+              src={currentUser.picture || "/avatar2.avif"}
+              alt="Usuario"
+              width={80}
+              height={80}
+              className="object-cover"
+              onError={() => setImageError(true)}
+            />
           )}
         </div>
       </div>
@@ -224,7 +223,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       {/* Sidebar para móvil */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 mt-34 flex md:hidden">
-          <div className="w-64 bg-white p-4">
+          <div className="w-64 bg-white p-4 overflow-y-auto max-h-screen">
             <UserInfo />
             <ul className="space-y-2">
               {clientMenu.map((item) => (

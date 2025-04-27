@@ -3,7 +3,6 @@ import {
   HiHome,
   HiBookOpen,
   HiOutlineStar,
-  HiOutlineLogout,
   HiUsers,
   HiCog,
   HiChartBar,
@@ -23,15 +22,56 @@ interface UserData {
   picture: string;
   role: string;
 }
+interface User {
+  id: string;
+  name: string;
+  picture: string;
+  email: string;
+  auth0_id: string; 
+  role: {
+    name: string;
+  };
+}
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { user: auth0User, isAuthenticated, isLoading, logout } = useAuth0();
+  const { user: auth0User, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loadingUserData, setLoadingUserData] = useState(true);
- 
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [apiError, setApiError] = useState<string>("");
 
   useEffect(() => {
+    const fetchUserAPI = async () => {
+      try {
+        const accessToken = await getAccessTokenSilently();
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        if (!response.ok) throw new Error("Error al obtener usuarios");
+        
+        const usersData: User[] = await response.json();
+        const auth0Id = auth0User?.sub;
+        const matchedUser = usersData.find((u) => u.auth0_id === auth0Id);
+
+        if (matchedUser) {
+          setCurrentUser(matchedUser);
+        } else {
+          setApiError("Usuario no encontrado en la base de datos");
+        }
+      } catch (err) {
+        setApiError(err instanceof Error ? err.message : "Error desconocido");
+      }
+    };
+
+    if (isAuthenticated) fetchUserAPI();
+  }, [isAuthenticated, getAccessTokenSilently, auth0User?.sub]);
+
+  useEffect(() => {
+    // Verificación de sesión y obtención de rol del usuario
     if (!isLoading && !isAuthenticated) {
       if (typeof window !== "undefined") {
         Swal.fire({
@@ -77,7 +117,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       setLoadingUserData(false);
     }
   }
-  // ⏳ Skeleton de carga personalizado
+
+  if (isLoading) return <div className="p-4">Cargando...</div>;
+  if (error) return <div className="p-4 text-red-500">Error: {error.message}</div>;
+  if (!isAuthenticated) return <div className="p-4">No estás autenticado</div>;
+  if (apiError) return <div className="p-4 text-red-500">Error: {apiError}</div>;
+  if (!currentUser) return <div className="p-4">Cargando usuario...</div>;
+
+  // Skeleton de carga personalizado
   if (isLoading || loadingUserData) {
     return (
       <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-br from-[#e0e0e0] via-[#f0f0f0] to-[#ffffff] px-4">
@@ -99,6 +146,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
     );
   }
+  
   if (userData && userData.role !== "ADMIN") {
     if (typeof window !== "undefined") {
       Swal.fire({
@@ -166,12 +214,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {roleIcon}
         <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode</h1>
         <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-          <Image src={userData.picture} alt="Usuario" width={40} height={40} className="rounded-full object-cover" />
+          <Image src={currentUser?.picture || "/avatar2.avif"} alt="Usuario" width={40} height={40} className="rounded-full object-cover" />
           <div>
-            <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
-            <p className="text-sm text-[#5e1914]">{userData.email}</p>
+            <h2 className="text-lg font-semibold text-[#5e1914]">{currentUser?.name || "Usuario"}</h2>
+            <p className="text-sm text-[#5e1914]">{currentUser?.email}</p>
             <p className="text-sm text-[#5e1914] font-bold">
-               {userData.role === "ADMIN" ? "Administrador" : userData.role === "TRAINER" ? "Entrenador" : "Usuario"}
+              {userData.role === "ADMIN" ? "Administrador" : userData.role === "TRAINER" ? "Entrenador" : "Usuario"}
             </p>
           </div>
         </div>
@@ -195,12 +243,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             {roleIcon}
             <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode</h1>
             <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-              <Image src={userData.picture} alt="Usuario" width={40} height={40} className="rounded-full object-cover" />
+              <Image src={currentUser?.picture || "/avatar2.avif"} alt="Usuario" width={40} height={40} className="rounded-full object-cover" />
               <div>
-                <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
-                <p className="text-sm text-[#5e1914]">{userData.email}</p>
+                <h2 className="text-lg font-semibold text-[#5e1914]">{currentUser?.name || "Usuario"}</h2>
+                <p className="text-sm text-[#5e1914]">{currentUser?.email}</p>
                 <p className="text-sm text-[#5e1914] font-bold">
-                 {userData.role === "ADMIN" ? "Administrador" : userData.role === "TRAINER" ? "Entrenador" : "Usuario"}
+                  {userData.role === "ADMIN" ? "Administrador" : userData.role === "TRAINER" ? "Entrenador" : "Usuario"}
                 </p>
               </div>
             </div>
@@ -219,16 +267,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </li>
               ))}
             </ul>
-
-            <div className="mt-4">
-              <button
-                onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-                className="w-full flex items-center justify-center gap-2 bg-[#5e1914] hover:bg-[#a82717] text-white p-2 rounded-md transition-all duration-300 transform hover:scale-105"
-              >
-                <HiOutlineLogout className="w-5 h-5" />
-                <span>Cerrar sesión</span>
-              </button>
-            </div>
           </div>
 
           <div className="flex-1 bg-[#5e191444]" onClick={() => setMobileMenuOpen(false)} />
@@ -236,8 +274,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       )}
 
       <main className="flex-1 p-4 md:p-8 min-h-screen bg-[#ffffff] mt-20 md:mt-0">
-        
-
         {children}
       </main>
     </div>

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
@@ -20,6 +20,17 @@ interface Exercise {
   imageUrl?: string | null;
 }
 
+interface ExerciseDetails {
+  sets: number;
+  reps: number;
+}
+
+interface AssignedExercise {
+  exercise: Exercise;
+  sets: number;
+  reps: number;
+}
+
 const ListadeRutinas: React.FC = () => {
   const [routines, setRoutines] = useState<Routine[]>([]);
   const [filteredRoutines, setFilteredRoutines] = useState<Routine[]>([]);
@@ -28,7 +39,10 @@ const ListadeRutinas: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [selectedRoutineId, setSelectedRoutineId] = useState<string | null>(null);
-  const [selectedExercises, setSelectedExercises] = useState<Set<string>>(new Set());
+  const [selectedExercises, setSelectedExercises] = useState<Record<string, ExerciseDetails>>({});
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 9;
 
   useEffect(() => {
     fetchRoutines();
@@ -45,6 +59,7 @@ const ListadeRutinas: React.FC = () => {
       const filtered = data.filter((r: Routine) => !r.name.toLowerCase().startsWith('prueba'));
       setRoutines(filtered);
       setFilteredRoutines(filtered);
+      setCurrentPage(1);
     } catch (error) {
       console.error('Error al obtener las rutinas:', error);
       toast.error('Error al obtener las rutinas');
@@ -58,7 +73,7 @@ const ListadeRutinas: React.FC = () => {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/exercises`);
       if (!response.ok) throw new Error('Error al obtener los ejercicios');
 
-      const data = await response.json();
+      const data: Exercise[] = await response.json();  // Especificamos el tipo aquí
       setExercises(data);
     } catch (error) {
       console.error('Error al obtener los ejercicios:', error);
@@ -66,11 +81,35 @@ const ListadeRutinas: React.FC = () => {
     }
   };
 
+  const fetchAssignedExercises = async (routineId: string) => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/routine-exercises/routine-exercises/${routineId}`);
+      if (!response.ok) throw new Error('Error al obtener ejercicios asignados');
+
+      const data: AssignedExercise[] = await response.json();  // Especificamos el tipo de datos
+      const assigned: Record<string, ExerciseDetails> = {};
+
+      data.forEach((item) => {
+        assigned[item.exercise.id] = {
+          sets: item.sets,
+          reps: item.reps,
+        };
+      });
+
+      return assigned;
+    } catch (error) {
+      console.error('Error al obtener ejercicios asignados:', error);
+      toast.error('Error al obtener ejercicios asignados');
+      return {};
+    }
+  };
+
   const openModal = async (routineId: string) => {
     setSelectedRoutineId(routineId);
-    setIsModalOpen(true);  
-    setSelectedExercises(new Set()); 
+    setIsModalOpen(true);
     await fetchExercises();
+    const assigned = await fetchAssignedExercises(routineId);
+    setSelectedExercises(assigned);
   };
 
   const closeModal = () => {
@@ -80,33 +119,42 @@ const ListadeRutinas: React.FC = () => {
 
   const toggleExerciseSelection = (exerciseId: string) => {
     setSelectedExercises((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(exerciseId)) {
-        newSet.delete(exerciseId);
+      const newSelected = { ...prev };
+      if (newSelected[exerciseId]) {
+        delete newSelected[exerciseId];
       } else {
-        newSet.add(exerciseId);
+        newSelected[exerciseId] = { sets: 3, reps: 12 };
       }
-      return newSet;
+      return newSelected;
     });
   };
 
+  const updateExerciseDetail = (exerciseId: string, field: "sets" | "reps", value: number) => {
+    setSelectedExercises((prev) => ({
+      ...prev,
+      [exerciseId]: {
+        ...prev[exerciseId],
+        [field]: value,
+      },
+    }));
+  };
+
   const handleAddToRoutine = async () => {
-    if (!selectedRoutineId || selectedExercises.size === 0) {
+    if (!selectedRoutineId || Object.keys(selectedExercises).length === 0) {
       toast.error('Selecciona al menos un ejercicio');
       return;
     }
 
     try {
-      const requests = Array.from(selectedExercises).map((exerciseId, index) => {
+      const requests = Object.entries(selectedExercises).map(([exerciseId, details], index) => {
         return fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/routine-exercises/create`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             routineId: selectedRoutineId,
             exerciseId,
-            sets: 3,
-            reps: 12,
-            duration: 60,
+            sets: details.sets,
+            reps: details.reps,
             rest: 30,
             order: index + 1,
           }),
@@ -149,6 +197,11 @@ const ListadeRutinas: React.FC = () => {
     }
   };
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentRoutines = filteredRoutines.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredRoutines.length / itemsPerPage);
+
   return (
     <div className="max-w-6xl mx-auto p-6 mt-12">
       <h2 className="text-3xl font-bold text-red-800 mb-8">Rutinas disponibles</h2>
@@ -163,11 +216,11 @@ const ListadeRutinas: React.FC = () => {
           onChange={(e) => {
             setSearch(e.target.value);
             const query = e.target.value.toLowerCase();
-            setFilteredRoutines(
-              routines
-                .filter(r => !r.name.toLowerCase().startsWith('prueba'))
-                .filter(r => r.name.toLowerCase().includes(query))
-            );
+            const filtered = routines
+              .filter(r => !r.name.toLowerCase().startsWith('prueba'))
+              .filter(r => r.name.toLowerCase().includes(query));
+            setFilteredRoutines(filtered);
+            setCurrentPage(1);
           }}
           className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
         />
@@ -182,7 +235,7 @@ const ListadeRutinas: React.FC = () => {
 
       {/* Lista */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredRoutines.map((routine) => (
+        {currentRoutines.map((routine) => (
           <div key={routine.id} className="bg-white rounded-3xl shadow-xl transform transition-all hover:scale-105 hover:shadow-2xl overflow-hidden p-4">
             <div className="relative w-full h-48 bg-gray-100 flex items-center justify-center rounded-lg mb-4 overflow-hidden">
               {routine.imageUrl ? (
@@ -218,6 +271,35 @@ const ListadeRutinas: React.FC = () => {
         ))}
       </div>
 
+      {/* Controles de Paginación */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center mt-8 space-x-4">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          >
+            Anterior
+          </button>
+          {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((pageNum) => (
+            <button
+              key={pageNum}
+              onClick={() => setCurrentPage(pageNum)}
+              className={`px-4 py-2 rounded ${currentPage === pageNum ? 'bg-red-700 text-white' : 'bg-gray-200'}`}
+            >
+              {pageNum}
+            </button>
+          ))}
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+          >
+            Siguiente
+          </button>
+        </div>
+      )}
+
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 flex justify-center items-center bg-[#5e191491] bg-opacity-40 z-50 mt-17">
@@ -230,28 +312,56 @@ const ListadeRutinas: React.FC = () => {
             </button>
             <h3 className="text-2xl font-bold mb-4 text-center">Selecciona ejercicios</h3>
             <div className="grid md:grid-cols-2 gap-4 overflow-y-auto max-h-[60vh]">
-              {exercises.map((ex) => (
-                <div
-                  key={ex.id}
-                  onClick={() => toggleExerciseSelection(ex.id)}
-                  className={`p-4 shadow-md cursor-pointer transition-all ${selectedExercises.has(ex.id) ? 'bg-blue-50' : 'bg-white'}`}
-                >
-                  <div className="relative w-full h-40 bg-gray-100 mb-2 rounded-lg overflow-hidden">
-                    {ex.imageUrl ? (
-                      <Image src={ex.imageUrl} alt={ex.name} fill className="object-cover" />
-                    ) : (
-                      <FaDumbbell className="text-4xl text-red-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+              {exercises.map((ex) => {
+                const isSelected = selectedExercises.hasOwnProperty(ex.id);
+                const details = isSelected ? selectedExercises[ex.id] : { sets: 3, reps: 12 };
+                return (
+                  <div
+                    key={ex.id}
+                    className={`p-4 shadow-md cursor-pointer transition-all ${isSelected ? 'bg-red-100 border-2 border-red-900' : 'bg-white'}`}
+                  >
+                    <div
+                      onClick={() => toggleExerciseSelection(ex.id)}
+                      className="relative w-full h-40 bg-gray-100 mb-2 rounded-lg overflow-hidden"
+                    >
+                      {ex.imageUrl ? (
+                        <Image src={ex.imageUrl} alt={ex.name} fill className="object-cover" />
+                      ) : (
+                        <FaDumbbell className="text-4xl text-red-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                      )}
+                    </div>
+                    <h4 className="font-semibold text-gray-800">{ex.name}</h4>
+                    {isSelected && (
+                      <div className="mt-2 space-y-1">
+                        <label className="block text-sm">
+                          Sets:
+                          <input
+                            type="number"
+                            value={details.sets}
+                            onChange={(e) => updateExerciseDetail(ex.id, "sets", +e.target.value)}
+                            className="w-full border rounded px-1 py-0.5"
+                          />
+                        </label>
+                        <label className="block text-sm">
+                          Repeticiones:
+                          <input
+                            type="number"
+                            value={details.reps}
+                            onChange={(e) => updateExerciseDetail(ex.id, "reps", +e.target.value)}
+                            className="w-full border rounded px-1 py-0.5"
+                          />
+                        </label>
+                      </div>
                     )}
                   </div>
-                  <h4 className="font-semibold text-gray-800">{ex.name}</h4>
-                </div>
-              ))}
+                );
+              })}
             </div>
-            <div className="sticky bottom-0 w-full">
+            <div className="sticky bottom-0 w-full mt-4">
               <button
                 onClick={handleAddToRoutine}
-                disabled={selectedExercises.size === 0}
-                className={`w-full py-3 ${selectedExercises.size > 0 ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'} text-white rounded-lg font-bold`}
+                disabled={Object.keys(selectedExercises).length === 0}
+                className={`w-full py-3 ${Object.keys(selectedExercises).length > 0 ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'} text-white rounded-lg font-bold`}
               >
                 Guardar en rutina
               </button>

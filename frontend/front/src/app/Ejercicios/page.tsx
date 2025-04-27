@@ -2,7 +2,7 @@
 import React, { useEffect, useState, Fragment } from "react";
 import Image from "next/image";
 import { Dialog, Transition } from "@headlessui/react";
-import { Menu } from "lucide-react"; 
+import { Menu } from "lucide-react";
 import { useAuth0 } from "@auth0/auth0-react";
 import Swal from "sweetalert2";
 
@@ -30,16 +30,16 @@ const Page = () => {
   const { isAuthenticated } = useAuth0();
 
   const openModal = (exercise: Exercise) => {
-if (!isAuthenticated) {
-  Swal.fire({
-    title: "Acceso restringido",
-    text: "Debes registrarte o iniciar sesión para ver los detalles de los ejercicios.",
-    icon: "warning",
-    confirmButtonColor: "#5e1914",
-    confirmButtonText: "Entendido",
-  });
-  return;
-}
+    if (!isAuthenticated) {
+      Swal.fire({
+        title: "Acceso restringido",
+        text: "Debes registrarte o iniciar sesión para ver los detalles de los ejercicios.",
+        icon: "warning",
+        confirmButtonColor: "#5e1914",
+        confirmButtonText: "Entendido",
+      });
+      return;
+    }
 
     setSelectedExercise(exercise);
     setIsOpen(true);
@@ -90,24 +90,26 @@ if (!isAuthenticated) {
   }, [selectedCategory, search, exercises]);
 
   return (
-    <div className="relative min-h-screen flex">
-      <aside className="hidden lg:flex flex-col fixed top-[80px] left-0 w-[250px] h-[calc(100vh-80px)] bg-[#5e1914] py-1 z-30 overflow-y-auto">
-        <h2 className="text-xl font-semibold mb-2 text-white">Categorías</h2>
-        <div className="flex flex-col gap-2">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 rounded-full text-sm transition-all duration-200 border-none whitespace-nowrap ${
-                selectedCategory === cat
-                  ? "bg-white text-[#5e1914] font-bold"
-                  : "bg-[#5e1914] text-white hover:bg-[#7c2d26]"
-              }`}>
-              {cat}
-            </button>
-          ))}
-        </div>
-      </aside>
+    <div className="relative min-h-screen flex bg-gradient-to-b ">
+      <aside className="hidden  lg:flex flex-col fixed top-[80px] left-0 w-[250px] h-[calc(100vh-80px)] bg-[#5e1914] py-6 z-30 overflow-y-auto shadow-xl">
+  <h2 className="text-3xl font-semibold mb-6 text-white tracking-wider font-serif">Categorías</h2>
+  <div className="flex flex-col gap-4">
+    {categories.map((cat) => (
+      <button
+        key={cat}
+        onClick={() => setSelectedCategory(cat)}
+        className={`px-6 py-3 rounded-full text-md font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5e1914] whitespace-nowrap ${
+          selectedCategory === cat
+            ? "bg-white text-[#5e1914] font-bold shadow-lg"
+            : "bg-[#5e1914] text-white hover:bg-[#7c2d26] hover:shadow-lg"
+        }`}
+      >
+        {cat}
+      </button>
+    ))}
+  </div>
+</aside>
+
 
       {/* Botón hamburguesa para móvil */}
       <button
@@ -123,13 +125,13 @@ if (!isAuthenticated) {
           className="relative z-50 lg:hidden"
           onClose={() => setSidebarOpen(false)}>
           <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm" />
-          <div className="fixed top-0 left-0 w-64 h-full bg-[#5e1914] p-4 shadow-lg overflow-y-auto">
+          <div className="fixed top-0 left-0 w-64 h-full bg-[#5e1914] p-4 shadow-lg overflow-y-auto rounded-xl">
             <button
               onClick={() => setSidebarOpen(false)}
               className="text-white text-right w-full mb-4 font-bold">
               Cerrar ✖
             </button>
-            <h2 className="text-xl font-semibold mb-4 text-white">
+            <h2 className="text-2xl font-semibold mb-4 text-white">
               Categorías
             </h2>
             <div className="flex flex-col gap-2">
@@ -158,7 +160,7 @@ if (!isAuthenticated) {
           <input
             type="text"
             placeholder="Buscar ejercicios..."
-            className="w-full lg:w-1/2 p-2 border-b-2 border-red-800 focus:outline-none bg-transparent text-black placeholder-gray-500"
+            className="w-full lg:w-1/2 p-2 border-b-2 border-red-800 focus:outline-none bg-transparent text-black placeholder-gray-500 rounded-lg shadow-md"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
@@ -171,13 +173,13 @@ if (!isAuthenticated) {
                 <div
                   key={ex.id}
                   onClick={() => openModal(ex)}
-                  className="cursor-pointer border rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow duration-200 p-2 min-h-[300px] flex flex-col">
-                  <div className="h-48 w-full relative">
+                  className="cursor-pointer border rounded-lg shadow-xl bg-white hover:shadow-2xl transition-shadow duration-300 p-2 min-h-[300px] flex flex-col">
+                  <div className="h-48 w-full relative rounded-lg overflow-hidden shadow-lg">
                     <Image
                       src={ex.imageUrl || "/descarga.png"}
                       alt={ex.name}
                       fill
-                      className="rounded object-cover"
+                      className="rounded-lg object-cover"
                     />
                   </div>
                   <h3 className="text-lg font-semibold text-center text-red-900 mt-3">
@@ -204,7 +206,7 @@ if (!isAuthenticated) {
             leave="ease-in duration-200"
             leaveFrom="opacity-100"
             leaveTo="opacity-0">
-            <div className="fixed inset-0  bg-opacity-30 backdrop-blur-sm" />
+            <div className="fixed inset-0 bg-opacity-30 backdrop-blur-sm" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
@@ -224,7 +226,7 @@ if (!isAuthenticated) {
                         src={selectedExercise?.imageUrl || "/descarga.png"}
                         alt={selectedExercise?.name || ""}
                         fill
-                        className="object-contain rounded"
+                        className="object-contain rounded-lg shadow-lg"
                       />
                     </div>
                     <div className="flex flex-col justify-center md:w-1/2">
@@ -247,4 +249,3 @@ if (!isAuthenticated) {
 };
 
 export default Page;
-

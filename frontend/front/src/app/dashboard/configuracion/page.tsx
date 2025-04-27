@@ -1,13 +1,14 @@
 
 import React from 'react';
-import UserProfile from '@/Components/obtenerfoto/infoobtener'
+
 import UpdateProfileForm from '@/Components/ActualizarInfo/ActualizarInfo';
+import AuthenticatedUser from '@/Components/obtenerfoto/infoobtener';
 
 const Page = () => {
   return (
     <div>
       <UpdateProfileForm />
-       <UserProfile/>
+       <AuthenticatedUser />
     </div>
   );
 };

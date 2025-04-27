@@ -20,7 +20,7 @@ const Admin: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchName, setSearchName] = useState('');
-  const [roleFilter, setRoleFilter] = useState<'all' | 'trainer' | 'client' | 'admin'>('all');
+  const [roleFilter, setRoleFilter] = useState<'all' | 'trainer' | 'client'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage, setUsersPerPage] = useState(7);
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
@@ -29,7 +29,6 @@ const Admin: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [newRole, setNewRole] = useState<string>('');
 
-  // Paleta de colores personalizadas
   const colors = {
     primary: 'bg-[#5e1914]',
     primaryGradient: 'bg-gradient-to-r from-[#5e1914] to-[#7a1e18]',
@@ -43,7 +42,6 @@ const Admin: React.FC = () => {
     shadow: 'shadow-xl shadow-[#5e1914]/10'
   };
 
-  // Animaciones
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -59,7 +57,6 @@ const Admin: React.FC = () => {
     show: { opacity: 1, y: 0 }
   };
 
-  // Detectamos el tamaño de pantalla al montar y en cambios
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);
@@ -79,7 +76,7 @@ const Admin: React.FC = () => {
 
     if (savedPage) setCurrentPage(Number(savedPage));
     if (savedUsersPerPage) setUsersPerPage(Number(savedUsersPerPage));
-    if (savedRoleFilter) setRoleFilter(savedRoleFilter as 'all' | 'trainer' | 'client' | 'admin');
+    if (savedRoleFilter) setRoleFilter(savedRoleFilter as 'all' | 'trainer' | 'client');
     if (savedSortOrder) setSortOrder(savedSortOrder as 'newest' | 'oldest');
   }, []);
 
@@ -90,19 +87,35 @@ const Admin: React.FC = () => {
     localStorage.setItem('sortOrder', sortOrder);
   }, [currentPage, usersPerPage, roleFilter, sortOrder]);
 
+  // Se consultan ambos endpoints (clientes y entrenadores) y se combinan los resultados
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`);
-      if (!response.ok) {
-        const errorData = await response.json();
-        toast.warning(errorData.message || 'No hay usuarios');
-        setUsers([]);
-        return;
+      let allUsers: User[] = [];
+
+      const [clientsRes, trainersRes] = await Promise.all([
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/client`),
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/trainer`)
+      ]);
+
+      if (clientsRes.ok) {
+        const clientsData = await clientsRes.json();
+        allUsers = allUsers.concat(clientsData);
+      } else {
+        const errorData = await clientsRes.json();
+        toast.warning(errorData.message || 'No hay clientes');
       }
-      const data = await response.json();
-      setUsers(data);
-      if (data.length === 0) toast.info('No hay usuarios');
+      
+      if (trainersRes.ok) {
+        const trainersData = await trainersRes.json();
+        allUsers = allUsers.concat(trainersData);
+      } else {
+        const errorData = await trainersRes.json();
+        toast.warning(errorData.message || 'No hay entrenadores');
+      }
+
+      setUsers(allUsers);
+      if (allUsers.length === 0) toast.info('No se encontraron usuarios');
     } catch (error) {
       toast.error('Error cargando usuarios');
       console.error('Error:', error);
@@ -159,6 +172,8 @@ const Admin: React.FC = () => {
     }
   };
 
+  // Filtramos en base al nombre y al rol seleccionado.
+  // Si el usuario eligió "all" se muestran todos, de lo contrario se filtra por el campo role.name
   const filteredUsers = users
     .filter(user => {
       const nameMatch = user.name?.toLowerCase().includes(searchName.toLowerCase()) ?? false;
@@ -302,7 +317,6 @@ const Admin: React.FC = () => {
               <option value="all">Todos los roles</option>
               <option value="trainer">Entrenadores</option>
               <option value="client">Clientes</option>
-              
             </select>
           </motion.div>
 
@@ -358,7 +372,7 @@ const Admin: React.FC = () => {
           </motion.div>
         ) : (
           <>
-            {/* Desktop Table - Mostrar solo en pantallas grandes */}
+            {/* Desktop Table */}
             {!isMobile && (
               <div className="hidden lg:block overflow-hidden rounded-2xl shadow-lg mb-6 sm:mb-8">
                 <div className="overflow-x-auto">
@@ -425,7 +439,7 @@ const Admin: React.FC = () => {
                                     user.role?.name === 'trainer'
                                       ? 'bg-blue-100 text-blue-800'
                                       : user.role?.name === 'client'
-                                      ? 'bg-purple-100 text-purple-800'               
+                                      ? 'bg-purple-100 text-purple-800'                
                                       : 'bg-slate-100 text-slate-800'
                                   }`}
                                 >
@@ -510,7 +524,7 @@ const Admin: React.FC = () => {
               </div>
             )}
 
-            {/* Mobile Cards - Mostrar solo en pantallas pequeñas */}
+            {/* Mobile Cards */}
             {isMobile && (
               <div className="lg:hidden">
                 <motion.div 
@@ -657,9 +671,7 @@ const Admin: React.FC = () => {
                     whileTap={{ scale: 0.95 }}
                     disabled={currentPage === 1}
                     onClick={() => setCurrentPage(prev => prev - 1)}
-                    className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm ${
-                      currentPage === 1 ? 'bg-slate-200 text-slate-500' : `${colors.primary} text-white`
-                    } transition-all hover:shadow-md`}
+                    className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm ${currentPage === 1 ? 'bg-slate-200 text-slate-500' : `${colors.primary} text-white`} transition-all hover:shadow-md`}
                   >
                     Anterior
                   </motion.button>
@@ -674,9 +686,7 @@ const Admin: React.FC = () => {
                     whileTap={{ scale: 0.95 }}
                     disabled={currentPage === totalPages}
                     onClick={() => setCurrentPage(prev => prev + 1)}
-                    className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm ${
-                      currentPage === totalPages ? 'bg-slate-200 text-slate-500' : `${colors.primary} text-white`
-                    } transition-all hover:shadow-md`}
+                    className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm ${currentPage === totalPages ? 'bg-slate-200 text-slate-500' : `${colors.primary} text-white`} transition-all hover:shadow-md`}
                   >
                     Siguiente
                   </motion.button>
@@ -694,7 +704,7 @@ const Admin: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[#5e191497]  p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#5e191497] p-4"
             onClick={() => setShowRoleModal(false)}
           >
             <motion.div
@@ -733,9 +743,7 @@ const Admin: React.FC = () => {
                   whileTap={{ scale: 0.95 }}
                   onClick={handleUpdateRole}
                   disabled={!newRole}
-                  className={`px-4 py-2 rounded-lg text-white font-medium transition-all ${
-                    !newRole ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-                  }`}
+                  className={`px-4 py-2 rounded-lg text-white font-medium transition-all ${!newRole ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
                 >
                   Confirmar
                 </motion.button>

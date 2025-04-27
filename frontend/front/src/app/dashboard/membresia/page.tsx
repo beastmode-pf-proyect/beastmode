@@ -3,7 +3,7 @@ import React from 'react'
 
 function page() {
   return (
-    <div className='p-8'>
+    <div className='p-9'>
       <MembresiasActivas/>
     </div>
   )
