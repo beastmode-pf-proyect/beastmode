@@ -14,15 +14,9 @@ export class UsersRepository{
         private readonly fileUploadService: FileUploadService,
     ){}
 
-    async getUsersTrainerAndClient() : Promise <Partial<User>[]> {
-      const users = await this.usersRepository.find({
-        relations: ['role']
-      })
-      const nonAdminUsers = users.filter(user => !user.role || user.role.name !== 'admin');
-      if(!nonAdminUsers){
-        throw new NotFoundException('No hay usuarios Trainers o Clients')
-      }
-      return nonAdminUsers;
+    async getUsers() : Promise <Partial<User>[]> {
+      const users = await this.usersRepository.find()
+      return users;
     }
 
     async getUsersTrainer() : Promise <Partial<User>[]> {

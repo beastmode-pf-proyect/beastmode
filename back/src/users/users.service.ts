@@ -7,8 +7,8 @@ import { updateUserDto } from 'src/dto/updateUserDto';
 export class UsersService {
     constructor (private readonly usersRepository : UsersRepository){}
 
-    getUsersTrainerAndClient() { 
-        return this.usersRepository.getUsersTrainerAndClient();
+    getUsers(){
+        return this.usersRepository.getUsers();
     }
 
     getUsersTrainer(){
