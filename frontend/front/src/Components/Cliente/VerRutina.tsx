@@ -228,18 +228,18 @@ const UserWorkoutRoutines = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: trialRoutines.length * 0.1 }}
-                onClick={() => router.push('/Membresias')}
+                // onClick={() => router.push('/Membresias')}
                 className="cursor-pointer flex flex-col justify-center items-center p-6 h-full bg-gradient-to-br from-red-100 to-white border-2 border-dashed border-red-300 rounded-2xl hover:bg-red-200 transition-colors"
               >
                 <span className="text-lg font-semibold text-red-800 text-center">
                   ¿Te gustaron estas rutinas?
                 </span>
                 <span className="text-sm text-red-700 mt-1 text-center">
-                  Descubre más rutinas premium
+                  Descubre más rutinas premium que tenemos preparadas par ti
                 </span>
-                <div className="mt-4 px-4 py-2 bg-red-800 text-white rounded-lg font-medium hover:bg-red-900 transition">
+                {/* <div className="mt-4 px-4 py-2 bg-red-800 text-white rounded-lg font-medium hover:bg-red-900 transition">
                   Ver Membresías
-                </div>
+                </div> */}
               </motion.div>
             )}
           </div>

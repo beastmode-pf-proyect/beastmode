@@ -9,6 +9,6 @@ export class updateUserDto {
     })
     @IsNotEmpty()
     @IsString()
-    @Length(3,20)
+    @Length(3,25)
     name: string
 }
