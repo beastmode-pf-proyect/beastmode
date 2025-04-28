@@ -262,6 +262,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
       <main className="flex-1 p-4 md:p-8 min-h-screen bg-[#ffffff] mt-20 md:mt-0">
         {children}
+   
       </main>
     </div>
   );

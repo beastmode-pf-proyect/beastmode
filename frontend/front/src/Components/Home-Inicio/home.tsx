@@ -4,20 +4,15 @@ import React, { useEffect, useState } from "react";
 import MembershipSection from "@/Components/memberships/memberships";
 import Ctestimonios from "../Ctestimonios/Ctestimonios";
 import { useSessionUser } from "@/app/SessionUserContext";
-
 import DownloadDietSection from "./diets";
 import { Subscription } from "../Cliente/SuscripActivodeaact";
-
-import TrialRoutinesOnly from "../Todo-Sobre-Rutina/Rutina-PruebaClient"; 
+import TrialRoutinesOnly from "../Todo-Sobre-Rutina/Rutina-PruebaClient";
 
 const HomePage: React.FC = () => {
   const { user: currentUser, loading: userLoading, user } = useSessionUser();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [, setLoading] = useState<boolean>(true);
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-
-  console.log(loading);
-
-  console.log(loading);
+  const [isClientUser, setIsClientUser] = useState<boolean>(false); // 👈 Nuevo estado para saber si es CLIENT
 
   useEffect(() => {
     const fetchMemberships = async () => {
@@ -41,18 +36,40 @@ const HomePage: React.FC = () => {
 
         setSubscriptions(userSubscriptions);
       } catch (error) {
-        console.error("No se pudo", error);
+        console.error("Error obteniendo suscripciones:", error);
       }
     };
+
+    const checkIfUserIsClient = async () => {
+      try {
+        if (!currentUser?.email) return;
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/client`
+        );
+        if (!response.ok) {
+          throw new Error("No se pudo obtener la lista de clientes");
+        }
+
+        const clients = await response.json(); // asumimos que es un array de usuarios
+        const isClient = clients.some(
+          (client: { email: string }) => client.email === currentUser.email
+        );
+
+        setIsClientUser(isClient);
+      } catch (error) {
+        console.error("Error verificando cliente:", error);
+      }
+    };
+
     if (!userLoading) {
       fetchMemberships();
+      checkIfUserIsClient();
     }
   }, [currentUser?.email, userLoading]);
 
-  console.log(subscriptions);
-
   const checkSubStatus = () => {
-    if (subscriptions[0].isActive === true) {
+    if (subscriptions[0]?.isActive === true) {
       return "ACTIVA";
     } else {
       return "DESACTIVA";
@@ -60,25 +77,15 @@ const HomePage: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
-    // Opción 1: Usando split (siempre que el formato sea consistente)
     const datePart = dateString.split("T")[0];
     const [year, month, day] = datePart.split("-");
-    return `${day}/${month}/${year}`; // Formato DD/MM/YYYY
-
-    /* Opción 2: Más robusta con Date (recomendada)
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-    */
+    return `${day}/${month}/${year}`;
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-      {/* Banner de bienvenida - Mejorado */}
-      <section className="bg-gradient-to-r from-red-800 to-red-600  shadow-lg">
+      {/* Banner de bienvenida */}
+      <section className="bg-gradient-to-r from-red-800 to-red-600 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
@@ -94,7 +101,7 @@ const HomePage: React.FC = () => {
             {subscriptions?.length > 0 ? (
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
                 <p className="text-amber-50 font-medium text-lg">
-                  Membresía:
+                  Membresía:{" "}
                   <span className="font-bold text-2xl text-white">
                     {subscriptions[0]?.membershipPlan?.name}
                   </span>
@@ -117,9 +124,13 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
-      <div className="mt-8 mb-6 mx-4">
-        <TrialRoutinesOnly />
-      </div>
+
+      {/* Solo mostrar si es CLIENT */}
+      {isClientUser && (
+        <div className="mt-8 mb-6 mx-4">
+          <TrialRoutinesOnly />
+        </div>
+      )}
 
       {/* Call to Action */}
       <section className="bg-red-700">
