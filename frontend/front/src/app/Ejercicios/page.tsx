@@ -33,7 +33,7 @@ const Page = () => {
     if (!isAuthenticated) {
       Swal.fire({
         title: "Acceso restringido",
-        text: "Debes registrarte o iniciar sesión para ver los detalles de los ejercicios.",
+        text: "Debes registrarte o iniciar sesión para ver el detalles de los ejercicios.",
         icon: "warning",
         confirmButtonColor: "#5e1914",
         confirmButtonText: "Entendido",
@@ -91,25 +91,25 @@ const Page = () => {
 
   return (
     <div className="relative min-h-screen flex bg-gradient-to-b ">
-      <aside className="hidden  lg:flex flex-col fixed top-[80px] left-0 w-[250px] h-[calc(100vh-80px)] bg-[#5e1914] py-6 z-30 overflow-y-auto shadow-xl">
-  <h2 className="text-3xl font-semibold mb-6 text-white tracking-wider font-serif">Categorías</h2>
-  <div className="flex flex-col gap-4">
-    {categories.map((cat) => (
-      <button
-        key={cat}
-        onClick={() => setSelectedCategory(cat)}
-        className={`px-6 py-3 rounded-full text-md font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5e1914] whitespace-nowrap ${
-          selectedCategory === cat
-            ? "bg-white text-[#5e1914] font-bold shadow-lg"
-            : "bg-[#5e1914] text-white hover:bg-[#7c2d26] hover:shadow-lg"
-        }`}
-      >
-        {cat}
-      </button>
-    ))}
-  </div>
-</aside>
-
+      <aside className="hidden  lg:flex flex-col fixed top-[80px] left-0 w-[250px] h-[calc(100vh-80px)] bg-[#5e1914] py-6 z-30 overflow-y-auto ">
+        <h2 className="text-3xl font-semibold mb-6 text-white tracking-wider font-serif">
+          Categorías
+        </h2>
+        <div className="flex flex-col gap-4">
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-6 py-3 rounded-full text-md font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5e1914] whitespace-nowrap ${
+                selectedCategory === cat
+                  ? "bg-white text-[#5e1914] font-bold shadow-lg"
+                  : "bg-[#5e1914] text-white hover:bg-[#7c2d26] hover:shadow-lg"
+              }`}>
+              {cat}
+            </button>
+          ))}
+        </div>
+      </aside>
 
       {/* Botón hamburguesa para móvil */}
       <button
