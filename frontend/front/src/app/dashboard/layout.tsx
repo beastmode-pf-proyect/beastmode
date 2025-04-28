@@ -16,6 +16,8 @@ import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
+
+
 interface UserData {
   name: string;
   email: string;
@@ -275,6 +277,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       <main className="flex-1 p-4 md:p-8 min-h-screen bg-[#ffffff] mt-20 md:mt-0">
         {children}
+  
       </main>
     </div>
   );

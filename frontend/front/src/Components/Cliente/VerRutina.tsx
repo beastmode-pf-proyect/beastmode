@@ -71,10 +71,10 @@ const UserWorkoutRoutines = () => {
             ...w.routine,
             ...allRoutines.find(r => r.id === w.routine.id)
           }))
-          .filter(r => r.isActive) // Seguridad doble
+          .filter(r => r.isActive) // ⚡ Aquí sí filtras que siga activo
 
         const trial = allRoutines.filter(r =>
-          r.isActive && r.name.toLowerCase().startsWith("prueba")
+          r.isActive && r.name.toLowerCase().startsWith('prueba')
         )
 
         setAssignedRoutines(assigned)

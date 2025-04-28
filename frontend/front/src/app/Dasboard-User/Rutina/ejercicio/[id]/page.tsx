@@ -246,7 +246,7 @@ const ExerciseDetailPage = () => {
             <StatBox 
               icon={<FiClock />} 
               label="Duración"
-              value={`${routineData.duration}s`} 
+              value="3 minutos - Maximo"
             />
             <StatBox 
               icon={<FiRepeat />} 
