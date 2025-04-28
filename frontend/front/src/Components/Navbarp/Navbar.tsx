@@ -53,6 +53,7 @@ const useUserMembership = () => {
   // Fetch del usuario desde la API
   useEffect(() => {
     const fetchUserData = async () => {
+      if (!user?.sub) return;
       try {
         const accessToken = await getAccessTokenSilently();
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
@@ -67,7 +68,7 @@ const useUserMembership = () => {
           setFetchedUser(matchedUser);
         } else {
           setMembershipError("Usuario no encontrado en la base de datos");
-          console.error("Usuario no encontrado en la base de datos");
+     
         }
       } catch (err) {
         console.error(err);
@@ -143,7 +144,13 @@ export const Navbarp = () => {
         if (!user?.sub) return;
         const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/role/${user.sub}`;
         const response = await fetch(url);
-        if (!response.ok) throw new Error(`Error al obtener el rol - status ${response.status}`);
+        if (!response.ok) {
+          if (response.status === 404) {
+            setUserRole("CLIENT");
+            return;
+          }
+          throw new Error(`Error al obtener el rol - status ${response.status}`);
+        }
         const roleText = await response.text();
         const normalizedRole = roleText.toUpperCase();
         if (["ADMIN", "TRAINER", "CLIENT"].includes(normalizedRole)) {

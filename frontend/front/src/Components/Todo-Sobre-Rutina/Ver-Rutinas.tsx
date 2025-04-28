@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
-import { FiSearch, FiRefreshCw } from 'react-icons/fi';
+import { FiSearch, FiRefreshCw, FiX } from 'react-icons/fi'; // Importa FiX para el ícono de cierre
 import { FaDumbbell } from 'react-icons/fa';
 
 interface Routine {
@@ -21,11 +21,13 @@ interface Exercise {
 }
 
 interface ExerciseDetails {
+  id: string;
   sets: number;
   reps: number;
 }
 
 interface AssignedExercise {
+  id: string;
   exercise: Exercise;
   sets: number;
   reps: number;
@@ -40,7 +42,10 @@ const ListadeRutinas: React.FC = () => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [selectedRoutineId, setSelectedRoutineId] = useState<string | null>(null);
   const [selectedExercises, setSelectedExercises] = useState<Record<string, ExerciseDetails>>({});
+  const [alreadyAssigned, setAlreadyAssigned] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
+  const [inputSets, setInputSets] = useState<Record<string, number>>({});
+  const [inputReps, setInputReps] = useState<Record<string, number>>({});
 
   const itemsPerPage = 9;
 
@@ -53,8 +58,7 @@ const ListadeRutinas: React.FC = () => {
     setSearch('');
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/workout-routine`);
-      if (!response.ok) throw new Error(`Error al obtener las rutinas`);
-
+      if (!response.ok) throw new Error('Error al obtener las rutinas');
       const data = await response.json();
       const filtered = data.filter((r: Routine) => !r.name.toLowerCase().startsWith('prueba'));
       setRoutines(filtered);
@@ -72,8 +76,7 @@ const ListadeRutinas: React.FC = () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/exercises`);
       if (!response.ok) throw new Error('Error al obtener los ejercicios');
-
-      const data: Exercise[] = await response.json();  // Especificamos el tipo aquí
+      const data: Exercise[] = await response.json();
       setExercises(data);
     } catch (error) {
       console.error('Error al obtener los ejercicios:', error);
@@ -85,17 +88,18 @@ const ListadeRutinas: React.FC = () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/routine-exercises/routine-exercises/${routineId}`);
       if (!response.ok) throw new Error('Error al obtener ejercicios asignados');
-
-      const data: AssignedExercise[] = await response.json();  // Especificamos el tipo de datos
+      const data: AssignedExercise[] = await response.json();
       const assigned: Record<string, ExerciseDetails> = {};
-
+      const assignedIds = new Set<string>();
       data.forEach((item) => {
         assigned[item.exercise.id] = {
+          id: item.id,
           sets: item.sets,
           reps: item.reps,
         };
+        assignedIds.add(item.exercise.id);
       });
-
+      setAlreadyAssigned(assignedIds);
       return assigned;
     } catch (error) {
       console.error('Error al obtener ejercicios asignados:', error);
@@ -110,63 +114,92 @@ const ListadeRutinas: React.FC = () => {
     await fetchExercises();
     const assigned = await fetchAssignedExercises(routineId);
     setSelectedExercises(assigned);
+    setInputSets({});
+    setInputReps({});
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedRoutineId(null);
+    setSelectedExercises({});
+    setAlreadyAssigned(new Set());
+    setInputSets({});
+    setInputReps({});
   };
 
-  const toggleExerciseSelection = (exerciseId: string) => {
-    setSelectedExercises((prev) => {
-      const newSelected = { ...prev };
-      if (newSelected[exerciseId]) {
-        delete newSelected[exerciseId];
-      } else {
-        newSelected[exerciseId] = { sets: 3, reps: 12 };
-      }
-      return newSelected;
-    });
-  };
+  const assignExercise = async (exerciseId: string) => {
+    if (!selectedRoutineId) return;
 
-  const updateExerciseDetail = (exerciseId: string, field: "sets" | "reps", value: number) => {
-    setSelectedExercises((prev) => ({
-      ...prev,
-      [exerciseId]: {
-        ...prev[exerciseId],
-        [field]: value,
-      },
-    }));
-  };
+    const sets = inputSets[exerciseId];
+    const reps = inputReps[exerciseId];
 
-  const handleAddToRoutine = async () => {
-    if (!selectedRoutineId || Object.keys(selectedExercises).length === 0) {
-      toast.error('Selecciona al menos un ejercicio');
+    if (!sets || !reps) {
+      toast.error('Debes asignar sets y reps antes de asignar el ejercicio');
       return;
     }
 
     try {
-      const requests = Object.entries(selectedExercises).map(([exerciseId, details], index) => {
-        return fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/routine-exercises/create`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            routineId: selectedRoutineId,
-            exerciseId,
-            sets: details.sets,
-            reps: details.reps,
-            rest: 30,
-            order: index + 1,
-          }),
-        });
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/routine-exercises/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          routineId: selectedRoutineId,
+          exerciseId,
+          sets,
+          reps,
+          rest: 30,
+          order: Object.keys(selectedExercises).length + 1,
+        }),
+      });
+      if (!response.ok) throw new Error('Error al asignar ejercicio');
+      const result = await response.json();
+
+      setSelectedExercises((prev) => ({
+        ...prev,
+        [exerciseId]: {
+          id: result.id || String(Date.now()),
+          sets,
+          reps,
+        },
+      }));
+      setAlreadyAssigned((prev) => new Set(prev).add(exerciseId));
+      toast.success('Ejercicio asignado correctamente');
+    } catch (error) {
+      console.error('Error al asignar ejercicio:', error);
+      toast.error('Error al asignar ejercicio');
+    }
+  };
+
+  const removeExercise = async (exerciseId: string) => {
+    if (!selectedRoutineId) return;
+
+    const routineExercise = selectedExercises[exerciseId];
+    if (!routineExercise) {
+      toast.error('No se encontró el ejercicio asignado');
+      return;
+    }
+
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/routine-exercises/${routineExercise.id}`, {
+        method: 'DELETE',
       });
 
-      await Promise.all(requests);
-      toast.success('Ejercicios asignados correctamente');
-      closeModal();
+      setAlreadyAssigned((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(exerciseId);
+        return newSet;
+      });
+
+      setSelectedExercises((prev) => {
+        const newSelected = { ...prev };
+        delete newSelected[exerciseId];
+        return newSelected;
+      });
+
+      toast.success('Ejercicio eliminado de la rutina');
     } catch (error) {
-      console.error('Error al asignar ejercicios:', error);
-      toast.error('Error al asignar ejercicios');
+      console.error('Error al eliminar ejercicio:', error);
+      toast.error('Error al eliminar ejercicio');
     }
   };
 
@@ -233,18 +266,13 @@ const ListadeRutinas: React.FC = () => {
         </button>
       </div>
 
-      {/* Lista */}
+      {/* Lista de rutinas */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {currentRoutines.map((routine) => (
-          <div key={routine.id} className="bg-white rounded-3xl shadow-xl transform transition-all hover:scale-105 hover:shadow-2xl overflow-hidden p-4">
-            <div className="relative w-full h-48 bg-gray-100 flex items-center justify-center rounded-lg mb-4 overflow-hidden">
+          <div key={routine.id} className="bg-white rounded-3xl shadow-xl p-4 hover:scale-105 transition-all">
+            <div className="relative w-full h-64 bg-gray-100 flex items-center justify-center rounded-lg mb-4 overflow-hidden">
               {routine.imageUrl ? (
-                <Image
-                  src={routine.imageUrl}
-                  alt={routine.name}
-                  fill
-                  className="object-cover"
-                />
+                <Image src={routine.imageUrl} alt={routine.name} fill className="object-cover" />
               ) : (
                 <FaDumbbell className="text-5xl text-red-500 animate-pulse" />
               )}
@@ -261,7 +289,7 @@ const ListadeRutinas: React.FC = () => {
                 </button>
                 <button
                   onClick={() => handleToggle(routine.id, routine.isActive)}
-                  className={`ml-4 py-2 px-4 rounded-lg ${routine.isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white font-medium transition-all duration-200`}
+                  className={`ml-4 py-2 px-4 rounded-lg ${routine.isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white font-medium`}
                 >
                   {routine.isActive ? 'Desactivar' : 'Activar'}
                 </button>
@@ -271,104 +299,91 @@ const ListadeRutinas: React.FC = () => {
         ))}
       </div>
 
-      {/* Controles de Paginación */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center mt-8 space-x-4">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-          >
-            Anterior
-          </button>
-          {Array.from({ length: totalPages }, (_, idx) => idx + 1).map((pageNum) => (
-            <button
-              key={pageNum}
-              onClick={() => setCurrentPage(pageNum)}
-              className={`px-4 py-2 rounded ${currentPage === pageNum ? 'bg-red-700 text-white' : 'bg-gray-200'}`}
-            >
-              {pageNum}
-            </button>
-          ))}
-          <button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-          >
-            Siguiente
-          </button>
-        </div>
-      )}
-
-      {/* Modal */}
+      {/* Modal de ejercicios */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex justify-center items-center bg-[#5e191491] bg-opacity-40 z-50 mt-17">
-          <div className="relative bg-white rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-[#5e191489] flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg w-full max-w-2xl p-8 max-h-[90vh] overflow-y-auto scroll-smooth relative">
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white text-xl w-10 h-10 rounded-full"
+              className="absolute top-4 right-4 text-3xl text-gray-600 hover:text-red-600"
             >
-              &times;
+              <FiX /> {/* Ícono de cierre */}
             </button>
-            <h3 className="text-2xl font-bold mb-4 text-center">Selecciona ejercicios</h3>
-            <div className="grid md:grid-cols-2 gap-4 overflow-y-auto max-h-[60vh]">
+            <h3 className="text-2xl font-semibold mb-4">Ejercicios para la rutina</h3>
+            <div className="grid gap-6">
               {exercises.map((ex) => {
-                const isSelected = selectedExercises.hasOwnProperty(ex.id);
-                const details = isSelected ? selectedExercises[ex.id] : { sets: 3, reps: 12 };
+                const isAssigned = alreadyAssigned.has(ex.id);
                 return (
-                  <div
-                    key={ex.id}
-                    className={`p-4 shadow-md cursor-pointer transition-all ${isSelected ? 'bg-red-100 border-2 border-red-900' : 'bg-white'}`}
-                  >
-                    <div
-                      onClick={() => toggleExerciseSelection(ex.id)}
-                      className="relative w-full h-40 bg-gray-100 mb-2 rounded-lg overflow-hidden"
-                    >
-                      {ex.imageUrl ? (
-                        <Image src={ex.imageUrl} alt={ex.name} fill className="object-cover" />
-                      ) : (
-                        <FaDumbbell className="text-4xl text-red-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-                      )}
-                    </div>
-                    <h4 className="font-semibold text-gray-800">{ex.name}</h4>
-                    {isSelected && (
-                      <div className="mt-2 space-y-1">
-                        <label className="block text-sm">
-                          Sets:
-                          <input
-                            type="number"
-                            value={details.sets}
-                            onChange={(e) => updateExerciseDetail(ex.id, "sets", +e.target.value)}
-                            className="w-full border rounded px-1 py-0.5"
-                          />
-                        </label>
-                        <label className="block text-sm">
-                          Repeticiones:
-                          <input
-                            type="number"
-                            value={details.reps}
-                            onChange={(e) => updateExerciseDetail(ex.id, "reps", +e.target.value)}
-                            className="w-full border rounded px-1 py-0.5"
-                          />
-                        </label>
+                  <div key={ex.id} className={`p-4 shadow-md rounded-lg ${isAssigned ? 'bg-green-200' : 'bg-white'}`}>
+                    <div className="flex justify-between items-center flex-wrap gap-4">
+                      <div>
+                        <h4 className="text-xl font-medium">{ex.name}</h4>
+                        {ex.imageUrl && (
+                          <div className="relative w-16 h-16 bg-gray-100 flex items-center justify-center rounded-lg mb-2 overflow-hidden">
+                            <Image src={ex.imageUrl} alt={ex.name} fill className="object-cover" />
+                          </div>
+                        )}
+                        <p className="text-sm text-gray-600">{ex.description}</p>
                       </div>
-                    )}
+                      <div className="flex gap-4">
+                        {isAssigned ? (
+                          <button
+                            onClick={() => removeExercise(ex.id)}
+                            className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
+                          >
+                            Eliminar
+                          </button>
+                        ) : (
+                          <>
+                            <input
+                              type="number"
+                              value={inputSets[ex.id] || ''}
+                              onChange={(e) => setInputSets((prev) => ({ ...prev, [ex.id]: parseInt(e.target.value) }))}
+                              className="border px-4 py-2 rounded-md"
+                              placeholder="Sets"
+                            />
+                            <input
+                              type="number"
+                              value={inputReps[ex.id] || ''}
+                              onChange={(e) => setInputReps((prev) => ({ ...prev, [ex.id]: parseInt(e.target.value) }))}
+                              className="border px-4 py-2 rounded-md"
+                              placeholder="Reps"
+                            />
+                            <button
+                              onClick={() => assignExercise(ex.id)}
+                              className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg"
+                            >
+                              Asignar
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 );
               })}
             </div>
-            <div className="sticky bottom-0 w-full mt-4">
-              <button
-                onClick={handleAddToRoutine}
-                disabled={Object.keys(selectedExercises).length === 0}
-                className={`w-full py-3 ${Object.keys(selectedExercises).length > 0 ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'} text-white rounded-lg font-bold`}
-              >
-                Guardar en rutina
-              </button>
-            </div>
           </div>
         </div>
       )}
+
+      {/* Paginación */}
+      <div className="flex justify-center mt-8">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="bg-gray-300 text-gray-500 rounded-lg py-2 px-4 mx-2"
+        >
+          Anterior
+        </button>
+        <button
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className="bg-gray-300 text-gray-500 rounded-lg py-2 px-4 mx-2"
+        >
+          Siguiente
+        </button>
+      </div>
     </div>
   );
 };

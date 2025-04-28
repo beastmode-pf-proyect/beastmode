@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import {
   HiHome,
   HiBookOpen,
-  HiOutlineLogout,
+
   HiMenu,
   HiX,
   HiOutlineClipboardList,
@@ -62,7 +62,7 @@ interface User {
 }
 
 export default function TrainerLayout({ children }: { children: React.ReactNode }) {
-  const { user, isAuthenticated, isLoading, logout, error, getAccessTokenSilently } = useAuth0();
+  const { user, isAuthenticated, isLoading, error, getAccessTokenSilently } = useAuth0();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [apiError, setApiError] = useState<string>("");
@@ -203,7 +203,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
           ) : (
             <>
               <HiChevronDoubleLeft className="w-5 h-5" />
-              <span> Colapsar</span>
+            
             </>
           )}
         </button>
@@ -245,15 +245,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
               ))}
             </ul>
 
-            <div className="mt-6">
-              <button
-                onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-                className="w-full flex items-center justify-center gap-2 bg-[#5e1914] hover:bg-[#400e0a] text-white p-2 rounded-md transition-all duration-300 transform hover:scale-105"
-              >
-                <HiOutlineLogout className="w-5 h-5" />
-                <span>Cerrar sesión</span>
-              </button>
-            </div>
+            
           </div>
           <div className="flex-1 bg-transparent" onClick={() => setMobileMenuOpen(false)} />
         </div>

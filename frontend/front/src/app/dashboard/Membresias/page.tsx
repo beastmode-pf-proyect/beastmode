@@ -1,5 +1,6 @@
-import MembresiasActivas from '@/Components/memberships/MembresiasActivasAdmin'
+
 import React from 'react'
+import MembresiasActivas from '@/Components/memberships/MembresiasActivasAdmin'
 
 function page() {
   return (

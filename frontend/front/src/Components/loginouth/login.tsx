@@ -97,7 +97,7 @@ const LoginForm = () => {
 
           if (isNewUser && !hasInitialized) {
             localStorage.setItem("hasInitialized", "true");
-            router.push("/landing");
+            router.push("/Home");
           } else {
             const returnTo = window.sessionStorage.getItem("returnTo") || "/dashboard";
             router.push(returnTo);
