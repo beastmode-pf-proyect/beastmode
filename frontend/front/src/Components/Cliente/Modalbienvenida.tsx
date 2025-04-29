@@ -32,12 +32,7 @@ const WelcomeModal = ({ show, onClose, userName }: WelcomeModalProps) => {
               </p>
 
               <div className="flex flex-col gap-3">
-                <button
-                  onClick={onClose}
-                  className="w-full py-3 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors"
-                >
-                  Explorar Planes
-                </button>
+                
                 <button
                   onClick={onClose}
                   className="text-sm text-gray-400 hover:text-white"

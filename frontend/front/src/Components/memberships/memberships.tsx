@@ -50,7 +50,10 @@ const MembershipSection = () => {
     const fetchUserRole = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/role/${currentUser.id}`);
-        if (!response.ok) throw new Error("Error obteniendo rol de usuario");
+        if (!response.ok) {
+          setUserRole("CLIENT");
+          return;
+        }
 
         const roleText = await response.text();
         const normalized = roleText.toUpperCase().trim();
