@@ -27,7 +27,7 @@ export interface Subscription {
   membershipPlan: MembershipPlan;
 }
 
-const ActiveSubscriptions = () => {
+const ActiveSubscriptions = () => { 
   const { user: currentUser, loading: userLoading } = useSessionUser();
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -36,52 +36,65 @@ const ActiveSubscriptions = () => {
   const [selectedSubscription, setSelectedSubscription] =
     useState<Subscription | null>(null);
 
-  useEffect(() => {
-    const fetchSubscriptions = async () => {
-      try {
-        if (!currentUser?.email) {
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/subscriptions`
-        );
-        if (!response.ok) {
-          throw new Error("No se pudo obtener las suscripciones");
-        }
-        const data: Subscription[] = await response.json();
-
-        const userSubscriptions = data.filter(
-          sub => sub.user.email === currentUser.email && sub.isPago
-        );
-
-        setSubscriptions(userSubscriptions);
-      } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : "Error desconocido");
-      } finally {
+  const fetchSubscriptions = async () => {
+    try {
+      if (!currentUser?.email) {
         setLoading(false);
+        return;
       }
-    };
 
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/subscriptions`
+      );
+      if (!response.ok) {
+        throw new Error("No se pudo obtener las suscripciones");
+      }
+      const data: Subscription[] = await response.json();
+
+      const userSubscriptions = data.filter(
+        sub => sub.user.email === currentUser.email && sub.isPago
+      );
+
+      setSubscriptions(userSubscriptions);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Error desconocido");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Llamada inicial cuando los datos de usuario están listos
+  useEffect(() => {
     if (!userLoading) {
       fetchSubscriptions();
     }
   }, [currentUser?.email, userLoading]);
 
+  // Polling cada 5 segundos para actualizar automáticamente las suscripciones
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (!userLoading) {
+        fetchSubscriptions();
+      }
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [currentUser?.email, userLoading]);
+
   const deactivateMembership = async (id: string) => {
-    const endpoint = `${process.env.NEXT_PUBLIC_BACKEND_URL}/memberships/desactivate/${id}`;
+    const endpoint = `${process.env.NEXT_PUBLIC_BACKEND_URL}/subscriptions/${id}`;
 
     try {
       const res = await fetch(endpoint, {
-        method: "PUT", // Mantén PUT si has decidido usar ese método en el backend
+        method: "DELETE", // Puedes cambiar a PUT si lo requiere el backend
       });
 
       if (!res.ok) throw new Error("Error al desactivar la membresía");
 
-     setSubscriptions(prev =>
-       prev.map(m => (m.id === id ? { ...m, active: false } : m))
-     );
+      // Actualizamos el estado local para reflejar el cambio
+      setSubscriptions(prev =>
+        prev.map(m => (m.id === id ? { ...m, isActive: false } : m))
+      );
 
       toast.success("Membresía desactivada correctamente", {
         style: {
@@ -103,7 +116,6 @@ const ActiveSubscriptions = () => {
       console.error("Error al desactivar la membresía:", error);
     }
   };
-
 
   if (userLoading) {
     return (
@@ -348,7 +360,6 @@ const ActiveSubscriptions = () => {
                       {sub.isPago ? "Pagado" : "Pendiente"}
                     </span>
                   </div>
-
                 </div>
               </div>
             );
@@ -357,7 +368,7 @@ const ActiveSubscriptions = () => {
       )}
 
       {showSuspendModal && selectedSubscription && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#5e19149b] bg-opacity-50">
           <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
             <h2 className="text-lg font-bold mb-4 text-[#5e1914]">
               Suspender membresía

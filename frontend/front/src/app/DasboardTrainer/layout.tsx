@@ -9,7 +9,6 @@ import Swal from "sweetalert2";
 import {
   HiHome,
   HiBookOpen,
-
   HiMenu,
   HiX,
   HiOutlineClipboardList,
@@ -70,7 +69,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
 
   const router = useRouter();
 
-  // Load desktop menu state from localStorage
+ 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("desktopMenuCollapsed");
@@ -80,7 +79,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
     }
   }, []);
 
-  // Toggle desktop menu and save state
+
   const toggleDesktopMenu = () => {
     setDesktopMenuCollapsed((prev) => {
       const newState = !prev;
@@ -89,39 +88,45 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
     });
   };
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const accessToken = await getAccessTokenSilently();
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/trainer`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
+  // Función para obtener los datos del usuario
+  const fetchUserData = async () => {
+    try {
+      const accessToken = await getAccessTokenSilently();
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/trainer`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
 
-        if (!response.ok) throw new Error("Error al obtener usuarios");
+      if (!response.ok) throw new Error("Error al obtener usuarios");
 
-        const usersData: User[] = await response.json();
-        const matchedUser = usersData.find((u) => u.auth0_id === user?.sub);
+      const usersData: User[] = await response.json();
+      const matchedUser = usersData.find((u) => u.auth0_id === user?.sub);
 
-        if (matchedUser) {
-          if (matchedUser.role.name.toUpperCase() !== "TRAINER") {
-            Swal.fire({
-              icon: "error",
-              title: "Acceso denegado",
-              text: "No tienes permisos para acceder como entrenador.",
-              confirmButtonText: "Volver",
-            }).then(() => router.push("/"));
-            return;
-          }
-          setCurrentUser(matchedUser);
-        } else {
-          setApiError("Usuario no encontrado en la base de datos");
+      if (matchedUser) {
+        if (matchedUser.role.name.toUpperCase() !== "TRAINER") {
+          Swal.fire({
+            icon: "error",
+            title: "Acceso denegado",
+            text: "No tienes permisos para acceder como entrenador.",
+            confirmButtonText: "Volver",
+          }).then(() => router.push("/"));
+          return;
         }
-      } catch (err) {
-        setApiError(err instanceof Error ? err.message : "Error desconocido");
+        setCurrentUser(matchedUser);
+      } else {
+        setApiError("Usuario no encontrado en la base de datos");
       }
-    };
+    } catch (err) {
+      setApiError(err instanceof Error ? err.message : "Error desconocido");
+    }
+  };
 
-    if (isAuthenticated) fetchUserData();
+  // Inicial y refresco cada 5 segundos para ver foto y nombre actualizadas
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchUserData();
+      const interval = setInterval(fetchUserData, 5000);
+      return () => clearInterval(interval);
+    }
   }, [isAuthenticated, getAccessTokenSilently, user?.sub, router]);
 
   useEffect(() => {
@@ -198,12 +203,10 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
           {desktopMenuCollapsed ? (
             <>
               <HiChevronDoubleRight className="w-5 h-5" />
-              {!desktopMenuCollapsed && <span> Expandir</span>}
             </>
           ) : (
             <>
               <HiChevronDoubleLeft className="w-5 h-5" />
-            
             </>
           )}
         </button>
@@ -244,8 +247,6 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
                 </li>
               ))}
             </ul>
-
-            
           </div>
           <div className="flex-1 bg-transparent" onClick={() => setMobileMenuOpen(false)} />
         </div>

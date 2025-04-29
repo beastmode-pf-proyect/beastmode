@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
-import { FiSearch, FiRefreshCw, FiX } from 'react-icons/fi'; // Importa FiX para el ícono de cierre
+import { FiSearch, FiRefreshCw, FiX } from 'react-icons/fi';
 import { FaDumbbell } from 'react-icons/fa';
 
 interface Routine {
@@ -48,10 +48,6 @@ const ListadeRutinas: React.FC = () => {
   const [inputReps, setInputReps] = useState<Record<string, number>>({});
 
   const itemsPerPage = 9;
-
-  useEffect(() => {
-    fetchRoutines();
-  }, []);
 
   const fetchRoutines = async () => {
     setLoading(true);
@@ -107,6 +103,15 @@ const ListadeRutinas: React.FC = () => {
       return {};
     }
   };
+
+  useEffect(() => {
+    fetchRoutines();
+    // Polling cada 5 segundos para actualizar la lista de rutinas nuevas
+    const interval = setInterval(() => {
+      fetchRoutines();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const openModal = async (routineId: string) => {
     setSelectedRoutineId(routineId);
@@ -300,72 +305,84 @@ const ListadeRutinas: React.FC = () => {
       </div>
 
       {/* Modal de ejercicios */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-[#5e191489] flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg w-full max-w-2xl p-8 max-h-[90vh] overflow-y-auto scroll-smooth relative">
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 text-3xl text-gray-600 hover:text-red-600"
-            >
-              <FiX /> {/* Ícono de cierre */}
-            </button>
-            <h3 className="text-2xl font-semibold mb-4">Ejercicios para la rutina</h3>
-            <div className="grid gap-6">
-              {exercises.map((ex) => {
-                const isAssigned = alreadyAssigned.has(ex.id);
-                return (
-                  <div key={ex.id} className={`p-4 shadow-md rounded-lg ${isAssigned ? 'bg-green-200' : 'bg-white'}`}>
-                    <div className="flex justify-between items-center flex-wrap gap-4">
-                      <div>
-                        <h4 className="text-xl font-medium">{ex.name}</h4>
-                        {ex.imageUrl && (
-                          <div className="relative w-16 h-16 bg-gray-100 flex items-center justify-center rounded-lg mb-2 overflow-hidden">
-                            <Image src={ex.imageUrl} alt={ex.name} fill className="object-cover" />
-                          </div>
-                        )}
-                        <p className="text-sm text-gray-600">{ex.description}</p>
-                      </div>
-                      <div className="flex gap-4">
-                        {isAssigned ? (
-                          <button
-                            onClick={() => removeExercise(ex.id)}
-                            className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
-                          >
-                            Eliminar
-                          </button>
-                        ) : (
-                          <>
-                            <input
-                              type="number"
-                              value={inputSets[ex.id] || ''}
-                              onChange={(e) => setInputSets((prev) => ({ ...prev, [ex.id]: parseInt(e.target.value) }))}
-                              className="border px-4 py-2 rounded-md"
-                              placeholder="Sets"
-                            />
-                            <input
-                              type="number"
-                              value={inputReps[ex.id] || ''}
-                              onChange={(e) => setInputReps((prev) => ({ ...prev, [ex.id]: parseInt(e.target.value) }))}
-                              className="border px-4 py-2 rounded-md"
-                              placeholder="Reps"
-                            />
-                            <button
-                              onClick={() => assignExercise(ex.id)}
-                              className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg"
-                            >
-                              Asignar
-                            </button>
-                          </>
-                        )}
-                      </div>
+{isModalOpen && (
+  <div className="fixed inset-0 bg-[#5e191489] flex items-center justify-center z-50 p-2 sm:p-4">
+    <div className="bg-white rounded-lg w-full max-w-2xl p-4 sm:p-6 md:p-8 max-h-[90vh] overflow-y-auto scroll-smooth relative">
+      <button
+        onClick={closeModal}
+        className="absolute top-2 right-2 sm:top-4 sm:right-4 text-2xl sm:text-3xl text-gray-600 hover:text-red-600"
+      >
+        <FiX />
+      </button>
+      <h3 className="text-xl sm:text-2xl font-semibold mb-4 md:mb-6">Ejercicios para la rutina</h3>
+      <div className="grid gap-4 sm:gap-6">
+        {exercises.map((ex) => {
+          const isAssigned = alreadyAssigned.has(ex.id);
+          return (
+            <div key={ex.id} className={`p-3 sm:p-4 shadow-md rounded-lg ${isAssigned ? 'bg-green-200' : 'bg-white'}`}>
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-4">
+                <div className="flex-1">
+                  <h4 className="text-lg sm:text-xl font-medium">{ex.name}</h4>
+                  {ex.imageUrl && (
+                    <div className="relative w-24 h-24 sm:w-16 sm:h-16 bg-gray-100 flex items-center justify-center rounded-lg mb-2 overflow-hidden">
+                      <Image 
+                        src={ex.imageUrl} 
+                        alt={ex.name} 
+                        fill 
+                        className="object-cover"
+                        sizes="(max-width: 640px) 96px, 64px"
+                      />
                     </div>
+                  )}
+                  <p className="text-xs sm:text-sm text-gray-600">{ex.description}</p>
+                </div>
+                <div className="w-full sm:w-auto">
+                  <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-4">
+                    {isAssigned ? (
+                      <button
+                        onClick={() => removeExercise(ex.id)}
+                        className="w-full sm:w-auto bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg text-sm sm:text-base"
+                      >
+                        Eliminar
+                      </button>
+                    ) : (
+                      <>
+                        <div className="flex gap-2 w-full sm:w-auto">
+                          <input
+                            type="number"
+                            value={inputSets[ex.id] || ''}
+                            onChange={(e) => setInputSets((prev) => ({ ...prev, [ex.id]: parseInt(e.target.value) }))}
+                            className="w-full sm:w-20 border px-3 py-2 rounded-md text-sm"
+                            placeholder="Sets"
+                            min="1"
+                          />
+                          <input
+                            type="number"
+                            value={inputReps[ex.id] || ''}
+                            onChange={(e) => setInputReps((prev) => ({ ...prev, [ex.id]: parseInt(e.target.value) }))}
+                            className="w-full sm:w-20 border px-3 py-2 rounded-md text-sm"
+                            placeholder="Reps"
+                            min="1"
+                          />
+                        </div>
+                        <button
+                          onClick={() => assignExercise(ex.id)}
+                          className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg text-sm sm:text-base"
+                        >
+                          Asignar
+                        </button>
+                      </>
+                    )}
                   </div>
-                );
-              })}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          );
+        })}
+      </div>
+    </div>
+  </div>
+)}
 
       {/* Paginación */}
       <div className="flex justify-center mt-8">
