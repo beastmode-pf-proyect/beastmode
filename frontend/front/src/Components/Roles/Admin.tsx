@@ -61,10 +61,8 @@ const Admin: React.FC = () => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);
     };
-    
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -87,7 +85,7 @@ const Admin: React.FC = () => {
     localStorage.setItem('sortOrder', sortOrder);
   }, [currentPage, usersPerPage, roleFilter, sortOrder]);
 
-  // Se consultan ambos endpoints (clientes y entrenadores) y se combinan los resultados
+  // Consultar ambos endpoints y combinar resultados
   const fetchUsers = async () => {
     try {
       setLoading(true);
@@ -124,6 +122,7 @@ const Admin: React.FC = () => {
     }
   };
 
+  // Se carga una sola vez al montar el componente
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -172,8 +171,7 @@ const Admin: React.FC = () => {
     }
   };
 
-  // Filtramos en base al nombre y al rol seleccionado.
-  // Si el usuario eligió "all" se muestran todos, de lo contrario se filtra por el campo role.name
+  // Filtrado y ordenamiento
   const filteredUsers = users
     .filter(user => {
       const nameMatch = user.name?.toLowerCase().includes(searchName.toLowerCase()) ?? false;
@@ -715,7 +713,6 @@ const Admin: React.FC = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <h3 className="text-lg font-bold mb-4">Cambiar rol de {selectedUser.name}</h3>
-              
               <div className="mb-6">
                 <label className="block text-sm font-medium text-slate-500 mb-2">Seleccionar nuevo rol</label>
                 <select
@@ -728,7 +725,6 @@ const Admin: React.FC = () => {
                   <option value="client">Cliente</option>
                 </select>
               </div>
-
               <div className="flex justify-end gap-3">
                 <motion.button
                   whileHover={{ scale: 1.05 }}

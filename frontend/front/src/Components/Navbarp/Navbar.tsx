@@ -35,7 +35,7 @@ export interface User {
   name: string;
   picture: string;
   email: string;
-  auth0_id: string; 
+  auth0_id: string;
   role: {
     name: string;
   };
@@ -50,7 +50,7 @@ const useUserMembership = () => {
   const [loading, setLoading] = useState(true);
   const [membershipError, setMembershipError] = useState<string | null>(null);
 
-  // Fetch del usuario desde la API
+  // Polling para actualizar datos del usuario cada 5 segundos
   useEffect(() => {
     const fetchUserData = async () => {
       if (!user?.sub) return;
@@ -68,7 +68,6 @@ const useUserMembership = () => {
           setFetchedUser(matchedUser);
         } else {
           setMembershipError("Usuario no encontrado en la base de datos");
-     
         }
       } catch (err) {
         console.error(err);
@@ -77,6 +76,8 @@ const useUserMembership = () => {
 
     if (isAuthenticated) {
       fetchUserData();
+      const interval = setInterval(fetchUserData, 5000);
+      return () => clearInterval(interval);
     }
   }, [isAuthenticated, user?.sub, getAccessTokenSilently]);
 
@@ -445,8 +446,7 @@ export const Navbarp = () => {
         <div
           className={`lg:hidden transition-all duration-300 ease-in-out overflow-hidden ${
             isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
-          } ${isProUser ? "bg-yellow-600" : "bg-[#5e1914]"}`
-          }
+          } ${isProUser ? "bg-yellow-600" : "bg-[#5e1914]"}`}
         >
           <div className="pt-2 pb-4 space-y-2">
             {itemNavbar.map((item, index) => (

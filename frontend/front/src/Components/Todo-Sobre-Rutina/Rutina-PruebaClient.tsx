@@ -104,12 +104,12 @@ const RoutineDetailPage = () => {
           )}
         </div>
         <div className="flex space-x-3">
-          <button
+         <button
             onClick={() => router.push(`/Dasboard-User/Rutina/rutinas/${routine.id}`)}
-            className="flex-1 bg-gradient-to-r from-[#5e1914] via-[#5e1914] to-[#5e1914] text-white py-3 px-5 rounded-xl font-semibold shadow-lg hover:brightness-110 transition-all duration-300 transform hover:scale-105"
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#5e1914] via-[#5e1914] to-[#5e1914] text-white py-3 px-5 rounded-xl font-semibold shadow-lg hover:brightness-110 transition-all duration-300 transform hover:scale-105"
           >
-            <FiPlay className="mr-1" />
-            Comenzar
+            <FiPlay className="w-5 h-5" />
+            <span>Comenzar</span>
           </button>
         </div>
       </div>

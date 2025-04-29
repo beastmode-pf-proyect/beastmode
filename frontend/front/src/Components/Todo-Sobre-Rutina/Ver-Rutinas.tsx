@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
-import { FiSearch, FiRefreshCw, FiX } from 'react-icons/fi'; // Importa FiX para el ícono de cierre
+import { FiSearch, FiRefreshCw, FiX } from 'react-icons/fi';
 import { FaDumbbell } from 'react-icons/fa';
 
 interface Routine {
@@ -48,10 +48,6 @@ const ListadeRutinas: React.FC = () => {
   const [inputReps, setInputReps] = useState<Record<string, number>>({});
 
   const itemsPerPage = 9;
-
-  useEffect(() => {
-    fetchRoutines();
-  }, []);
 
   const fetchRoutines = async () => {
     setLoading(true);
@@ -107,6 +103,15 @@ const ListadeRutinas: React.FC = () => {
       return {};
     }
   };
+
+  useEffect(() => {
+    fetchRoutines();
+    // Polling cada 5 segundos para actualizar la lista de rutinas nuevas
+    const interval = setInterval(() => {
+      fetchRoutines();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const openModal = async (routineId: string) => {
     setSelectedRoutineId(routineId);
@@ -307,7 +312,7 @@ const ListadeRutinas: React.FC = () => {
               onClick={closeModal}
               className="absolute top-4 right-4 text-3xl text-gray-600 hover:text-red-600"
             >
-              <FiX /> {/* Ícono de cierre */}
+              <FiX />
             </button>
             <h3 className="text-2xl font-semibold mb-4">Ejercicios para la rutina</h3>
             <div className="grid gap-6">
