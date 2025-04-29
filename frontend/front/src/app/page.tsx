@@ -1,17 +1,18 @@
-'use client';
 
-import { useAuth0 } from '@auth0/auth0-react';
-import Landing from './Landing/page';
-import Home from './Home/page'; 
+"use client";
+
+import { useAuth0 } from "@auth0/auth0-react";
+import Landing from "./Landing/page";
+import Home from "./Home/page"; 
+import ClientOnly from "./ClientOnly"; 
 
 export default function Page() {
-  const { isAuthenticated } = useAuth0();
-
-
+  const { isAuthenticated, isLoading } = useAuth0();
 
   return (
-    <>
-      {isAuthenticated ? <Home /> : <Landing />}
-    </>
+    <ClientOnly>
+      {isLoading ? null : isAuthenticated ? <Home /> : <Landing />}
+    </ClientOnly>
+
   );
 }
