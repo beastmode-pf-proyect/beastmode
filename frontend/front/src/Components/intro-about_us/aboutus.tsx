@@ -32,11 +32,7 @@ const AboutUs = () => {
           </div>
 
           {/* Botón de CTA */}
-          <div className="mt-10 flex justify-center">
-            <button className="px-8 py-3 bg-gradient-to-r from-red-600 to-purple-600 text-white font-bold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-              Conoce nuestras membresías
-            </button>
-          </div>
+          
         </div>
       </div>
     </div>
