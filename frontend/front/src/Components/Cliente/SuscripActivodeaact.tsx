@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useSessionUser } from "@/app/SessionUserContext";
 import Image from "next/image";
+import toast from "react-hot-toast";
 
 export interface MembershipPlan {
   id: string;
@@ -31,6 +32,9 @@ const ActiveSubscriptions = () => {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [showSuspendModal, setShowSuspendModal] = useState(false);
+  const [selectedSubscription, setSelectedSubscription] =
+    useState<Subscription | null>(null);
 
   useEffect(() => {
     const fetchSubscriptions = async () => {
@@ -49,7 +53,7 @@ const ActiveSubscriptions = () => {
         const data: Subscription[] = await response.json();
 
         const userSubscriptions = data.filter(
-          (sub) => sub.user.email === currentUser.email && sub.isPago
+          sub => sub.user.email === currentUser.email && sub.isPago
         );
 
         setSubscriptions(userSubscriptions);
@@ -64,6 +68,42 @@ const ActiveSubscriptions = () => {
       fetchSubscriptions();
     }
   }, [currentUser?.email, userLoading]);
+
+  const deactivateMembership = async (id: string) => {
+    const endpoint = `${process.env.NEXT_PUBLIC_BACKEND_URL}/memberships/desactivate/${id}`;
+
+    try {
+      const res = await fetch(endpoint, {
+        method: "PUT", // Mantén PUT si has decidido usar ese método en el backend
+      });
+
+      if (!res.ok) throw new Error("Error al desactivar la membresía");
+
+     setSubscriptions(prev =>
+       prev.map(m => (m.id === id ? { ...m, active: false } : m))
+     );
+
+      toast.success("Membresía desactivada correctamente", {
+        style: {
+          background: "#f0f0f0",
+          color: "#5e1914",
+          border: "1px solid #5e1914",
+          padding: "16px",
+        },
+      });
+    } catch (error) {
+      toast.error("Ocurrió un error al desactivar la membresía.", {
+        style: {
+          background: "#f0f0f0",
+          color: "#d32f2f",
+          border: "1px solid #d32f2f",
+          padding: "16px",
+        },
+      });
+      console.error("Error al desactivar la membresía:", error);
+    }
+  };
+
 
   if (userLoading) {
     return (
@@ -98,8 +138,7 @@ const ActiveSubscriptions = () => {
             <svg
               className="h-5 w-5 text-red-500"
               viewBox="0 0 20 20"
-              fill="currentColor"
-            >
+              fill="currentColor">
               <path
                 fillRule="evenodd"
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
@@ -123,8 +162,7 @@ const ActiveSubscriptions = () => {
             className="mx-auto h-12 w-12 text-[#5e1914]"
             fill="none"
             viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
+            stroke="currentColor">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -141,8 +179,7 @@ const ActiveSubscriptions = () => {
           <div className="mt-6">
             <button
               onClick={() => (window.location.href = "/login")}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#5e1914] hover:bg-[#4c1511] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5e1914]"
-            >
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#5e1914] hover:bg-[#4c1511] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5e1914]">
               Iniciar sesión
             </button>
           </div>
@@ -169,8 +206,7 @@ const ActiveSubscriptions = () => {
             className="mx-auto h-24 w-24 text-gray-400"
             fill="none"
             viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
+            stroke="currentColor">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -187,15 +223,14 @@ const ActiveSubscriptions = () => {
           <div className="mt-6">
             <a
               href="/memberships"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#5e1914] hover:bg-[#4c1511] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5e1914]"
-            >
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#5e1914] hover:bg-[#4c1511] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5e1914]">
               Ver planes disponibles
             </a>
           </div>
         </div>
       ) : (
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {subscriptions.map((sub) => {
+          {subscriptions.map(sub => {
             const end = new Date(sub.endDate);
             const now = new Date();
             const diffTime = end.getTime() - now.getTime();
@@ -207,15 +242,13 @@ const ActiveSubscriptions = () => {
                 key={sub.id}
                 className={`rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
                   isExpired ? "bg-gray-100 opacity-70" : "bg-white"
-                }`}
-              >
+                }`}>
                 <div
                   className={`px-6 py-4 ${
                     isExpired
                       ? "bg-gray-300"
                       : "bg-gradient-to-r from-[#5e1914] to-red-900"
-                  }`}
-                >
+                  }`}>
                   <div className="flex items-center">
                     <div className="flex-shrink-0 relative">
                       {sub.user.picture && (
@@ -284,15 +317,15 @@ const ActiveSubscriptions = () => {
                       </div>
                     </div>
                     <div className="mt-4 text-sm text-gray-600">
-                      {isExpired ? (
-                        <span className="text-red-500">
-                          ❌ Membresía expirada
-                        </span>
-                      ) : (
-                        <span>
-                          ⏳ {diffDays} día{diffDays > 1 ? "s" : ""} restante
-                          {diffDays > 1 ? "s" : ""}
-                        </span>
+                      {!isExpired && sub.isActive && (
+                        <button
+                          onClick={() => {
+                            setSelectedSubscription(sub);
+                            setShowSuspendModal(true);
+                          }}
+                          className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#5e1914] hover:bg-[#4c1511]">
+                          Suspender membresía
+                        </button>
                       )}
                     </div>
                   </div>
@@ -303,8 +336,7 @@ const ActiveSubscriptions = () => {
                         !isExpired && sub.isActive
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-800"
-                      }`}
-                    >
+                      }`}>
                       {!isExpired && sub.isActive ? "Activa" : "Inactiva"}
                     </span>
                     <span
@@ -312,28 +344,49 @@ const ActiveSubscriptions = () => {
                         sub.isPago
                           ? "bg-green-100 text-green-800"
                           : "bg-red-100 text-red-800"
-                      }`}
-                    >
+                      }`}>
                       {sub.isPago ? "Pagado" : "Pendiente"}
                     </span>
                   </div>
 
-                  <div className="mt-6">
-                    <button
-                      disabled={isExpired}
-                      className={`w-full flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                        isExpired
-                          ? "bg-gray-400 cursor-not-allowed text-white"
-                          : "bg-[#5e1914] hover:bg-[#4c1511] text-white focus:ring-[#5e1914]"
-                      }`}
-                    >
-                      {isExpired ? "Expirada" : "Gestionar membresía"}
-                    </button>
-                  </div>
                 </div>
               </div>
             );
           })}
+        </div>
+      )}
+
+      {showSuspendModal && selectedSubscription && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
+            <h2 className="text-lg font-bold mb-4 text-[#5e1914]">
+              Suspender membresía
+            </h2>
+            <p className="mb-4 text-gray-700">
+              ¿Estás seguro que deseas suspender tu membresía{" "}
+              <strong>{selectedSubscription?.membershipPlan?.name}</strong>?
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setShowSuspendModal(false);
+                  setSelectedSubscription(null);
+                }}
+                className="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300">
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  console.log("Suspender membresía", selectedSubscription?.id);
+                  deactivateMembership(selectedSubscription?.id);
+                  setShowSuspendModal(false);
+                  setSelectedSubscription(null);
+                }}
+                className="px-4 py-2 rounded bg-[#5e1914] text-white hover:bg-[#4c1511]">
+                Confirmar suspensión
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

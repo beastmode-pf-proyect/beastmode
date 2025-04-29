@@ -31,7 +31,7 @@ const AboutUs = () => {
             </p>
           </div>
 
-          {/* Botón de CTA */}
+     
           
         </div>
       </div>
