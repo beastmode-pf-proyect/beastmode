@@ -98,7 +98,7 @@ export class UsersRepository{
           return user;
     }
 
-    async updateUser(id : string, userName: updateUserDto, file: Express.Multer.File) {
+    async updateUserName(id : string, userName: updateUserDto) {
       
       const updateUser = await this.usersRepository.findOneBy({
         auth0_id : id
@@ -108,20 +108,7 @@ export class UsersRepository{
           throw new NotFoundException('Usuario no encontrado')
       }
 
-      interface UpdateData {
-        name: string;
-        picture?: string;
-    }
-
-      const updateData:UpdateData = { ...userName };
-
-    if (file) {
-        const uploadResponse = await this.fileUploadService.uploadUserImage(file);
-        
-        updateData.picture = uploadResponse.secure_url;
-    }
-    
-    await this.usersRepository.update({ auth0_id: id }, updateData);
+    await this.usersRepository.update({ auth0_id: id }, userName);
     
     const updatedUser = await this.usersRepository.findOneBy({ auth0_id: id });
     return updatedUser;
