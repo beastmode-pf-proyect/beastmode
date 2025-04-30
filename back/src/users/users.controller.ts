@@ -45,25 +45,9 @@ export class UsersController {
 
   @Put(':id')
   @UseInterceptors(FileInterceptor('file'))
-  updateUser(@Param('id') id: string,
-   @Body() userName: updateUserDto,
-   @UploadedFile( // Valida el archivo.
-          new ParseFilePipe({
-              validators: [
-                // Valida que el archivo no sea muy grande.
-                  new MaxFileSizeValidator({
-                      maxSize: 2000000,
-                      message: 'Tamaño de la imagen permitido es de 2MB',
-                  }),
-                  // Valida que el archivo sea una imagen.
-                  new FileTypeValidator({
-                      fileType: /(jpg|jpeg|png|webp|gif|mp4)$/,
-                  }),
-              ],
-          })
-      ) file: Express.Multer.File,// Archivo validado
-      ){
-    return this.usersService.updateUser(id, userName, file);
+  updateUserName(@Param('id') id: string,
+   @Body() userName: updateUserDto){
+    return this.usersService.updateUserName(id, userName);
   }
 
   @Put('/upRole/:id')

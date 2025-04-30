@@ -21,9 +21,15 @@ export class FileUploadService {
 
     ) {}
 
-    async uploadUserImage(file: Express.Multer.File) {
+    async uploadUserImage(file: Express.Multer.File, id: string) {
+        const userExists = await this.usersRepository.findOneBy({ auth0_id: id });
+        if (!userExists) {
+            return 'El usuario no existe!';
+        }
         
         const uploadedImage = await this.fileUploadRepository.uploadImage(file);
+
+        await this.usersRepository.update({ auth0_id: id }, { picture: uploadedImage.secure_url });
 
         return uploadedImage;
     }
