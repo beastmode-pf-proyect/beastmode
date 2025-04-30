@@ -44,7 +44,6 @@ export class UsersController {
   }
 
   @Put(':id')
-  @UseInterceptors(FileInterceptor('file'))
   updateUserName(@Param('id') id: string,
    @Body() userName: updateUserDto){
     return this.usersService.updateUserName(id, userName);
