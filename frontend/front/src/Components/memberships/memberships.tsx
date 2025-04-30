@@ -163,10 +163,18 @@ const MembershipSection = () => {
             : "Como entrenador, eres la inspiración y guía para nuestros miembros. Tu conocimiento y dedicación son el motor del éxito."}
         </p>
       </div>
+      
+
     );
+    
   }
+  
+  
 
   return (
+    
+
+
     <div className="min-h-screen w-full px-4 py-12 sm:py-20 lg:px-8 xl:px-20 flex items-center justify-center">
       <div className="max-w-7xl w-full">
         {!userSubscription && (

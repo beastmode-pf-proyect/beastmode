@@ -88,7 +88,7 @@ const UserSubscriptions = () => {
     if (!result.isConfirmed) return;
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/subscriptions/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/subscriptions/${id}`, { 
         method: "DELETE",
       });
 
