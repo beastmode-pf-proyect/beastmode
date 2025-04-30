@@ -42,7 +42,6 @@ const ListadeRutinasprueba: React.FC = () => {
       if (!response.ok) throw new Error(`Error al obtener las rutinas`);
 
       const data = await response.json();
-      // Filtra solo las rutinas que empiezan con "Prueba"
       const filteredData = data.filter((routine: Routine) => routine.name.startsWith('Prueba'));
       setRoutines(filteredData);
       setFilteredRoutines(filteredData);

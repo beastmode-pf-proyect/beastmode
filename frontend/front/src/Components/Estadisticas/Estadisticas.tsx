@@ -16,7 +16,6 @@ type User = {
 };
 
 const UserRoleStatsWithModal: React.FC = () => {
-  const [, setUsers] = useState<User[]>([]);
   const [clientList, setClientList] = useState<User[]>([]);
   const [trainerList, setTrainerList] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -25,24 +24,21 @@ const UserRoleStatsWithModal: React.FC = () => {
   const [activeRole, setActiveRole] = useState<"client" | "trainer" | null>(null);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`);
-        const data: User[] = await res.json();
-        setUsers(data);
-  
-        setClientList(data.filter(user => user.role?.name?.toLowerCase() === "client"));
-        setTrainerList(data.filter(user => user.role?.name?.toLowerCase() === "trainer"));
-      } catch (err) {
+    const fetchClients = fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/client`).then(res => res.json());
+    const fetchTrainers = fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/trainer`).then(res => res.json());
+
+    Promise.all([fetchClients, fetchTrainers])
+      .then(([clients, trainers]) => {
+        setClientList(clients);
+        setTrainerList(trainers);
+      })
+      .catch(err => {
         console.error("Error al obtener usuarios", err);
-      } finally {
+      })
+      .finally(() => {
         setLoading(false);
-      }
-    };
-  
-    fetchUsers();
+      });
   }, []);
-  
 
   const openModal = (role: "client" | "trainer") => {
     setActiveRole(role);
@@ -64,7 +60,6 @@ const UserRoleStatsWithModal: React.FC = () => {
         <p className="text-center text-gray-600">Cargando...</p>
       ) : (
         <div className="grid grid-cols-2 gap-6">
-          {/* Card Clientes */}
           <button
             onClick={() => openModal("client")}
             className="bg-white rounded-xl shadow p-4 flex flex-col items-center w-full hover:bg-blue-50 transition focus:outline-none focus:ring-2 focus:ring-blue-300"
@@ -76,7 +71,6 @@ const UserRoleStatsWithModal: React.FC = () => {
             <span className="text-3xl font-bold text-blue-700">{clientList.length}</span>
           </button>
 
-          {/* Card Entrenadores */}
           <button
             onClick={() => openModal("trainer")}
             className="bg-white rounded-xl shadow p-4 flex flex-col items-center w-full hover:bg-green-50 transition focus:outline-none focus:ring-2 focus:ring-green-300"
@@ -86,7 +80,6 @@ const UserRoleStatsWithModal: React.FC = () => {
               <span>Entrenadores</span>
             </div>
             <span className="text-3xl font-bold text-green-700">{trainerList.length}</span>
-           
           </button>
         </div>
       )}

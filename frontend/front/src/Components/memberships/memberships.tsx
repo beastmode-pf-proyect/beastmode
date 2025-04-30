@@ -50,7 +50,10 @@ const MembershipSection = () => {
     const fetchUserRole = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/role/${currentUser.id}`);
-        if (!response.ok) throw new Error("Error obteniendo rol de usuario");
+        if (!response.ok) {
+          setUserRole("CLIENT");
+          return;
+        }
 
         const roleText = await response.text();
         const normalized = roleText.toUpperCase().trim();
@@ -160,10 +163,18 @@ const MembershipSection = () => {
             : "Como entrenador, eres la inspiración y guía para nuestros miembros. Tu conocimiento y dedicación son el motor del éxito."}
         </p>
       </div>
+      
+
     );
+    
   }
+  
+  
 
   return (
+    
+
+
     <div className="min-h-screen w-full px-4 py-12 sm:py-20 lg:px-8 xl:px-20 flex items-center justify-center">
       <div className="max-w-7xl w-full">
         {!userSubscription && (
@@ -212,39 +223,47 @@ const MembershipSection = () => {
               </div>
             </>
           ) : (
-            <div className="flex flex-wrap justify-center gap-8 lg:gap-12">
-              {plans.map(plan => (
-                <div
-                  key={plan.id}
-                  className="w-full md:w-[500px] border-2 border-gray-200 rounded-4xl bg-white shadow-xl hover:shadow-2xl transition-all duration-300 p-6 flex flex-col relative"
-                >
-                  {plan.name === "Pro" && (
-                    <div className="absolute top-0 right-0 bg-red-900 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-4xl">
-                      POPULAR
-                    </div>
-                  )}
-                  <div className="flex-grow">
-                    <p className="text-xl md:text-2xl font-light mb-2 text-gray-600">{plan.name}</p>
-                    <p className="text-3xl md:text-4xl font-extrabold mb-6 font-[Inter] text-red-950">
-                      ${plan.price}<span className="text-lg md:text-xl">/{plan.duration}</span>
-                    </p>
-                    <p className="text-sm md:text-base mb-4 text-gray-700">{plan.description}</p>
-                  </div>
-                  <div className="mt-8">
-                    <button
-                      onClick={() => handleNavigation(plan.id)}
-                      className={`w-full rounded-3xl px-6 py-3 font-medium transition-colors duration-300 ${
-                        plan.name === "Pro"
-                          ? "bg-red-900 text-white border-2 border-red-900 hover:bg-red-800"
-                          : "bg-transparent text-red-950 border-2 border-red-950 hover:bg-red-950 hover:text-white"
-                      }`}
-                    >
-                      {plan.name === "Pro" ? "¡Quiero ser PRO!" : "Comenzar Ahora"}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 px-4 w-full max-w-7xl mx-auto">
+  {plans.map((plan) => (
+    <div
+      key={plan.id}
+      className={`w-full border-2 ${
+        plan.name === "Pro" 
+          ? "border-red-900 scale-[1.02]" 
+          : "border-gray-200"
+      } rounded-3xl bg-white shadow-xl hover:shadow-2xl transition-all duration-300 p-8 flex flex-col relative`}
+    >
+      {plan.name === "Pro" && (
+        <div className="absolute top-0 right-0 bg-red-900 text-white text-sm font-bold px-4 py-2 rounded-bl-xl rounded-tr-3xl">
+          POPULAR
+        </div>
+      )}
+      
+      <div className="flex-grow">
+        <p className="text-2xl font-bold mb-3 text-gray-900">{plan.name}</p>
+        <p className="text-4xl font-extrabold mb-6 text-red-900">
+          ${plan.price}<span className="text-xl text-gray-600">/{plan.duration}</span>
+        </p>
+        <p className="text-base text-gray-700 leading-relaxed mb-6">
+          {plan.description}
+        </p>
+      </div>
+      
+      <div className="mt-auto">
+        <button
+          onClick={() => handleNavigation(plan.id)}
+          className={`w-full rounded-2xl px-8 py-4 text-lg font-semibold transition-all duration-300 ${
+            plan.name === "Pro" 
+              ? "bg-red-900 text-white hover:bg-red-800 hover:scale-105" 
+              : "bg-gray-50 text-red-900 border-2 border-red-900 hover:bg-red-900 hover:text-white hover:scale-105"
+          }`}
+        >
+          {plan.name === "Pro" ? "¡Quiero ser PRO!" : "Comenzar Ahora"}
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
           )}
 
         {selectedPlan && <SubscriptionModal plan={selectedPlan} onClose={handleCloseModal} />}

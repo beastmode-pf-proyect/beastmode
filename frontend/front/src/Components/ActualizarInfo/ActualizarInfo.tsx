@@ -7,10 +7,7 @@ import Image from "next/image";
 
 export const UpdateProfileForm = () => {
   const { setSessionUser } = useSessionUser();
-  const [firstName, setFirstName] = useState("");
-  const [middleName, setMiddleName] = useState("");
-  const [lastName1, setLastName1] = useState("");
-  const [lastName2, setLastName2] = useState("");
+  const [fullName, setFullName] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [image, setImage] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -28,18 +25,8 @@ export const UpdateProfileForm = () => {
         const dbUser = await response.json();
 
         if (dbUser.name) {
-          const names = dbUser.name.trim().split(/\s+/);
-          setFirstName(names[0] || "");
-          setMiddleName(names[1] || "");
-          setLastName1(names[2] || "");
-          if (names.length > 4) {
-            setLastName2(names.slice(3).join(" "));
-          } else {
-            setLastName2(names[3] || "");
-          }
+          setFullName(dbUser.name);
         }
-
-        
       } catch (err) {
         console.error("Error cargando datos:", err);
         setError("Error al cargar los datos del usuario");
@@ -79,8 +66,8 @@ export const UpdateProfileForm = () => {
     setIsLoading(true);
     setError(null);
 
-    if (!firstName.trim() || !lastName1.trim()) {
-      setError("El primer nombre y primer apellido son obligatorios.");
+    if (!fullName.trim()) {
+      setError("El nombre completo es obligatorio.");
       setIsLoading(false);
       return;
     }
@@ -98,15 +85,8 @@ export const UpdateProfileForm = () => {
       return;
     }
 
-    const fullName = [
-      firstName.trim(),
-      middleName.trim(),
-      lastName1.trim(),
-      lastName2.trim()
-    ].filter(Boolean).join(" ");
-
     const formData = new FormData();
-    formData.append("name", fullName);
+    formData.append("name", fullName.trim());
     if (image) formData.append("file", image);
 
     try {
@@ -127,9 +107,8 @@ export const UpdateProfileForm = () => {
       sessionStorage.setItem("name", updatedUser.name || "");
       sessionStorage.setItem("picture", updatedUser.picture || "");
       setPreviewUrl(updatedUser.picture);
-      
-      toast.success("¡Perfil actualizado con éxito!");
 
+      toast.success("¡Perfil actualizado con éxito!");
     } catch (err) {
       console.error("Error:", err);
       setError("Error al actualizar el perfil");
@@ -177,12 +156,12 @@ export const UpdateProfileForm = () => {
                 {previewUrl ? (
                   <>
                     <Image
-      src={previewUrl}
-      alt="Vista previa"
-      layout="fill"
-      objectFit="cover"
-      className="transform group-hover:scale-105 transition-transform duration-300"
-    />
+                      src={previewUrl}
+                      alt="Vista previa"
+                      layout="fill"
+                      objectFit="cover"
+                      className="transform group-hover:scale-105 transition-transform duration-300"
+                    />
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -214,56 +193,17 @@ export const UpdateProfileForm = () => {
           </label>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Primer nombre *
-              <input
-                type="text"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-                className="mt-1 block w-full rounded-lg border-red-300 shadow-sm focus:border-red-500 focus:ring-2 focus:ring-red-500/50 transition duration-200 px-4 py-2.5"
-              />
-            </label>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Segundo nombre
-              <input
-                type="text"
-                value={middleName}
-                onChange={(e) => setMiddleName(e.target.value)}
-                className="mt-1 block w-full rounded-lg border-red-300 shadow-sm focus:border-red-500 focus:ring-2 focus:ring-red-500/50 transition duration-200 px-4 py-2.5"
-              />
-            </label>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Primer apellido *
-              <input
-                type="text"
-                value={lastName1}
-                onChange={(e) => setLastName1(e.target.value)}
-                required
-                className="mt-1 block w-full rounded-lg border-red-300 shadow-sm focus:border-red-500 focus:ring-2 focus:ring-red-500/50 transition duration-200 px-4 py-2.5"
-              />
-            </label>
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Segundo apellido
-              <input
-                type="text"
-                value={lastName2}
-                onChange={(e) => setLastName2(e.target.value)}
-                className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition duration-200 px-4 py-2.5"
-              />
-            </label>
-          </div>
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Nombre completo *
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+              className="mt-1 block w-full rounded-lg border-red-300 shadow-sm focus:border-red-500 focus:ring-2 focus:ring-red-500/50 transition duration-200 px-4 py-2.5"
+            />
+          </label>
         </div>
 
         <button

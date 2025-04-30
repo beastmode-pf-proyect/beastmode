@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import {
   HiHome,
   HiOutlineLogout,
@@ -12,7 +12,6 @@ import { MdFitnessCenter } from "react-icons/md";
 import Link from "next/link";
 import { useAuth0 } from "@auth0/auth0-react";
 import Swal from "sweetalert2";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -33,6 +32,38 @@ interface User {
   };
 }
 
+const SkeletonLoader = () => (
+  <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8] animate-pulse">
+    {/* Skeleton Sidebar */}
+    <div className="hidden md:block w-64 bg-white p-4">
+      <div className="flex justify-center mb-4">
+        <div className="w-20 h-20 bg-gray-200 rounded-full" />
+      </div>
+      <div className="h-8 bg-gray-200 rounded w-3/4 mx-auto mb-4" />
+      <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto mb-6" />
+      
+      <div className="space-y-2">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="h-10 bg-gray-200 rounded-md" />
+        ))}
+      </div>
+    </div>
+
+    {/* Skeleton Main Content */}
+    <div className="flex-1 p-4 md:p-8 min-h-screen bg-white mt-20 md:mt-0">
+      <div className="h-8 bg-gray-200 rounded w-1/4 mb-6" />
+      <div className="grid gap-6">
+        <div className="h-64 bg-gray-200 rounded-xl" />
+        <div className="grid md:grid-cols-2 gap-6">
+          {[...Array(2)].map((_, i) => (
+            <div key={i} className="h-32 bg-gray-200 rounded-xl" />
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const {
     user,
@@ -49,16 +80,19 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const [imageError, setImageError] = useState(false);
   const router = useRouter();
 
+  // Fetch inicial y verificación de rol
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Obtener lista de usuarios y encontrar el que coincide con el usuario actual
         const accessToken = await getAccessTokenSilently();
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/users`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
         if (!response.ok) throw new Error("Error al obtener usuarios");
         const usersData: User[] = await response.json();
         const matchedUser = usersData.find((u) => u.auth0_id === user?.sub);
@@ -72,7 +106,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       }
 
       try {
-        // Obtener el rol del usuario
         if (user && user.sub) {
           const res = await fetch(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/role/${user.sub}`
@@ -110,6 +143,40 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     }
   }, [isAuthenticated, user, getAccessTokenSilently, router]);
 
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    const refreshUserData = async () => {
+      try {
+        const accessToken = await getAccessTokenSilently();
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/users`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        if (!response.ok) throw new Error("Error al obtener usuarios");
+        const usersData: User[] = await response.json();
+        const matchedUser = usersData.find((u) => u.auth0_id === user?.sub);
+        if (matchedUser) {
+          setCurrentUser(matchedUser);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (isAuthenticated && user) {
+      refreshUserData();
+      intervalId = setInterval(refreshUserData, 2000);
+    }
+
+    return () => clearInterval(intervalId);
+  }, [isAuthenticated, user, getAccessTokenSilently]);
+
+  
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       Swal.fire({
@@ -123,12 +190,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     }
   }, [isLoading, isAuthenticated, router]);
 
-  if (isLoading) return <div className="p-4">Cargando...</div>;
+  if (isLoading) return <SkeletonLoader />;
   if (error) return <div className="p-4 text-red-500">Error: {error.message}</div>;
-  if (!isAuthenticated) return <div className="p-4">No estás autenticado</div>;
+  if (!isAuthenticated) return <SkeletonLoader />;
   if (apiError) return <div className="p-4 text-red-500">Error: {apiError}</div>;
-  if (!currentUser || !userData)
-    return <div className="p-4">Cargando usuario...</div>;
+  if (!currentUser || !userData) return <SkeletonLoader />;
 
   const clientMenu = [
     {
@@ -163,16 +229,16 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <div className="flex justify-center mb-4">
         <div className="w-[80px] h-[80px] rounded-full bg-[#e0e0e0] overflow-hidden flex items-center justify-center">
           {imageError || !currentUser?.picture ? (
-        <HiUser className="w-10 h-10 text-[#5e1914]" />
+            <HiUser className="w-10 h-10 text-[#5e1914]" />
           ) : (
-        <Image
-          src={currentUser.picture || "/avatar2.avif"}
-          alt="Usuario"
-          width={80}
-          height={80}
-          className="object-cover"
-          onError={() => setImageError(true)}
-        />
+            <Image
+              src={currentUser.picture || "/avatar2.avif"}
+              alt="Usuario"
+              width={80}
+              height={80}
+              className="object-cover"
+              onError={() => setImageError(true)}
+            />
           )}
         </div>
       </div>
@@ -224,7 +290,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       {/* Sidebar para móvil */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 mt-34 flex md:hidden">
-          <div className="w-64 bg-white p-4">
+          <div className="w-64 bg-white p-4 overflow-y-auto max-h-screen">
             <UserInfo />
             <ul className="space-y-2">
               {clientMenu.map((item) => (

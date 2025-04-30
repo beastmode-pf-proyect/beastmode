@@ -44,6 +44,11 @@ const RoutineDetailPage = () => {
     if (id) fetchExercises()
   }, [id])
 
+  // Filtrar solo ejercicios donde ambos isActive sean true
+  const activeExercises = exercises.filter(
+    (e) => e.isActive && e.exercise.isActive
+  )
+
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6">
       <motion.div
@@ -64,18 +69,17 @@ const RoutineDetailPage = () => {
             <div key={index} className="h-40 bg-gray-100 rounded-lg animate-pulse" />
           ))}
         </div>
-      ) : exercises.length === 0 ? (
+      ) : activeExercises.length === 0 ? (
         <div className="text-center py-8">
           <div className="mx-auto h-16 w-16 text-[#5e1914] mb-3">
             <FiActivity className="w-full h-full" />
           </div>
-          <h3 className="text-base font-medium text-gray-900">No hay ejercicios asignados</h3>
-          <p className="mt-1 text-sm text-gray-500">Agrega ejercicios para comenzar</p>
+          <h3 className="text-base font-medium text-gray-900">No hay ejercicios activos</h3>
+          <p className="mt-1 text-sm text-gray-500">Agrega ejercicios activos para comenzar</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-          {exercises.map((e, index) => (
-            
+          {activeExercises.map((e, index) => (
             <motion.div
               key={e.id}
               initial={{ opacity: 0, scale: 0.95 }}
@@ -105,8 +109,8 @@ const RoutineDetailPage = () => {
                   <div>
                     <div className="flex justify-between items-start">
                       <h3 className="text-base font-semibold text-gray-900 truncate">{e.exercise.name}</h3>
-                      <span className={`text-xs px-1.5 py-0.5 rounded-full ${e.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}`}>
-                        {e.isActive ? 'Activo' : 'Inactivo'}
+                      <span className="text-xs px-1.5 py-0.5 rounded-full bg-green-100 text-green-800">
+                        Activo
                       </span>
                     </div>
                     <p className="text-gray-500 text-sm mt-2 line-clamp-2">{e.exercise.description}</p>

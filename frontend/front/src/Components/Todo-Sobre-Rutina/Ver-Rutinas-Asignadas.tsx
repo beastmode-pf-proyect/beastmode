@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import Swal from "sweetalert2";
+// import Swal from "sweetalert2";
 import { FaUser, FaEnvelope, FaCalendarAlt, FaClock, FaChevronDown } from "react-icons/fa";
 import Image from "next/image";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -108,37 +108,37 @@ export default function VerRutinasAsignadas() {
     }
     
 
-  const eliminarAsignacion = async (id: string) => {
-    const result = await Swal.fire({
-      title: "¿Estás seguro?",
-      text: "Esta acción eliminará la asignación de rutina.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#5e1914",
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-    });
+  // const eliminarAsignacion = async (id: string) => {
+  //   const result = await Swal.fire({
+  //     title: "¿Estás seguro?",
+  //     text: "Esta acción eliminará la asignación de rutina.",
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#d33",
+  //     cancelButtonColor: "#5e1914",
+  //     confirmButtonText: "Sí, eliminar",
+  //     cancelButtonText: "Cancelar",
+  //   });
 
-    if (!result.isConfirmed) return;
+  //   if (!result.isConfirmed) return;
 
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user-workout/${id}`, {
-        method: "DELETE",
-      });
+  //   try {
+  //     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user-workout/${id}`, {
+  //       method: "DELETE",
+  //     });
 
-      if (res.ok) {
-        toast.success("Asignación eliminada correctamente");
-        fetchAsignaciones();
-      } else {
-        const data = await res.json();
-        toast.error(data.message || "No se pudo eliminar la asignación");
-      }
-    } catch (err) {
-      console.error("Error eliminando asignación:", err);
-      toast.error("Error al eliminar la asignación");
-    }
-  };
+  //     if (res.ok) {
+  //       toast.success("Asignación eliminada correctamente");
+  //       fetchAsignaciones();
+  //     } else {
+  //       const data = await res.json();
+  //       toast.error(data.message || "No se pudo eliminar la asignación");
+  //     }
+  //   } catch (err) {
+  //     console.error("Error eliminando asignación:", err);
+  //     toast.error("Error al eliminar la asignación");
+  //   }
+  // };
 
   const groupedByUser = asignaciones.reduce(
     (acc: Record<string, AssignedRoutine[]>, asignacion) => {
@@ -368,12 +368,12 @@ export default function VerRutinasAsignadas() {
                         />
                       ) : null}
 
-                      <button
+                      {/* <button
                         onClick={() => eliminarAsignacion(asignacion.id)}
                         className="mt-2 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
                       >
                         Eliminar Asignación
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 );

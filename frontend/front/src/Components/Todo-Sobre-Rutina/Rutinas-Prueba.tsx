@@ -175,21 +175,7 @@ const RoutineFormPrueba = () => {
           )}
         </motion.div>
 
-        <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="flex items-center space-x-4">
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="isActive"
-              name="isActive"
-              checked={routineData.isActive}
-              onChange={handleChange}
-              className="h-5 w-5 text-[#5e1914] focus:ring-[#5e1914] border-gray-300 rounded transition-all"
-            />
-            <label htmlFor="isActive" className="ml-3 text-sm font-medium text-gray-700">
-              Activar rutina inmediatamente
-            </label>
-          </div>
-        </motion.div>
+        
 
         <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.4 }} className="space-y-4">
           <div>
