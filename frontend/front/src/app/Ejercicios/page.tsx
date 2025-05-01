@@ -92,7 +92,7 @@ const Page = () => {
   return (
     <div className="relative min-h-screen flex bg-gradient-to-b ">
       <aside className="hidden  lg:flex flex-col fixed top-[80px] left-0 w-[250px] h-[calc(100vh-80px)] bg-[#5e1914] py-6 z-30 overflow-y-auto ">
-        <h2 className="text-3xl font-semibold mb-6 text-white tracking-wider font-serif">
+        <h2 className="text-center text-3xl font-semibold mb-6 text-white tracking-wider font-serif">
           Categorías
         </h2>
         <div className="flex flex-col gap-4">
@@ -155,8 +155,8 @@ const Page = () => {
         </Dialog>
       </Transition>
 
-      <main className="flex-1 p-4 pt-6 lg:pl-[270px] max-w-7xl mx-auto">
-        <div className="mb-6">
+      <main className="flex-1  p-4 pt-6 lg:pl-[270px] max-w-7xl mx-auto">
+        <div className="flex justify-center mb-6">
           <input
             type="text"
             placeholder="Buscar ejercicios..."

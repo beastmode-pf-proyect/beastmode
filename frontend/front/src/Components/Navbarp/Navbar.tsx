@@ -39,6 +39,7 @@ export interface User {
   role: {
     name: string;
   };
+  isBlocked?: boolean;
 }
 
 type UserRole = "ADMIN" | "TRAINER" | "CLIENT" | null;
@@ -49,6 +50,7 @@ const useUserMembership = () => {
   const [membership, setMembership] = useState<MembershipPlan | null>(null);
   const [loading, setLoading] = useState(true);
   const [membershipError, setMembershipError] = useState<string | null>(null);
+    const [isBlocked, setIsBlocked] = useState<boolean>(false);
 
   // Polling para actualizar datos del usuario cada 5 segundos
   useEffect(() => {
@@ -66,6 +68,7 @@ const useUserMembership = () => {
         const matchedUser = usersData.find(u => u.auth0_id === auth0Id);
         if (matchedUser) {
           setFetchedUser(matchedUser);
+          setIsBlocked(matchedUser.isBlocked ?? false); 
         } else {
           setMembershipError("Usuario no encontrado en la base de datos");
         }
@@ -109,17 +112,31 @@ const useUserMembership = () => {
     fetchUserMembership();
   }, [fetchedUser?.email]);
 
-  return { membership, loading, error: membershipError || auth0Error, fetchedUser };
+  return { membership, loading, error: membershipError || auth0Error, fetchedUser, isBlocked };
 };
 
 export const Navbarp = () => {
   const router = useRouter();
   const { isAuthenticated, logout, user } = useAuth0();
-  const { membership, loading: membershipLoading, fetchedUser } = useUserMembership();
+  const {
+    membership,
+    loading: membershipLoading,
+    fetchedUser,
+    isBlocked,
+  } = useUserMembership();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  console.log(loading)
+    useEffect(() => {
+      if (isAuthenticated && !membershipLoading) {
+        setLoading(false);
+      }
+    }, [isAuthenticated, membershipLoading]);
+
 
   // Fuente de avatar: usar el de API o el de Auth0, o un fallback
   const avatarSrc = fetchedUser?.picture || "/avatar2.avif";
@@ -315,7 +332,7 @@ export const Navbarp = () => {
               <Link
                 key={index}
                 href={item.href}
-                className={`relative px-3 py-2 transition-colors duration-300 group ${
+                className={`relative px-3 py-2 transition-colores duration-300 group ${
                   isProUser
                     ? "text-gray-900 hover:text-black"
                     : "text-gray-100 hover:text-white"
@@ -335,40 +352,44 @@ export const Navbarp = () => {
             {isAuthenticated ? (
               <div className="flex items-center gap-4 relative profile-menu-container">
                 {/* Avatar con dropdown */}
-                <div
-                  className="flex items-center gap-2 cursor-pointer group"
-                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                >
-                  <div className="relative w-10 h-10">
-                    <div
-                      className={`w-11 h-11 rounded-full border-4 overflow-hidden ${getAvatarStyle()} ${getAvatarHoverEffect()} transition-all duration-300 ${
-                        isProUser ? "ring-2 ring-yellow-400" : ""
-                      }`}
-                    >
-                      <Image
-                        src={avatarSrc}
-                        alt="Avatar"
-                        width={50}
-                        height={50}
-                        className="w-full h-full rounded-full object-cover"
-                      />
+                {!isBlocked ? ( 
+                  <div
+                    className="flex items-center gap-2 cursor-pointer group"
+                    onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                  >
+                    <div className="relative w-10 h-10">
+                      <div
+                        className={`w-11 h-11 rounded-full border-4 overflow-hidden ${getAvatarStyle()} ${getAvatarHoverEffect()} transition-all duration-300 ${
+                          isProUser ? "ring-2 ring-yellow-400" : ""
+                        }`}
+                      >
+                        <Image
+                          src={avatarSrc}
+                          alt="Avatar"
+                          width={50}
+                          height={50}
+                          className="w-full h-full rounded-full object-cover"
+                        />
+                      </div>
+                      {getMembershipBadge()}
                     </div>
-                    {getMembershipBadge()}
+                    {isProfileMenuOpen ? (
+                      <FaChevronUp
+                        className={`transition-transform ${
+                          isProUser ? "text-gray-900 group-hover:text-black" : "text-gray-100 group-hover:text-white"
+                        }`}
+                      />
+                    ) : (
+                      <FaChevronDown
+                        className={`transition-transform ${
+                          isProUser ? "text-gray-900 group-hover:text-black" : "text-gray-100 group-hover:text-white"
+                        }`}
+                      />
+                    )}
                   </div>
-                  {isProfileMenuOpen ? (
-                    <FaChevronUp
-                      className={`transition-transform ${
-                        isProUser ? "text-gray-900 group-hover:text-black" : "text-gray-100 group-hover:text-white"
-                      }`}
-                    />
-                  ) : (
-                    <FaChevronDown
-                      className={`transition-transform ${
-                        isProUser ? "text-gray-900 group-hover:text-black" : "text-gray-100 group-hover:text-white"
-                      }`}
-                    />
-                  )}
-                </div>
+                ) : (
+                  <span className="text-red-500">Usuario bloqueado</span> // Mensaje si el usuario está bloqueado
+                )}
 
                 {/* Menú desplegable */}
                 <div
@@ -466,36 +487,40 @@ export const Navbarp = () => {
               {isAuthenticated ? (
                 <div className="space-y-3 pt-2 px-4 mobile-menu-container">
                   {/* Avatar móvil */}
-                  <div
-                    className="flex items-center gap-3 cursor-pointer pb-3"
-                    onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                  >
-                    <div className="relative">
-                      <Image
-                        src={avatarSrc}
-                        alt="Avatar"
-                        width={42}
-                        height={42}
-                        className={`rounded-full border-4 ${getAvatarStyle()} ${getAvatarHoverEffect()} ${
-                          isProUser ? "ring-2 ring-yellow-400" : ""
-                        }`}
-                      />
-                      {getMembershipBadge()}
+                  {!isBlocked ? ( 
+                    <div
+                      className="flex items-center gap-3 cursor-pointer pb-3"
+                      onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                    >
+                      <div className="relative">
+                        <Image
+                          src={avatarSrc}
+                          alt="Avatar"
+                          width={42}
+                          height={42}
+                          className={`rounded-full border-4 ${getAvatarStyle()} ${getAvatarHoverEffect()} ${
+                            isProUser ? "ring-2 ring-yellow-400" : ""
+                          }`}
+                        />
+                        {getMembershipBadge()}
+                      </div>
+                      <div>
+                        <p className={`font-medium ${isProUser ? "text-gray-900" : "text-gray-100"}`}>
+                          {fetchedUser?.name || user?.name || "Mi cuenta"}
+                        </p>
+                        <p className={`text-xs ${isProUser ? "text-gray-800" : "text-gray-300"}`}>
+                          {membership?.name || "Sin membresía"}
+                        </p>
+                      </div>
+                      {isProfileMenuOpen ? (
+                        <FaChevronUp className={isProUser ? "text-gray-900 ml-auto" : "text-gray-100 ml-auto"} />
+                      ) : (
+                        <FaChevronDown className={isProUser ? "text-gray-900 ml-auto" : "text-gray-100 ml-auto"} />
+                      )}
                     </div>
-                    <div>
-                      <p className={`font-medium ${isProUser ? "text-gray-900" : "text-gray-100"}`}>
-                        {fetchedUser?.name || user?.name || "Mi cuenta"}
-                      </p>
-                      <p className={`text-xs ${isProUser ? "text-gray-800" : "text-gray-300"}`}>
-                        {membership?.name || "Sin membresía"}
-                      </p>
-                    </div>
-                    {isProfileMenuOpen ? (
-                      <FaChevronUp className={isProUser ? "text-gray-900 ml-auto" : "text-gray-100 ml-auto"} />
-                    ) : (
-                      <FaChevronDown className={isProUser ? "text-gray-900 ml-auto" : "text-gray-100 ml-auto"} />
-                    )}
-                  </div>
+                  ) : (
+                    <span className="text-red-500">Usuario bloqueado</span> // Mensaje si el usuario está bloqueado
+                  )}
 
                   {/* Menú desplegable móvil */}
                   <div
@@ -556,5 +581,6 @@ export const Navbarp = () => {
     </nav>
   );
 };
+
 
 export default Navbarp;

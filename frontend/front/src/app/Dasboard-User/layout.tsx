@@ -5,6 +5,7 @@ import {
   HiOutlineLogout,
   HiMenu,
   HiX,
+  HiCog,
   HiUser,
   HiOutlineDocumentText,
 } from "react-icons/hi";
@@ -219,7 +220,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     },
     {
       name: "Configuracion",
-      icon: <HiOutlineDocumentText className="w-5 h-5" />,
+      icon: <HiCog className="w-5 h-5" />,
       href: "/Dasboard-User/Configuracion",
     },
   ];
