@@ -108,9 +108,9 @@ export default function ExerciseForm() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-8 bg-gradient-to-br from-[#7a2e28] to-[#5e1914] rounded-2xl shadow-2xl">
+    <div className="max-w-3xl mx-auto p-8 bg-white rounded-2xl shadow-2xl">
       <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/20">
-        <h2 className="text-3xl font-bold mb-8 text-center text-white uppercase tracking-wider">
+        <h2 className="text-3xl font-bold mb-8 text-center text-red-950 uppercase tracking-wider">
           Crear Nuevo Ejercicio
         </h2>
 
@@ -128,7 +128,7 @@ export default function ExerciseForm() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-white font-medium mb-2 text-lg">
+            <label className="block text-red-950 font-medium mb-2 text-lg">
               Nombre del Ejercicio
             </label>
             <input
@@ -136,13 +136,13 @@ export default function ExerciseForm() {
               name="name"
               value={exercise.name}
               onChange={handleChange}
-              className="w-full px-5 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
+              className="w-full px-5 py-3 bg-white/10 border border-red-900 rounded-xl text-red-950 focus:outline-none focus:ring-2 focus:ring-red-950 transition-all"
               required
             />
           </div>
 
           <div>
-            <label className="block text-white font-medium mb-2 text-lg">
+            <label className="block text-red-950 font-medium mb-2 text-lg">
               Descripción
             </label>
             <textarea
@@ -150,7 +150,7 @@ export default function ExerciseForm() {
               value={exercise.description}
               onChange={handleChange}
               rows={4}
-              className="w-full px-5 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all"
+              className="w-full px-5 py-3 bg-white/10 border border-red-900 rounded-xl text-red-950 focus:outline-none focus:ring-2 focus:ring-red-950 transition-all"
               required
             />
           </div>
@@ -164,12 +164,11 @@ export default function ExerciseForm() {
               value={exercise.category}
               onChange={handleChange}
               className="w-full px-5 py-3 bg-white/10 border border-red-900 rounded-xl text-red-950 focus:outline-none focus:ring-2 focus:ring-red-950 transition-all"
-              required
-            >
+              required>
               <option value="" disabled>
                 Selecciona una categoría
               </option>
-              {categories.map((cat) => (
+              {categories.map(cat => (
                 <option key={cat} value={cat}>
                   {cat}
                 </option>
@@ -178,18 +177,18 @@ export default function ExerciseForm() {
           </div>
 
           <div>
-            <label className="block text-white font-medium mb-2 text-lg">
+            <label className="block text-red-950 font-medium mb-2 text-lg">
               Imagen del Ejercicio
             </label>
             <div className="relative group">
-              <div className="flex items-center justify-center w-full h-32 border-2 border-dashed border-white/30 rounded-xl bg-white/10 hover:border-white transition-colors cursor-pointer">
+              <div className="flex items-center justify-center w-full px-5 py-3 bg-white/10 border border-red-900 rounded-xl text-red-950 focus:outline-none focus:ring-2 focus:ring-red-950 transition-all">
                 <input
                   type="file"
                   onChange={handleFileChange}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   accept="image/*"
                 />
-                <span className="text-white/70 group-hover:text-white transition-colors">
+                <span className="text-red-950 group-hover:text-red-950 transition-colors">
                   {exercise.imageFile
                     ? exercise.imageFile.name
                     : "Arrastra o haz clic para subir"}
@@ -211,8 +210,7 @@ export default function ExerciseForm() {
                 <button
                   type="button"
                   onClick={handleFileRemove}
-                  className="absolute top-2 right-2 px-3 py-1 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors shadow-lg"
-                >
+                  className="absolute top-2 right-2 px-3 py-1 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-colors shadow-lg">
                   ✕ Eliminar
                 </button>
               </div>
@@ -222,12 +220,11 @@ export default function ExerciseForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full py-4 text-lg font-bold rounded-xl transition-all ${
+            className={`w-full px-5 py-3 bg-gray-100 border border-red-900 rounded-xl text-red-950 focus:outline-none focus:ring-2 focus:ring-red-950 transition-all ${
               isSubmitting
-                ? "bg-white/10 cursor-not-allowed"
-                : "bg-white/20 hover:bg-white/30 hover:scale-[1.01] active:scale-95"
-            } text-white shadow-lg hover:shadow-xl`}
-          >
+                ? "bg-gray-300 cursor-not-allowed"
+                : "bg-gray-300 hover:bg-white/30 hover:scale-[1.01] active:scale-95"
+            } text-red-950 shadow-lg hover:shadow-xl`}>
             {isSubmitting ? (
               <span className="flex items-center justify-center gap-2">
                 <div className="w-5 h-5 border-2 border-white/50 border-t-transparent rounded-full animate-spin"></div>
