@@ -220,11 +220,11 @@ export default function ExerciseForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full px-5 py-3 bg-gray-100 border border-red-900 rounded-xl text-red-950 focus:outline-none focus:ring-2 focus:ring-red-950 transition-all ${
+            className={`w-full px-5 py-3 bg-red-950 border border-red-900 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-950 transition-all ${
               isSubmitting
                 ? "bg-gray-300 cursor-not-allowed"
-                : "bg-gray-300 hover:bg-white/30 hover:scale-[1.01] active:scale-95"
-            } text-red-950 shadow-lg hover:shadow-xl`}>
+                : "bg-gray-300 hover:bg-white/30 hover:text-red-950 hover:scale-[1.01] active:scale-95"
+            }  shadow-lg hover:shadow-xl`}>
             {isSubmitting ? (
               <span className="flex items-center justify-center gap-2">
                 <div className="w-5 h-5 border-2 border-white/50 border-t-transparent rounded-full animate-spin"></div>
