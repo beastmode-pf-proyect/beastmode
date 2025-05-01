@@ -81,7 +81,7 @@ export class SubscriptionsService {
     }
 
 
-    @Cron('0,5,10,15,20,25,30 20 * * *') // Se ejecuta en la hora programada (cada 15 minutos a las 20:xx)
+    @Cron('0,5,10,15,20,25,30,35,40 20 * * *') // Se ejecuta en la hora programada (cada 15 minutos a las 20:xx)
     async handleSubscriptionExpirationCheck() {
         this.logger.log('Running subscription check cron job (checking for expiration within 30 days)...');
 
