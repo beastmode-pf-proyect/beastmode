@@ -24,9 +24,8 @@ export const UpdateProfileForm = () => {
 
         const dbUser = await response.json();
 
-        if (dbUser.name) {
-          setFullName(dbUser.name);
-        }
+        if (dbUser.name) setFullName(dbUser.name);
+        if (dbUser.picture) setPreviewUrl(dbUser.picture);
       } catch (err) {
         console.error("Error cargando datos:", err);
         setError("Error al cargar los datos del usuario");
@@ -41,7 +40,7 @@ export const UpdateProfileForm = () => {
 
     if (file) {
       const fileType = file.type.split("/")[1];
-      if (fileType !== "jpeg" && fileType !== "png") {
+      if (fileType !== "jpeg" && fileType !== "png" && fileType !== "jpg") {
         toast.error("Solo se permiten imágenes en formato JPG o PNG.");
         return;
       }
@@ -66,18 +65,6 @@ export const UpdateProfileForm = () => {
     setIsLoading(true);
     setError(null);
 
-    if (!fullName.trim()) {
-      setError("El nombre completo es obligatorio.");
-      setIsLoading(false);
-      return;
-    }
-
-    if (!previewUrl) {
-      toast.error("¡Por favor, sube una imagen de perfil!");
-      setIsLoading(false);
-      return;
-    }
-
     const userId = sessionStorage.getItem("id");
     if (!userId) {
       setError("No se encontró el usuario.");
@@ -85,17 +72,46 @@ export const UpdateProfileForm = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("name", fullName.trim());
-    if (image) formData.append("file", image);
+    if (!fullName.trim() && !image) {
+      toast.error("Debes ingresar un nuevo nombre o subir una nueva imagen.");
+      setIsLoading(false);
+      return;
+    }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`, {
-        method: "PUT",
-        body: formData,
-      });
+      // Subir imagen si existe
+      if (image) {
+        const imageFormData = new FormData();
+        imageFormData.append("file", image);
 
-      const updatedUser = await response.json();
+        const uploadResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/file-upload/user/uploadImage/${userId}`,
+          {
+            method: "POST",
+            body: imageFormData,
+          }
+        );
+
+        if (!uploadResponse.ok) throw new Error("Error al subir la imagen");
+      }
+
+      // Actualizar nombre si existe
+      if (fullName.trim()) {
+        const updateResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: fullName.trim() }),
+          }
+        );
+
+        if (!updateResponse.ok) throw new Error("Error al actualizar el nombre");
+      }
+
+      // Volver a obtener datos actualizados
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${userId}`);
+      const updatedUser = await res.json();
 
       setSessionUser({
         id: updatedUser.id,
@@ -120,18 +136,18 @@ export const UpdateProfileForm = () => {
   return (
     <div className="max-w-2xl mx-auto p-8 bg-gradient-to-br from-red-50 to-red-50 rounded-2xl shadow-2xl shadow-blue-100/50">
       <div className="mb-8">
-        <h2 className="text-3xl font-extrabold text-gray-900 text-center">
-          Actualizar Perfil
-        </h2>
-        <p className="mt-2 text-center text-gray-600">
-          Mantén tu información personal actualizada
-        </p>
+        <h2 className="text-3xl font-extrabold text-gray-900 text-center">Actualizar Perfil</h2>
+        <p className="mt-2 text-center text-gray-600">Mantén tu información personal actualizada</p>
       </div>
 
       {error && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center">
           <svg className="w-5 h-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+              clipRule="evenodd"
+            />
           </svg>
           <span className="text-red-600 text-sm">{error}</span>
         </div>
@@ -159,20 +175,45 @@ export const UpdateProfileForm = () => {
                       src={previewUrl}
                       alt="Vista previa"
                       layout="fill"
-                      objectFit="cover"
+                      objectFit="contain"  // Cambié de "cover" a "contain"
                       className="transform group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <svg
+                        className="w-8 h-8 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
                       </svg>
                     </div>
                   </>
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center space-y-2">
-                    <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    <svg
+                      className="w-12 h-12 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                      />
                     </svg>
                     <span className="text-gray-500 text-sm">Subir imagen</span>
                   </div>
@@ -185,7 +226,11 @@ export const UpdateProfileForm = () => {
                   className="absolute -top-2 -right-2 bg-red-500 text-white p-1.5 rounded-full shadow-lg hover:bg-red-600 transition-colors duration-200"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    <path
+                      fillRule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </button>
               )}
@@ -195,12 +240,11 @@ export const UpdateProfileForm = () => {
 
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
-            Nombre completo *
+            Nombre completo
             <input
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              required
               className="mt-1 block w-full rounded-lg border-red-300 shadow-sm focus:border-red-500 focus:ring-2 focus:ring-red-500/50 transition duration-200 px-4 py-2.5"
             />
           </label>
@@ -213,14 +257,23 @@ export const UpdateProfileForm = () => {
         >
           {isLoading ? (
             <>
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <svg
+                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
               </svg>
               Procesando...
             </>
           ) : (
-            'Actualizar Perfil'
+            "Actualizar Perfil"
           )}
         </button>
       </form>
