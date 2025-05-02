@@ -50,7 +50,7 @@ const useUserMembership = () => {
   const [membership, setMembership] = useState<MembershipPlan | null>(null);
   const [loading, setLoading] = useState(true);
   const [membershipError, setMembershipError] = useState<string | null>(null);
-    const [isBlocked, setIsBlocked] = useState<boolean>(false);
+  const [isBlocked, setIsBlocked] = useState<boolean>(false);
 
   // Polling para actualizar datos del usuario cada 5 segundos
   useEffect(() => {
@@ -68,7 +68,7 @@ const useUserMembership = () => {
         const matchedUser = usersData.find(u => u.auth0_id === auth0Id);
         if (matchedUser) {
           setFetchedUser(matchedUser);
-          setIsBlocked(matchedUser.isBlocked ?? false); 
+          setIsBlocked(matchedUser.isBlocked ?? false);
         } else {
           setMembershipError("Usuario no encontrado en la base de datos");
         }
@@ -84,7 +84,7 @@ const useUserMembership = () => {
     }
   }, [isAuthenticated, user?.sub, getAccessTokenSilently]);
 
-  // Fetch de la membresía del usuario
+  // Polling de la membresía del usuario cada 5 segundos
   useEffect(() => {
     const fetchUserMembership = async () => {
       try {
@@ -101,6 +101,8 @@ const useUserMembership = () => {
         );
         if (activeMembership) {
           setMembership(activeMembership.membershipPlan);
+        } else {
+          setMembership(null);
         }
       } catch (error) {
         console.error("Error al obtener la membresía:", error);
@@ -109,7 +111,12 @@ const useUserMembership = () => {
         setLoading(false);
       }
     };
-    fetchUserMembership();
+
+    if (fetchedUser?.email) {
+      fetchUserMembership();
+      const interval = setInterval(fetchUserMembership, 5000);
+      return () => clearInterval(interval);
+    }
   }, [fetchedUser?.email]);
 
   return { membership, loading, error: membershipError || auth0Error, fetchedUser, isBlocked };
@@ -128,17 +135,15 @@ export const Navbarp = () => {
   const [scrolled, setScrolled] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
-  console.log(loading)
-    useEffect(() => {
-      if (isAuthenticated && !membershipLoading) {
-        setLoading(false);
-      }
-    }, [isAuthenticated, membershipLoading]);
+  useEffect(() => {
+    if (isAuthenticated && !membershipLoading) {
+      setLoading(false);
+    }
+  }, [isAuthenticated, membershipLoading]);
 
-
-  // Fuente de avatar: usar el de API o el de Auth0, o un fallback
+  // Fuente de avatar
   const avatarSrc = fetchedUser?.picture || "/avatar2.avif";
 
   // Determinar si el usuario es PRO
@@ -352,7 +357,7 @@ export const Navbarp = () => {
             {isAuthenticated ? (
               <div className="flex items-center gap-4 relative profile-menu-container">
                 {/* Avatar con dropdown */}
-                {!isBlocked ? ( 
+                {!isBlocked ? (
                   <div
                     className="flex items-center gap-2 cursor-pointer group"
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
@@ -388,7 +393,7 @@ export const Navbarp = () => {
                     )}
                   </div>
                 ) : (
-                  <span className="text-red-500">Usuario bloqueado</span> // Mensaje si el usuario está bloqueado
+                  <span className="text-red-500">Usuario bloqueado</span>
                 )}
 
                 {/* Menú desplegable */}
@@ -487,7 +492,7 @@ export const Navbarp = () => {
               {isAuthenticated ? (
                 <div className="space-y-3 pt-2 px-4 mobile-menu-container">
                   {/* Avatar móvil */}
-                  {!isBlocked ? ( 
+                  {!isBlocked ? (
                     <div
                       className="flex items-center gap-3 cursor-pointer pb-3"
                       onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
@@ -519,7 +524,7 @@ export const Navbarp = () => {
                       )}
                     </div>
                   ) : (
-                    <span className="text-red-500">Usuario bloqueado</span> // Mensaje si el usuario está bloqueado
+                    <span className="text-red-500">Usuario bloqueado</span>
                   )}
 
                   {/* Menú desplegable móvil */}
@@ -581,6 +586,5 @@ export const Navbarp = () => {
     </nav>
   );
 };
-
 
 export default Navbarp;

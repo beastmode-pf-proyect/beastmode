@@ -13,11 +13,11 @@ import {
   HiX,
   HiOutlineClipboardList,
   HiOutlineCog,
-  HiChevronDoubleLeft,
-  HiChevronDoubleRight,
+  // HiChevronDoubleLeft,
+  // HiChevronDoubleRight,
 } from "react-icons/hi";
 
-// Skeleton Loader Component
+
 function SkeletonLoader() {
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8] overflow-auto md:overflow-visible">
@@ -80,13 +80,13 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
   }, []);
 
 
-  const toggleDesktopMenu = () => {
-    setDesktopMenuCollapsed((prev) => {
-      const newState = !prev;
-      localStorage.setItem("desktopMenuCollapsed", newState.toString());
-      return newState;
-    });
-  };
+  // const toggleDesktopMenu = () => {
+  //   setDesktopMenuCollapsed((prev) => {
+  //     const newState = !prev;
+  //     localStorage.setItem("desktopMenuCollapsed", newState.toString());
+  //     return newState;
+  //   });
+  // };
 
   // Función para obtener los datos del usuario
   const fetchUserData = async () => {
@@ -120,7 +120,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
     }
   };
 
-  // Inicial y refresco cada 5 segundos para ver foto y nombre actualizadas
+
   useEffect(() => {
     if (isAuthenticated) {
       fetchUserData();
@@ -196,7 +196,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
             </li>
           ))}
         </ul>
-        <button
+        {/* <button
           onClick={toggleDesktopMenu}
           className="mt-auto p-2 hover:bg-gray-200 rounded flex items-center justify-center"
         >
@@ -209,7 +209,7 @@ export default function TrainerLayout({ children }: { children: React.ReactNode 
               <HiChevronDoubleLeft className="w-5 h-5" />
             </>
           )}
-        </button>
+        </button> */}
       </div>
 
       {/* Sidebar móvil */}
