@@ -1,16 +1,10 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller,  Param, Post } from '@nestjs/common';
 import { StripeService } from './stripe.service';
 
 @Controller('stripe')
 export class StripeController {
-  constructor(private readonly stripeService: StripeService) {}
-
-  // Iniciar pago
-  @Post(':id')
-  checkout(@Param('id') id: string, @Body('id') membershipId: string) {
-    return this.stripeService.payment(id, membershipId);
-  }
-
+  constructor(private readonly stripeService: StripeService) { }
+  
   // 🔁 Verificar pago y activar suscripción después del redireccionamiento de Stripe
   @Post('verify')
   verifyPayment(@Body() body: { sessionId: string; transactionId: string }) {
@@ -18,5 +12,21 @@ export class StripeController {
       body.sessionId,
       body.transactionId,
     );
+  }
+  
+  // Iniciar pago
+  //   @Post(':id')
+  //   checkout(@Param('id') id: string, @Body('id') membershipId: string) {
+  //     return this.stripeService.payment(id, membershipId);
+  //   }
+  // }
+
+  @Post(':id')
+  checkout(
+    @Param('id') id: string,
+    @Body() body: { id: string; origin: string },
+  ) {
+    const { id: membershipId, origin } = body;
+    return this.stripeService.payment(id, membershipId, origin);
   }
 }

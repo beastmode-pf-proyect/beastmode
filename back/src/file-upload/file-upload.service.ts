@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { User } from 'src/entities/users.entity';
 import { Exercise } from 'src/entities/exercise.entity';
 import { WorkoutRoutine } from 'src/entities/workout.routine.entity';
+import { UploadApiResponse } from 'cloudinary';
 
 
 @Injectable()
@@ -20,21 +21,17 @@ export class FileUploadService {
 
     ) {}
 
-    async uploadUserImage(file: Express.Multer.File, userId: string) {
-        
-        const userExists = await this.usersRepository.findOneBy({ id: userId });
+    async uploadUserImage(file: Express.Multer.File, id: string) {
+        const userExists = await this.usersRepository.findOneBy({ auth0_id: id });
         if (!userExists) {
             return 'El usuario no existe!';
         }
-
-        // Sube la imagen a Cloudinary y obtiene la URL segura
+        
         const uploadedImage = await this.fileUploadRepository.uploadImage(file);
 
-        // Actualiza la URL de la imagen en la base de datos
-        await this.usersRepository.update(userId, { picture: uploadedImage.secure_url });
+        await this.usersRepository.update({ auth0_id: id }, { picture: uploadedImage.secure_url });
 
-        // Retorna el user actualizado
-        return await this.usersRepository.findOneBy({ id: userId });
+        return uploadedImage;
     }
 
 
@@ -69,6 +66,10 @@ export class FileUploadService {
         
         // Retorna el WorkoutRoutine actualizado
         return await this.WorkoutRoutineRepository.findOneBy({ id: workoutId });
+    }
+
+    async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
+        return this.fileUploadRepository.uploadImage(file);
     }
 
 }

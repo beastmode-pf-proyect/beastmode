@@ -3,13 +3,11 @@ import { SubscriptionsService } from "./suscriptions.service";
 import { CreateSubscriptionDto } from "src/dto/createSubscriptionDto";
 import { UpdateSubscriptionDto } from "src/dto/UpdateSubscriptionDto";
 import { SubscriptionValidationInterceptor } from "src/interceptors/subscription.interceptor";
-import { StripeService } from "src/stripe/stripe.service";
 
 
 @Controller("subscriptions")
 export class SubscriptionsController {
-    constructor(private readonly service: SubscriptionsService,
-                private readonly stripeService: StripeService
+    constructor(private readonly service: SubscriptionsService
     ) {}
 
 
@@ -38,21 +36,6 @@ export class SubscriptionsController {
     @Post(":id/restore") 
     async restore(@Param("id", ParseUUIDPipe) id: string) {
         return this.service.restore(id);
-    }
-    
-    // Endpoint que maneja la redirección después de un pago exitoso
-    @Get('success')
-    async handleSuccessfulPayment(
-        @Query('session_id') sessionId: string,
-        @Query('transaction_id') transactionId: string,
-    ) {
-        return this.stripeService.verifyPaymentAndCreateSubscription(sessionId, transactionId);
-    }
-        
-    // Endpoint que maneja la redirección después de un pago cancelado
-    @Get('cancel')
-    handleCancelledPayment() {
-        return { success: false, message: 'Pago cancelado' };
     }
 
     @Get(':id')   

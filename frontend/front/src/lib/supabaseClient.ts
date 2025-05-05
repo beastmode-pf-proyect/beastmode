@@ -7,6 +7,7 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
   throw new Error("❌ Supabase URL y clave son requeridos.");
 }
 
-console.log("✅ Conectando a Supabase con:", SUPABASE_URL);
+// console.log("✅ Conectando a Supabase con:", SUPABASE_URL);
+
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);

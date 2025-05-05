@@ -1,0 +1,214 @@
+/* Estilos base */
+.greeting-container {
+    position: relative;
+    background: linear-gradient(to bottom right, rgba(94, 25, 20, 0.1), rgba(255, 127, 80, 0.06));
+    padding: 2rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+    transition: all 0.5s ease;
+  }
+  
+  .greeting-container:hover {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  }
+  
+  .background-effect {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(255, 127, 80, 0.2), transparent 60%);
+    opacity: 0.4;
+    animation: glow 8s ease-in-out infinite;
+  }
+  
+  .border-effect {
+    position: absolute;
+    inset: 0;
+    border-radius: 1.5rem;
+    border: 2px solid transparent;
+    transition: all 0.5s ease;
+  }
+  
+  .greeting-container:hover .border-effect {
+    border-color: rgba(255, 127, 80, 0.3);
+  }
+  
+  /* Avatar */
+  .avatar-container {
+    position: relative;
+    flex-shrink: 0;
+  }
+  
+  .avatar-glow {
+    position: absolute;
+    inset: -0.5rem;
+    background: linear-gradient(to right, #ff7f50, #5e1914);
+    border-radius: 50%;
+    opacity: 0.2;
+    filter: blur(20px);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  
+  .avatar-frame {
+    position: relative;
+    overflow: hidden;
+    width: 6rem;
+    height: 6rem;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .avatar-frame:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  .avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* Texto y contenido */
+  .title-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .greeting-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .gradient-text {
+    background: linear-gradient(to right, #ff7f50, #5e1914);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 2rem;
+    font-weight: 800;
+  }
+  
+  .trainer-name {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 900;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Iconos */
+  .sun-icon {
+    color: #ffb347;
+    font-size: 2.5rem;
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .cloud-sun-icon {
+    color: #ff7f50;
+    font-size: 2.5rem;
+    animation: spin 25s linear infinite;
+  }
+  
+  .moon-icon {
+    color: #7d8aff;
+    font-size: 2.5rem;
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  /* Tarjetas de información */
+  .time-info {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .info-card {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.8rem 1.2rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+  }
+  
+  .info-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .info-icon {
+    color: #ff7f50;
+    font-size: 1.2rem;
+  }
+  
+  .info-text {
+    color: rgba(76, 51, 51, 0.9);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  /* Animaciones */
+  @keyframes glow {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.6; }
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.4; }
+  }
+  
+  /* Responsividad */
+  @media (max-width: 768px) {
+    .greeting-container {
+      padding: 1.5rem;
+      border-radius: 1rem;
+    }
+    
+    .avatar-frame {
+      width: 5rem;
+      height: 5rem;
+    }
+    
+    .gradient-text {
+      font-size: 1.5rem;
+    }
+    
+    .trainer-name {
+      font-size: 2rem;
+    }
+    
+    .info-text {
+      font-size: 0.8rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .title-container {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .trainer-name {
+      font-size: 1.75rem;
+    }
+  }

@@ -9,15 +9,6 @@ export class updateUserDto {
     })
     @IsNotEmpty()
     @IsString()
-    @Length(8,20)
+    @Length(3,25)
     name: string
-
-    @ApiProperty({
-        description: 'Url de la Imagen del Usuario',
-        example: 'https://example.com/image.jpg'
-    })
-    @IsNotEmpty()
-    @IsString()
-    @Length(8,100)
-    imgUrl: string
 }

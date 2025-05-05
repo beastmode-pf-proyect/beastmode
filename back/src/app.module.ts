@@ -15,11 +15,17 @@ import { RoutineExerciseModule } from './routine_exercise/routine_exercise.modul
 import { UserWorkoutRoutineModule } from './user_workout_routine/user_workout_routine.module';
 import { StripeModule } from './stripe/stripe.module';
 import { JwtModule } from '@nestjs/jwt';
+import { RolesController } from './roles/roles.controller';
+import { RolesModule } from './roles/roles.module';
+import { MapsModule } from './maps/maps.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 
 
 @Module({
-  imports: [ConfigModule.forRoot({
+  imports: [
+    ScheduleModule.forRoot(),
+    ConfigModule.forRoot({
     isGlobal: true,
     load: [typeOrm],
   }),
@@ -45,9 +51,9 @@ import { JwtModule } from '@nestjs/jwt';
   UsersModule, SubscriptionsModule, 
   MembershipsModule, WorkoutRoutineModule, 
   TestimonialsModule, FileUploadModule, 
-  ExerciseModule, RoutineExerciseModule, RoutineExerciseModule, UserWorkoutRoutineModule, StripeModule
+  ExerciseModule, RoutineExerciseModule, RoutineExerciseModule, UserWorkoutRoutineModule, StripeModule, RolesModule, MapsModule
   ],
-  controllers: [AppController],
+  controllers: [AppController, RolesController],
   providers: [AppService],
 })
 export class AppModule {};

@@ -1,9 +1,11 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import Swal from "sweetalert2";
+import { FaSignInAlt } from "react-icons/fa";
 
 const LoginForm = () => {
   const { loginWithRedirect, user, isAuthenticated, isLoading } = useAuth0();
@@ -21,32 +23,36 @@ const LoginForm = () => {
         throw new Error("Datos de usuario incompletos");
       }
 
-      // Verificar si ya existe el usuario
-      const { data: existingUser } = await supabase
+      const { data: existingUser, error: fetchError } = await supabase
         .from("users2")
-        .select("id")
+        .select("id, picture")
         .eq("auth0_id", auth0User.sub)
         .single();
 
-      const isNewUser = !existingUser;
+      if (fetchError && fetchError.code !== "PGRST116") {
+        throw fetchError;
+      }
 
-      // Insertar o actualizar usuario
-      const { data, error: supabaseError } = await supabase
+      const isNewUser = !existingUser;
+      const pictureToSave = auth0User.picture || existingUser?.picture || null;
+
+      const { error: upsertError } = await supabase
         .from("users2")
         .upsert(
           {
             auth0_id: auth0User.sub,
             email: auth0User.email,
             name: auth0User.name || null,
-            picture: auth0User.picture || null,
+            picture: pictureToSave,
             last_login: new Date().toISOString(),
+            ...(isNewUser && { role_id: "a039d031-b804-4b7b-afdf-f57424f2fbd9" }),
           },
           { onConflict: "auth0_id" }
         )
         .select();
 
-      if (supabaseError) throw supabaseError;
-      return { data, isNewUser };
+      if (upsertError) throw upsertError;
+      return { isNewUser };
     } catch (error) {
       console.error("Error al guardar usuario:", error);
       throw error;
@@ -55,7 +61,7 @@ const LoginForm = () => {
 
   useEffect(() => {
     const handleAuth = async () => {
-      if (isAuthenticated && user?.sub && !isProcessing) {
+      if (isAuthenticated && user && user.sub && !isProcessing) {
         setIsProcessing(true);
 
         const hasWelcomed = window.sessionStorage.getItem("hasWelcomed");
@@ -91,9 +97,9 @@ const LoginForm = () => {
 
           if (isNewUser && !hasInitialized) {
             localStorage.setItem("hasInitialized", "true");
-            router.push("/landing");
+            router.push("/Home");
           } else {
-            const returnTo = window.sessionStorage.getItem("returnTo") || window.location.pathname || "/dashboard";
+            const returnTo = window.sessionStorage.getItem("returnTo") || "/dashboard";
             router.push(returnTo);
           }
         } catch (error) {
@@ -112,7 +118,6 @@ const LoginForm = () => {
   }, [isAuthenticated, user, router, saveUserToSupabase, isProcessing]);
 
   const handleAuth0Login = () => {
-    // Guardar la ruta actual antes de redirigir a login
     window.sessionStorage.setItem("returnTo", window.location.pathname);
 
     loginWithRedirect({
@@ -135,12 +140,16 @@ const LoginForm = () => {
   }
 
   return (
-    <div>
+    <div className="w-full">
       <button
         onClick={handleAuth0Login}
-        className="w-full flex items-center justify-center px-4 py-2 rounded-md shadow-sm text-sm font-medium text-white hover:bg-[#5e1914] transition duration-300 bg-[#a82717]"
+        className="relative w-full flex items-center justify-center gap-3 px-6 py-3 rounded-xl text-white font-semibold bg-[#a82717] shadow-[0_4px_20px_rgba(0,0,0,0.4)] 
+          hover:bg-[#5e1914] hover:shadow-[0_0_15px_3px_rgba(168,39,23,0.7)] 
+          transition-all duration-300 border border-transparent hover:border-red-700"
       >
-        Inicia Sesión - Regístrate
+        <span className="absolute -inset-px rounded-xl bg-gradient-to-r from-[#5e1914] to-[#a82717] opacity-0 hover:opacity-100 transition-opacity duration-300 blur-sm" />
+        <FaSignInAlt className="text-xl z-10" />
+        <span className="z-10">Inicia Sesión / Regístrate</span>
       </button>
     </div>
   );

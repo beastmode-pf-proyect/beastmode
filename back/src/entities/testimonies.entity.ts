@@ -33,7 +33,8 @@ import { User } from "./users.entity";
     isApproved: boolean;
 
     @Column({ default: true })
-    isActive: boolean;
+        isActive: boolean;
+        
 
     // Relación ManyToOne con User
     @ManyToOne(() => User, (user) => user.testimonies)

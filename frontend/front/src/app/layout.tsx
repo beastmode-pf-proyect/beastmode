@@ -1,11 +1,19 @@
+
 import type { Metadata } from "next";
 import "./globals.css";
 import Footer from "@/Components/Footer/Footer";
 import AuthProvider from "./AuthProvider";
-import Header from "@/Views/Header";
 import LoginFormProvider from "@/Components/loginouth/LoginProvider";
 import StripeProvider from "@/Components/Suscripcion/page";
 import { SessionUserProvider } from "./SessionUserContext";
+import { Suspense } from "react";
+import { Toaster } from "react-hot-toast";
+import Navbarp from "@/Components/Navbarp/Navbar";
+import FloatingMapButton from "@/Components/Maps/page";
+
+
+
+
 
 export const metadata: Metadata = {
   title: "BeastMode",
@@ -15,23 +23,27 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+
+
   return (
-    <AuthProvider>
-      <SessionUserProvider>
-
-      <StripeProvider>
-      <html lang="en">
-        <body className="flex flex-col min-h-screen">
-          <Header />
-
-
+    <html lang="en">
+      <body className="flex flex-col min-h-screen pt-24">
+        <AuthProvider>
+          <SessionUserProvider>
+            <StripeProvider>
+              <Navbarp />
+              <Toaster position="top-center" />
               <LoginFormProvider />
-              {children}
+              <Suspense fallback={<div>Cargando....</div>}>
+                {children}
+              
+                <FloatingMapButton />
+              </Suspense>
               <Footer />
-            </body>
-          </html>
-        </StripeProvider>
-      </SessionUserProvider>
-    </AuthProvider>
+            </StripeProvider>
+          </SessionUserProvider>
+        </AuthProvider>
+      </body>
+    </html>
   );
 }

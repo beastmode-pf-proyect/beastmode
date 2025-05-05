@@ -13,11 +13,14 @@ interface SessionUser {
 interface SessionUserContextType {
   user: SessionUser | null;
   loading: boolean;
+  setSessionUser: (user: SessionUser | null) => void; // ✅ ahora incluimos setSessionUser
 }
 
+// Creamos el contexto inicial
 const SessionUserContext = createContext<SessionUserContextType>({
   user: null,
   loading: true,
+  setSessionUser: () => {}, // ✅ función por defecto vacía
 });
 
 export const SessionUserProvider = ({
@@ -41,9 +44,12 @@ export const SessionUserProvider = ({
 
         setSessionUser(userData);
         sessionStorage.setItem("id", userData.id);
+        // Puedes guardar el usuario completo si quieres:
+        // sessionStorage.setItem("user", JSON.stringify(userData));
       } else {
         setSessionUser(null);
         sessionStorage.removeItem("id");
+        // sessionStorage.removeItem("user");
       }
 
       setLoading(false);
@@ -51,7 +57,7 @@ export const SessionUserProvider = ({
   }, [isAuthenticated, isLoading, user]);
 
   return (
-    <SessionUserContext.Provider value={{ user: sessionUser, loading }}>
+    <SessionUserContext.Provider value={{ user: sessionUser, loading, setSessionUser }}>
       {children}
     </SessionUserContext.Provider>
   );

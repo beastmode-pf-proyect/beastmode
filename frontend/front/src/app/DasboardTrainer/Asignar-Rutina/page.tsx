@@ -1,12 +1,13 @@
-import AssignRoutine from '@/Components/AsignarRuina/AsignarRutina'
-import UserRoutines from '@/Components/VeryeditarasignasionRuti/Veriasigrutina'
+
+import AsignarRutina from '@/Components/Todo-Sobre-Rutina/Asignar-Rutina'
+import VerRutinasAsignadas from '@/Components/Todo-Sobre-Rutina/Ver-Rutinas-Asignadas'
 import React from 'react'
 
 function page() {
   return (
     <div>
-      <AssignRoutine/>
-      <UserRoutines/>
+      <AsignarRutina/>  
+      <VerRutinasAsignadas/>
     </div>
   )
 }

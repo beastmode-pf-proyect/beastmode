@@ -105,9 +105,10 @@ const TestimonialsCarousel = () => {
 
                       <div className="mt-6 flex justify-end ">
                         <span>
-                          <img
+                          <Image
                             src="/images/beastmode_wolf_white.png"
                             className="h-7 mt-5"
+                            alt=""
                           />
                         </span>
                       </div>
@@ -147,7 +148,7 @@ export default TestimonialsCarousel;
 {
   /* <div className="mt-6 flex justify-end">
             <span>
-              <img src="/images/beastmode_wolf_white.png" className="h-7 " />
+              <Image src="/images/beastmode_wolf_white.png" className="h-7 " />
             </span>
           </div> */
 }

@@ -1,9 +1,15 @@
-import { StaticImageData } from "next/image";
-
 export interface ITestimonios {
-  nombre: string;
-  descripcion: string;
-  calificacion: string;
-  calificacionNumero: number;
-  imagen: string | StaticImageData;
+  id?: string;
+  fullName: string;
+  age?: number;
+  occupation: string;
+  content: string;
+  score: number;
+  createdAt?: Date;
+  isApproved?: boolean;
+  isActive?: boolean;
+  imagen?: string;
+  user?: {
+    id: string;
+  };
 }

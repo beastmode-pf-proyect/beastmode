@@ -1,41 +1,183 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import {
   HiHome,
-  HiBookOpen,
-  HiShoppingCart,
-  HiOutlineStar,
   HiOutlineLogout,
-  HiCog,
-  HiChartBar,
   HiMenu,
   HiX,
-  HiUser
+  HiCog,
+  HiUser,
+  HiOutlineDocumentText,
 } from "react-icons/hi";
+import { MdFitnessCenter } from "react-icons/md";
 import Link from "next/link";
 import { useAuth0 } from "@auth0/auth0-react";
 import Swal from "sweetalert2";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
-import Trainer from "@/Components/Roles/Trainer";
+import Image from "next/image";
 
 interface UserData {
   name: string;
   email: string;
   picture: string;
-  role_id: number;
-  roles: {
+  role: string;
+}
+interface User {
+  id: string;
+  name: string;
+  picture: string;
+  email: string;
+  auth0_id: string;
+  role: {
     name: string;
   };
 }
 
+const SkeletonLoader = () => (
+  <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8] animate-pulse">
+    {/* Skeleton Sidebar */}
+    <div className="hidden md:block w-64 bg-white p-4">
+      <div className="flex justify-center mb-4">
+        <div className="w-20 h-20 bg-gray-200 rounded-full" />
+      </div>
+      <div className="h-8 bg-gray-200 rounded w-3/4 mx-auto mb-4" />
+      <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto mb-6" />
+      
+      <div className="space-y-2">
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className="h-10 bg-gray-200 rounded-md" />
+        ))}
+      </div>
+    </div>
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { user: auth0User, isAuthenticated, isLoading, logout } = useAuth0();
-  const [userData, setUserData] = useState<{ name: string; email: string; avatar: string; role: string } | null>(null);
+    {/* Skeleton Main Content */}
+    <div className="flex-1 p-4 md:p-8 min-h-screen bg-white mt-20 md:mt-0">
+      <div className="h-8 bg-gray-200 rounded w-1/4 mb-6" />
+      <div className="grid gap-6">
+        <div className="h-64 bg-gray-200 rounded-xl" />
+        <div className="grid md:grid-cols-2 gap-6">
+          {[...Array(2)].map((_, i) => (
+            <div key={i} className="h-32 bg-gray-200 rounded-xl" />
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+export default function ClientLayout({ children }: { children: React.ReactNode }) {
+  const {
+    user,
+    isAuthenticated,
+    isLoading,
+    error,
+    logout,
+    getAccessTokenSilently,
+  } = useAuth0();
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [apiError, setApiError] = useState<string>("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const router = useRouter();
 
+  // Fetch inicial y verificación de rol
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const accessToken = await getAccessTokenSilently();
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/users`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        if (!response.ok) throw new Error("Error al obtener usuarios");
+        const usersData: User[] = await response.json();
+        const matchedUser = usersData.find((u) => u.auth0_id === user?.sub);
+        if (matchedUser) {
+          setCurrentUser(matchedUser);
+        } else {
+          setApiError("Usuario no encontrado en la base de datos");
+        }
+      } catch (err) {
+        setApiError(err instanceof Error ? err.message : "Error desconocido");
+      }
+
+      try {
+        if (user && user.sub) {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/role/${user.sub}`
+          );
+          if (!res.ok)
+            throw new Error("Error al obtener los datos del usuario");
+          const roleText = await res.text();
+          const parsedData: UserData = {
+            name: user.name ?? "Usuario",
+            email: user.email ?? "Sin correo",
+            picture: user.picture ?? "",
+            role: roleText.toUpperCase(),
+          };
+
+          if (parsedData.role !== "CLIENT") {
+            Swal.fire({
+              icon: "error",
+              title: "Acceso denegado",
+              text: "No tienes permisos para acceder como cliente.",
+              confirmButtonText: "Volver",
+            }).then(() => {
+              router.push("/");
+            });
+            return;
+          }
+          setUserData(parsedData);
+        }
+      } catch (error: unknown) {
+        console.error("❌ Error:", error);
+      }
+    };
+
+    if (isAuthenticated && user) {
+      fetchData();
+    }
+  }, [isAuthenticated, user, getAccessTokenSilently, router]);
+
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    const refreshUserData = async () => {
+      try {
+        const accessToken = await getAccessTokenSilently();
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/users`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        if (!response.ok) throw new Error("Error al obtener usuarios");
+        const usersData: User[] = await response.json();
+        const matchedUser = usersData.find((u) => u.auth0_id === user?.sub);
+        if (matchedUser) {
+          setCurrentUser(matchedUser);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (isAuthenticated && user) {
+      refreshUserData();
+      intervalId = setInterval(refreshUserData, 2000);
+    }
+
+    return () => clearInterval(intervalId);
+  }, [isAuthenticated, user, getAccessTokenSilently]);
+
+  
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       Swal.fire({
@@ -49,144 +191,115 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [isLoading, isAuthenticated, router]);
 
-  useEffect(() => {
-    if (auth0User && auth0User.sub) {
-      fetchUserData(auth0User.sub);
-    }
-  }, [auth0User]);
+  if (isLoading) return <SkeletonLoader />;
+  if (error) return <div className="p-4 text-red-500">Error: {error.message}</div>;
+  if (!isAuthenticated) return <SkeletonLoader />;
+  if (apiError) return <div className="p-4 text-red-500">Error: {apiError}</div>;
+  if (!currentUser || !userData) return <SkeletonLoader />;
 
-  async function fetchUserData(auth0_id: string) {
-      const { data, error } = await supabase
-        .from("users2")
-        .select("name, email, picture, role_id, roles(name)")
-        .eq("auth0_id", auth0_id)
-        .single<UserData>();
-    
-      if (error) {
-        console.error("❌ Error obteniendo datos del usuario:", error.message);
-        return;
-      }
-    
-      setUserData({
-        name: data?.name ?? "Usuario",
-        email: data?.email ?? "Sin correo",
-        avatar: data?.picture ?? "https://via.placeholder.com/100",
-        role: data?.roles?.name ? data.roles.name.toUpperCase() : "SIN ROL",
-      });
-    }
-
-  if (isLoading) {
-    return <div className="text-center text-xl text-gray-600">Cargando...</div>;
-  }
-
-  if (!isAuthenticated || !userData) {
-    return null;
-  }
-
-
-
-  //------Menú estándar para usuarios ------//
-  const standardMenuUsers = [
-    { name: "Inicio", icon: <HiHome className="w-5 h-5" />, href: "/Dasboard-User" },
-    { name: "Rutina", icon: <HiBookOpen className="w-5 h-5" />, href: "/Dasboard-User/Rutina" },
-    { name: "Membesias Activas", icon: <HiOutlineStar className="w-5 h-5" />, href: "/Dasboard-User/Mi-membresia" },
-    { name: "Historial", icon: <HiShoppingCart className="w-5 h-5" />, href: "/Dasboard-User/Historial-Pagos" }
+  const clientMenu = [
+    {
+      name: "Inicio",
+      icon: <HiHome className="w-5 h-5" />,
+      href: "/Dasboard-User",
+    },
+    {
+      name: "Rutinas",
+      icon: <MdFitnessCenter className="w-5 h-5" />,
+      href: "/Dasboard-User/Rutina",
+    },
+    {
+      name: "Membresía",
+      icon: <HiUser className="w-5 h-5" />,
+      href: "/Dasboard-User/Mi-membresia",
+    },
+    {
+      name: "Historial de Pagos",
+      icon: <HiOutlineDocumentText className="w-5 h-5" />,
+      href: "/Dasboard-User/Historial-Pagos",
+    },
+    {
+      name: "Configuracion",
+      icon: <HiCog className="w-5 h-5" />,
+      href: "/Dasboard-User/Configuracion",
+    },
   ];
 
-  const currentMenu = standardMenuUsers;
-
-  const roleIcon = (
-    <div
-      className="flex items-center justify-center w-20 h-20 mb-6 rounded-full shadow-md mx-auto"
-      style={{
-        backgroundColor:
-          userData.role === "ADMIN"
-            ? "#5e1914"
-            : userData.role === "TRAINER"
-            ? "#3B3B66"
-            : "#178a7a",
-      }}
-    >
-      {userData.role === "ADMIN" ? (
-        <HiCog className="text-white w-16 h-16" />
-      ) : userData.role === "TRAINER" ? (
-        <HiChartBar className="text-white w-10 h-16" />
-      ) : (
-        <HiUser className="text-white w-16 h-16" />
-      )}
-    </div>
+  const UserInfo = () => (
+    <>
+      <div className="flex justify-center mb-4">
+        <div className="w-[80px] h-[80px] rounded-full bg-[#e0e0e0] overflow-hidden flex items-center justify-center">
+          {imageError || !currentUser?.picture ? (
+            <HiUser className="w-10 h-10 text-[#5e1914]" />
+          ) : (
+            <Image
+              src={currentUser.picture || "/avatar2.avif"}
+              alt="Usuario"
+              width={80}
+              height={80}
+              className="object-cover"
+              onError={() => setImageError(true)}
+            />
+          )}
+        </div>
+      </div>
+      <h1 className="text-2xl font-bold text-[#5e1914] mb-4 text-center">
+        BeastMode Client
+      </h1>
+      <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
+        <div>
+          <h2 className="text-lg font-semibold text-[#5e1914]">
+            {currentUser?.name || "Usuario"}
+          </h2>
+          <p className="text-sm text-[#5e1914]">{userData.email}</p>
+          <p className="text-sm text-[#5e1914] font-bold">Cliente</p>
+        </div>
+      </div>
+    </>
   );
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-[#f8f8f8] text-[#333]">
       {/* Navbar móvil */}
-      <div className="md:hidden fixed top-4  mt-16 left-0 right-0 bg-white shadow-md z-30 p-2 flex justify-between items-center">
-        <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 rounded-md text-[#5e1914]">
+      <div className="md:hidden fixed top-4 mt-16 left-0 right-0 bg-white z-30 p-2 flex justify-between items-center">
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-2 rounded-md text-[#5e1914]"
+        >
           {mobileMenuOpen ? <HiX size={24} /> : <HiMenu size={24} />}
         </button>
       </div>
 
-      {/* Sidebar desktop */}
-      <div className="hidden md:block w-64 bg-white shadow-lg p-4">
-        {roleIcon}
-        <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode</h1>
-        <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-          <img src={userData.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
-          <div>
-            <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
-            <p className="text-sm text-[#5e1914]">{userData.email}</p>
-            <p className="text-sm text-[#5e1914] font-bold">
-              ROL: {userData.role === "ADMIN" ? "Administrador" : userData.role === "TRAINER" ? "Entrenador" : "Usuario"}
-            </p>
-          </div>
-        </div>
-
+      {/* Sidebar para desktop */}
+      <div className="hidden md:block w-64 bg-white p-4">
+        <UserInfo />
         <ul className="space-y-2">
-          {currentMenu.map((item) => (
+          {clientMenu.map((item) => (
             <li key={item.name}>
-              <Link href={item.href} className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#5e1914]">
+              <Link
+                href={item.href}
+                className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#5e1914] hover:scale-105 text-[#5e1914] hover:text-[#5e1914]"
+              >
                 {item.icon}
                 <span>{item.name}</span>
               </Link>
             </li>
           ))}
         </ul>
-
-        <div className="mt-4">
-          <button
-            onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-            className="w-full flex items-center justify-center gap-2 bg-[#5e1914] hover:bg-[#a82717] text-white p-2 rounded-md transition-all duration-300 transform hover:scale-105"
-          >
-            <HiOutlineLogout className="w-5 h-5" />
-            <span>Cerrar sesión</span>
-          </button>
-        </div>
       </div>
 
-      {/* Sidebar móvil */}
+      {/* Sidebar para móvil */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 mt-34 flex md:hidden">
-          <div className="w-64 bg-white shadow-lg p-4">
-            {roleIcon}
-            <h1 className="text-2xl font-bold text-[#5e1914] mb-6 text-center">BeastMode</h1>
-            <div className="flex items-center space-x-3 bg-[#ffffff] p-3 rounded-md mb-6">
-              <img src={userData.avatar} alt="Usuario" className="w-10 h-10 rounded-full" />
-              <div>
-                <h2 className="text-lg font-semibold text-[#5e1914]">{userData.name}</h2>
-                <p className="text-sm text-[#5e1914]">{userData.email}</p>
-                <p className="text-sm text-[#5e1914] font-bold">
-                  ROL: {userData.role === "ADMIN" ? "Administrador" : userData.role === "TRAINER" ? "Entrenador" : "Usuario"}
-                </p>
-              </div>
-            </div>
-
+          <div className="w-64 bg-white p-4 overflow-y-auto max-h-screen">
+            <UserInfo />
             <ul className="space-y-2">
-              {currentMenu.map((item) => (
+              {clientMenu.map((item) => (
                 <li key={item.name}>
                   <Link
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#3B3B66] hover:scale-105 text-[#5e1914]"
+                    className="flex items-center p-2 space-x-3 rounded-md transition-all duration-300 hover:bg-[#5e1914] hover:scale-105 text-[#5e1914] hover:text-white"
                   >
                     {item.icon}
                     <span>{item.name}</span>
@@ -194,10 +307,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </li>
               ))}
             </ul>
-
             <div className="mt-4">
               <button
-                onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+                onClick={() =>
+                  logout({
+                    logoutParams: { returnTo: window.location.origin },
+                  })
+                }
                 className="w-full flex items-center justify-center gap-2 bg-[#5e1914] hover:bg-[#a82717] text-white p-2 rounded-md transition-all duration-300 transform hover:scale-105"
               >
                 <HiOutlineLogout className="w-5 h-5" />
@@ -205,33 +321,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </button>
             </div>
           </div>
-
-          <div className="flex-1 bg-[#5e191444]" onClick={() => setMobileMenuOpen(false)} />
+          <div
+            className="flex-1 bg-[#5e191444]"
+            onClick={() => setMobileMenuOpen(false)}
+          />
         </div>
       )}
 
       <main className="flex-1 p-4 md:p-8 min-h-screen bg-[#ffffff] mt-20 md:mt-0">
-        <div className="mb-6">
-          {userData.role === "ADMIN" ? (
-            <div className="bg-gradient-to-r from-[#fefefe] to-[#f8f8f8] p-6 rounded-xl shadow-xl">
-              <h3 className="text-2xl font-bold text-[#5e1914] mb-4">Panel de Administrador</h3>
-              <p className="text-[#5e1914] text-lg">Administra usuarios, clases, membresías y más.</p>
-            </div>
-          ) : userData.role === "TRAINER" ? (
-            <div className="bg-gradient-to-r from-[#fefefe] to-[#f8f8f8] p-6 rounded-xl shadow-xl">
-              <h3 className="text-2xl font-bold text-[#5e1914] mb-4">Panel de Entrenador</h3>
-              <div className="text-[#5e1914]">
-                <Trainer />
-              </div>
-            </div>
-          ) : (
-            <div className="bg-gradient-to-r from-[#fefefe] to-[#f8f8f8] p-6 rounded-xl shadow-xl">
-              <h3 className="text-2xl font-bold text-[#5e1914]">Panel de Usuario</h3>
-              <p className="text-[#5e1914] text-lg">Bienvenido a tu espacio personalizado.</p>
-            </div>
-          )}
-        </div>
-
         {children}
       </main>
     </div>

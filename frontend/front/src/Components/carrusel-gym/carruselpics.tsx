@@ -42,10 +42,10 @@ const GymCarousel = () => {
   }, [isPaused, selfies.length]);
 
   return (
-    <div className="relative w-full overflow-hidden  py-8">
+    <div className="relative w-full overflow-hidden py-8 ">
       <div
         ref={carouselRef}
-        className="flex transition-transform duration-1000 ease-linear"
+        className="flex transition-transform duration-1000 ease-linear h-40 md:h-56 lg:h-64"
         style={{
           transform: `translateX(-${currentIndex * (100 / selfies.length)}%)`,
         }}
@@ -55,10 +55,10 @@ const GymCarousel = () => {
         {items.map((img, index) => (
           <div
             key={`${img}-${index}`}
-            className="flex-shrink-0 px-2"
+            className="flex-shrink-0 px-1"
             style={{ width: `${100 / selfies.length}%` }}
           >
-            <div className="relative h-64 rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:scale-105">
+            <div className="relative w-full h-40 md:h-56 lg:h-64 rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:scale-105">
               <Image
                 src={img}
                 alt={`Selfie ${(index % selfies.length) + 1}`}

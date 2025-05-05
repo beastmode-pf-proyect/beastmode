@@ -16,19 +16,21 @@ const About = () => {
     },
     {
       id: 2,
-      image: "/img/rene.png",
+      image: "/images/rene.png",
       name: "Rene Oswaldo Orozco Hernandez",
-      linkedin: "https://www.linkedin.com/in/rene-oswaldo-orozco-hernandez-626808288",
+      linkedin:
+        "https://www.linkedin.com/in/rene-oswaldo-orozco-hernandez-626808288",
       github: "https://github.com/Rene-Orozco",
-      hoverColor: "hover:bg-red-950",
+      hoverColor: "hover:bg-gray-700",
       role: "Front-End Developer",
-      roleColor: "bg-red-100 text-red-800",
+      roleColor: "bg-gray-100 text-gray-800",
     },
     {
       id: 3,
       image: "/images/pm.png",
       name: "Pablo Méndez",
-      linkedin: "https://www.linkedin.com/in/pablo-emilio-m%C3%A9ndez-00b3641b1/",
+      linkedin:
+        "https://www.linkedin.com/in/pablo-emilio-m%C3%A9ndez-00b3641b1/",
       github: "https://github.com/PabloEmilioMendez",
       hoverColor: "hover:bg-amber-500",
       roleColor: "bg-amber-100 text-amber-800",

@@ -1,15 +1,15 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import Swal from "sweetalert2";
+import WelcomeModal from "@/Components/Cliente/Modalbienvenida"; // Ajusta si tu ruta cambia
 
 const LoginFormProvider = () => {
   const { user, isAuthenticated, isLoading, logout } = useAuth0();
   const [error, setError] = useState("");
-  const router = useRouter();
-  const hasHandledLogin = useRef(false); // Solo se ejecuta una vez
+  const hasHandledLogin = useRef(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
   interface Auth0User {
     sub: string;
@@ -18,72 +18,92 @@ const LoginFormProvider = () => {
     picture?: string;
   }
 
-  const saveUserToSupabase = async (auth0User: Auth0User) => {
-    if (!auth0User.sub || !auth0User.email) {
-      throw new Error("Datos de usuario incompletos");
-    }
-
-    // Verificar si el usuario está bloqueado
-    const { data, error: fetchError } = await supabase
+  const checkEmailExists = useCallback(async (email: string) => {
+    const { data, error } = await supabase
       .from("users2")
-      .select("is_blocked")
-      .eq("auth0_id", auth0User.sub)
-      .single();
+      .select("auth0_id")
+      .eq("email", email)
+      .maybeSingle();
 
-    if (fetchError && fetchError.code !== "PGRST116") {
-      throw fetchError;
-    }
+    if (error) throw error;
+    return !!data;
+  }, []);
 
-    if (data?.is_blocked) {
-      Swal.fire({
-        icon: "error",
-        title: "Usuario bloqueado",
-        text: "Tu cuenta ha sido bloqueada. Por favor, comunícate con el administrador.",
-        confirmButtonText: "Entendido",
-      });
-      // Opcional: cerrar sesión automáticamente
-      // Esperamos a que el modal se cierre y luego deslogueamos
-      setTimeout(() => {
-        logout({ logoutParams: { returnTo: window.location.origin } });
-      }, 300);
+  const saveUserToSupabase = useCallback(
+    async (auth0User: Auth0User) => {
+      if (!auth0User.sub || !auth0User.email) {
+        throw new Error("Datos de usuario incompletos");
+      }
 
-      throw new Error("Usuario bloqueado");
-    }
+      const emailExists = await checkEmailExists(auth0User.email);
+      if (emailExists) {
+        const { data: existingUser } = await supabase
+          .from("users2")
+          .select("auth0_id")
+          .eq("email", auth0User.email)
+          .single();
 
-    // Guardar o actualizar usuario
-    const { error: supabaseError } = await supabase.from("users2").upsert(
-      {
-        auth0_id: auth0User.sub,
-        email: auth0User.email,
-        name: auth0User.name || null,
-        picture: auth0User.picture || null,
-        last_login: new Date().toISOString(),
-      },
-      { onConflict: "auth0_id" }
-    );
+        if (existingUser?.auth0_id !== auth0User.sub) {
+          Swal.fire({
+            icon: "error",
+            title: "Correo ya registrado",
+            text: "Este correo electrónico ya está asociado a otra cuenta.",
+            confirmButtonText: "Entendido",
+          });
+          await logout({ logoutParams: { returnTo: window.location.origin } });
+          throw new Error("Correo ya registrado");
+        }
+      }
 
-    if (supabaseError) throw supabaseError;
-  };
+      const { data: existingUserData, error: fetchError } = await supabase
+        .from("users2")
+        .select("is_blocked, picture, name")
+        .eq("auth0_id", auth0User.sub)
+        .maybeSingle();
+
+      if (fetchError && fetchError.code !== "PGRST116") {
+        throw fetchError;
+      }
+
+      if (existingUserData?.is_blocked) {
+        Swal.fire({
+          icon: "error",
+          title: "Usuario bloqueado",
+          text: "Tu cuenta ha sido bloqueada. Por favor, comunícate con el administrador.",
+          confirmButtonText: "Entendido",
+        });
+        setTimeout(() => {
+          logout({ logoutParams: { returnTo: window.location.origin } });
+        }, 300);
+        throw new Error("Usuario bloqueado");
+      }
+
+      const isNewUser = !existingUserData;
+      const pictureToSave = isNewUser ? (auth0User.picture || null) : (existingUserData?.picture || null);
+      const nameToSave = isNewUser ? (auth0User.name || null) : (existingUserData?.name || null);
+
+      const { error: supabaseError } = await supabase.from("users2").upsert(
+        {
+          auth0_id: auth0User.sub,
+          email: auth0User.email,
+          name: nameToSave,
+          picture: pictureToSave,
+          last_login: new Date().toISOString(),
+        },
+        { onConflict: "auth0_id" }
+      );
+
+      if (supabaseError) throw supabaseError;
+    },
+    [checkEmailExists, logout]
+  );
 
   useEffect(() => {
     const handleAuth = async () => {
       if (isAuthenticated && user && !hasHandledLogin.current) {
         hasHandledLogin.current = true;
 
-        const isFirstLogin = !sessionStorage.getItem("hasWelcomed");
-
         try {
-          if (isFirstLogin) {
-            Swal.fire({
-              title: "Procesando tu información",
-              html: "Estamos preparando tu dashboard...",
-              allowOutsideClick: false,
-              didOpen: () => {
-                Swal.showLoading();
-              },
-            });
-          }
-
           await saveUserToSupabase({
             sub: user.sub || "",
             email: user.email || "",
@@ -91,21 +111,18 @@ const LoginFormProvider = () => {
             picture: user.picture,
           });
 
-          if (isFirstLogin) {
-            Swal.fire({
-              icon: "success",
-              title: "¡Bienvenido!",
-              text: "Redirigiendo a tu dashboard...",
-              timer: 1500,
-              showConfirmButton: false,
-              willClose: () => {
-                sessionStorage.setItem("hasWelcomed", "true");
-              },
-            });
+          const alreadyShown = localStorage.getItem("hasShownWelcomeModal");
+          if (!alreadyShown) {
+            setShowWelcomeModal(true);
+            localStorage.setItem("hasShownWelcomeModal", "true");
           }
+
         } catch (error) {
-          if (error instanceof Error && error.message === "Usuario bloqueado") {
-            // No hacer nada, ya mostramos SweetAlert
+          if (
+            error instanceof Error && 
+            (error.message === "Usuario bloqueado" || error.message === "Correo ya registrado")
+          ) {
+            // Mensaje ya mostrado por SweetAlert
           } else {
             console.error("Error de login:", error);
             setError(
@@ -119,12 +136,17 @@ const LoginFormProvider = () => {
     };
 
     handleAuth();
-  }, [isAuthenticated, user, router,]);
+  }, [isAuthenticated, user, saveUserToSupabase]);
 
-  if (isLoading) return null;
-  if (error) return null;
+  if (isLoading || error) return null;
 
-  return null;
+  return (
+    <WelcomeModal
+      show={showWelcomeModal}
+      onClose={() => setShowWelcomeModal(false)}
+      userName={user?.name || user?.nickname}
+    />
+  );
 };
 
 export default LoginFormProvider;
